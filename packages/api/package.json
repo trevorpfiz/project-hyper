@@ -1,0 +1,45 @@
+{
+  "name": "@hyper/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./dist/lib/api/client/index.js"
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf .turbo dist node_modules",
+    "dev": "tsc --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "generate-client": "pnpm dlx @hey-api/openapi-ts --input https://next-fast-turbo.vercel.app/openapi.json --output ./src/lib/api/client --client fetch",
+    "generate-client:dev": "pnpm dlx @hey-api/openapi-ts --input http://127.0.0.1:8000/openapi.json --output ./src/lib/api/client --client fetch"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^5.1.6",
+    "@hyper/db": "workspace:*",
+    "@hyper/validators": "workspace:*",
+    "@trpc/server": "catalog:",
+    "nanoid": "^5.0.7",
+    "superjson": "2.2.1",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@hyper/eslint-config": "workspace:*",
+    "@hyper/prettier-config": "workspace:*",
+    "@hyper/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@hyper/prettier-config"
+}

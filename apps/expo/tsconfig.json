@@ -1,0 +1,17 @@
+{
+  "extends": "@hyper/tsconfig/base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    },
+    "jsx": "react-native",
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
+    "types": ["nativewind/types"],
+    "checkJs": false,
+    "module": "esnext"
+  },
+  "include": ["src", "*.ts", "*.js", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
+}
