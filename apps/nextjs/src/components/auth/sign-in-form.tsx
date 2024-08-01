@@ -2,8 +2,8 @@
 
 import { useAction } from "next-safe-action/hooks";
 
-import type { SignInSchemaType } from "@wellchart/validators";
-import { Button } from "@wellchart/ui/button";
+import type { SignInSchemaType } from "@hyper/validators";
+import { Button } from "@hyper/ui/button";
 import {
   Form,
   FormControl,
@@ -12,9 +12,9 @@ import {
   FormLabel,
   FormMessage,
   useForm,
-} from "@wellchart/ui/form";
-import { Input } from "@wellchart/ui/input";
-import { SignInSchema } from "@wellchart/validators";
+} from "@hyper/ui/form";
+import { Input } from "@hyper/ui/input";
+import { SignInSchema } from "@hyper/validators";
 
 import { FormError } from "~/components/auth/form-error";
 import { signInWithPassword } from "~/lib/actions/auth";

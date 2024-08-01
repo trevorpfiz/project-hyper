@@ -1,4 +1,4 @@
-import { Button } from "@wellchart/ui/button";
+import { Button } from "@hyper/ui/button";
 
 import { signOut } from "~/lib/actions/auth";
 

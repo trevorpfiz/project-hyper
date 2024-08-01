@@ -1,6 +1,6 @@
 import { FcGoogle } from "react-icons/fc";
 
-import { Button } from "@wellchart/ui/button";
+import { Button } from "@hyper/ui/button";
 
 import { signInWithGoogle } from "~/lib/actions/auth";
 

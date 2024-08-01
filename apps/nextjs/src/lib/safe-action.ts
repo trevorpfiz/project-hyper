@@ -2,17 +2,18 @@ import { createSafeActionClient } from "next-safe-action";
 
 import { createClient } from "~/utils/supabase/server";
 
-export const action = createSafeActionClient();
+// Base client
+export const actionClient = createSafeActionClient();
 
-export const authAction = createSafeActionClient({
-  async middleware() {
-    const supabase = createClient();
-    const { data, error } = await supabase.auth.getUser();
+// Auth client
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const authActionClient = actionClient.use(async ({ next, ctx }) => {
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.getUser();
 
-    if (error ?? !data.user) {
-      throw new Error("Unauthorized");
-    }
+  if (error ?? !data.user) {
+    throw new Error("Unauthorized");
+  }
 
-    return { user: data.user };
-  },
+  return next({ ctx: { user: data.user } });
 });

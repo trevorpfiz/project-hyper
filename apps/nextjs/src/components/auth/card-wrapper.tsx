@@ -1,4 +1,4 @@
-import { Card, CardContent, CardFooter, CardHeader } from "@wellchart/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@hyper/ui/card";
 
 import { BackButton } from "~/components/auth/back-button";
 import { Header } from "~/components/auth/header";
