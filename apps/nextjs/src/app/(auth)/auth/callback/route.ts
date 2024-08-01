@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "~/utils/supabase/server";
 
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get("next") ?? "/";
@@ -14,10 +14,10 @@ export async function GET(request: NextRequest) {
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return redirect(`${origin}${next}`);
+      return redirect(next);
     }
   }
 
   // return the user to an error page with instructions
-  return redirect(`${origin}/auth/auth-code-error`);
+  return redirect("/auth/error");
 }

@@ -2,7 +2,7 @@
 
 import { useAction } from "next-safe-action/hooks";
 
-import type { SignUpSchemaType } from "@hyper/validators";
+import type { SignUp } from "@hyper/validators";
 import { Button } from "@hyper/ui/button";
 import {
   Form,
@@ -29,9 +29,9 @@ export const SignUpForm = () => {
     },
   });
 
-  const { execute, result, status } = useAction(signUp);
+  const { execute, result, isExecuting, hasSucceeded } = useAction(signUp);
 
-  const onSubmit = (values: SignUpSchemaType) => {
+  const onSubmit = (values: SignUp) => {
     execute(values);
   };
 
@@ -48,7 +48,7 @@ export const SignUpForm = () => {
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={status === "executing"}
+                    disabled={isExecuting}
                     placeholder="Email address"
                     type="email"
                   />
@@ -67,7 +67,7 @@ export const SignUpForm = () => {
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={status === "executing"}
+                    disabled={isExecuting}
                     placeholder="Password"
                     type="password"
                   />
@@ -78,16 +78,12 @@ export const SignUpForm = () => {
           />
         </div>
 
-        {status === "hasSucceeded" && (
+        {hasSucceeded && (
           <FormSuccess message={"Confirmation email has been sent!"} />
         )}
         <FormError message={result.serverError} />
 
-        <Button
-          disabled={status === "executing"}
-          type="submit"
-          className="w-full"
-        >
+        <Button disabled={isExecuting} type="submit" className="w-full">
           Continue with Email
         </Button>
       </form>

@@ -15,5 +15,5 @@ export const authActionClient = actionClient.use(async ({ next, ctx }) => {
     throw new Error("Unauthorized");
   }
 
-  return next({ ctx: { user: data.user } });
+  return next({ ctx: { supabase, user: data.user } });
 });

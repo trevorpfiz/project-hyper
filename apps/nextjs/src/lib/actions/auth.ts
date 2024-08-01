@@ -25,7 +25,7 @@ export const signInWithPassword = actionClient
     }
 
     revalidatePath("/", "layout");
-    redirect(DEFAULT_LOGIN_REDIRECT);
+    // redirect(DEFAULT_LOGIN_REDIRECT);
   });
 
 export const signUp = actionClient
@@ -53,6 +53,7 @@ export const signUp = actionClient
       throw error;
     }
 
+    revalidatePath("/", "layout");
     return data.user;
   });
 
@@ -69,7 +70,8 @@ export const signInWithGithub = async () => {
     redirect(res.data.url);
   }
   if (res.error) {
-    throw new Error(res.error.message);
+    console.error(res.error.message);
+    redirect("/auth/error");
   }
 };
 
@@ -88,7 +90,8 @@ export const signInWithGoogle = async () => {
     redirect(res.data.url);
   }
   if (res.error) {
-    throw new Error(res.error.message);
+    console.error(res.error.message);
+    redirect("/auth/error");
   }
 };
 

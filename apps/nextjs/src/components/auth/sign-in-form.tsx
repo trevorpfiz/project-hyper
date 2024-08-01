@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useAction } from "next-safe-action/hooks";
 
-import type { SignInSchemaType } from "@hyper/validators";
+import type { SignIn } from "@hyper/validators";
 import { Button } from "@hyper/ui/button";
 import {
   Form,
@@ -28,9 +29,9 @@ export const SignInForm = () => {
     },
   });
 
-  const { execute, result, status } = useAction(signInWithPassword);
+  const { execute, result, isExecuting } = useAction(signInWithPassword);
 
-  const onSubmit = (values: SignInSchemaType) => {
+  const onSubmit = (values: SignIn) => {
     execute(values);
   };
 
@@ -47,7 +48,7 @@ export const SignInForm = () => {
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={status === "executing"}
+                    disabled={isExecuting}
                     placeholder="Email address"
                     type="email"
                   />
@@ -62,11 +63,19 @@ export const SignInForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <div className="flex items-center pt-1">
+                  <FormLabel className="pb-1">Password</FormLabel>
+                  <Link
+                    href="#"
+                    className="ml-auto inline-block text-sm underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={status === "executing"}
+                    disabled={isExecuting}
                     placeholder="Password"
                     type="password"
                   />
@@ -79,11 +88,7 @@ export const SignInForm = () => {
 
         <FormError message={result.serverError} />
 
-        <Button
-          disabled={status === "executing"}
-          type="submit"
-          className="w-full"
-        >
+        <Button disabled={isExecuting} type="submit" className="w-full">
           Continue with Email
         </Button>
       </form>
