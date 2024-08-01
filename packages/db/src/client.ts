@@ -1,14 +1,17 @@
-import { RDSDataClient } from "@aws-sdk/client-rds-data";
-import { drizzle } from "drizzle-orm/aws-data-api/pg";
-import { Resource } from "sst";
+import { createEnv } from "@t3-oss/env-core";
+import { sql } from "@vercel/postgres";
+import { drizzle } from "drizzle-orm/vercel-postgres";
+import { z } from "zod";
 
 import * as schema from "./schema";
 
-const client = new RDSDataClient({});
-
-export const db = drizzle(client, {
-  database: Resource.MyPostgres.database,
-  secretArn: Resource.MyPostgres.secretArn,
-  resourceArn: Resource.MyPostgres.clusterArn,
-  schema,
+export const env = createEnv({
+  server: {
+    POSTGRES_URL: z.string(),
+  },
+  // eslint-disable-next-line no-restricted-properties
+  runtimeEnv: process.env,
+  emptyStringAsUndefined: true,
 });
+
+export const db = drizzle(sql, { schema });

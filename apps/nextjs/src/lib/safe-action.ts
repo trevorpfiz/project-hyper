@@ -1,16 +1,18 @@
-import { auth } from "@clerk/nextjs/server";
 import { createSafeActionClient } from "next-safe-action";
+
+import { createClient } from "~/utils/supabase/server";
 
 export const action = createSafeActionClient();
 
 export const authAction = createSafeActionClient({
-  middleware() {
-    const { userId } = auth();
+  async middleware() {
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.getUser();
 
-    if (!userId) {
+    if (error ?? !data.user) {
       throw new Error("Unauthorized");
     }
 
-    return { user: userId };
+    return { user: data.user };
   },
 });

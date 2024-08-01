@@ -22,15 +22,11 @@
     "typecheck": "turbo run typecheck",
     "ui:ui-add": "turbo -F @hyper/ui ui-add"
   },
-  "dependencies": {
-    "sst": "ion"
-  },
   "devDependencies": {
     "@hyper/prettier-config": "workspace:*",
-    "@turbo/gen": "^2.0.8",
-    "@types/aws-lambda": "8.10.140",
+    "@turbo/gen": "^2.0.10",
     "prettier": "catalog:",
-    "turbo": "^2.0.8",
+    "turbo": "^2.0.10",
     "typescript": "catalog:"
   },
   "prettier": "@hyper/prettier-config"

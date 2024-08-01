@@ -52,7 +52,7 @@
       "interactive": true
     }
   },
-  "globalEnv": ["PORT", "CLERK_JWT_KEY"],
+  "globalEnv": ["POSTGRES_URL", "PORT"],
   "globalPassThroughEnv": [
     "NODE_ENV",
     "CI",

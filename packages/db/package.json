@@ -24,29 +24,31 @@
     "dev": "tsc",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "dk-generate": "sst shell drizzle-kit generate",
-    "migrate": "sst shell drizzle-kit migrate",
-    "migrate:script": "sst shell tsx src/migrate.ts",
-    "push": "sst shell drizzle-kit push",
-    "studio": "sst shell drizzle-kit studio",
+    "dk-generate": "pnpm with-env drizzle-kit generate",
+    "migrate": "pnpm with-env drizzle-kit migrate",
+    "migrate:script": "pnpm with-env tsx src/migrate.ts",
+    "push": "pnpm with-env drizzle-kit push",
+    "studio": "pnpm with-env drizzle-kit studio",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@aws-sdk/client-rds-data": "^3.609.0",
-    "drizzle-orm": "^0.31.4",
+    "@t3-oss/env-core": "^0.11.0",
+    "@vercel/postgres": "^0.9.0",
+    "drizzle-orm": "^0.32.1",
     "drizzle-zod": "^0.5.1",
-    "pg": "^8.12.0"
+    "pg": "^8.12.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@hyper/eslint-config": "workspace:*",
     "@hyper/prettier-config": "workspace:*",
     "@hyper/tsconfig": "workspace:*",
     "dotenv-cli": "^7.4.2",
-    "drizzle-kit": "^0.22.8",
+    "drizzle-kit": "^0.23.1",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "tsx": "^4.9.3",
+    "tsx": "^4.16.3",
     "typescript": "catalog:"
   },
   "prettier": "@hyper/prettier-config"

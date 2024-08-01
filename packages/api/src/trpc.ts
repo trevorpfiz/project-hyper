@@ -6,15 +6,12 @@
  * tl;dr - this is where all the tRPC server stuff is created and plugged in.
  * The pieces you will need to use are documented accordingly near the end
  */
-import type { getAuth } from "@clerk/nextjs/server";
-import { verifyToken } from "@clerk/nextjs/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "@hyper/db/client";
-
-type AuthObject = ReturnType<typeof getAuth>;
 
 /**
  * 1. CONTEXT
@@ -30,32 +27,23 @@ type AuthObject = ReturnType<typeof getAuth>;
  */
 export const createTRPCContext = async (opts: {
   headers: Headers;
-  auth: AuthObject;
+  supabase: SupabaseClient;
 }) => {
+  const supabase = opts.supabase;
+
   // React Native will pass their token through headers,
   // browsers will have the session cookie set
-  const authHeader = opts.headers.get("Authorization");
+  const token = opts.headers.get("Authorization");
 
-  let userId: string | null = null;
-
-  if (authHeader) {
-    const authToken = authHeader.startsWith("Bearer ")
-      ? authHeader.slice("Bearer ".length)
-      : authHeader;
-
-    const verifiedToken = await verifyToken(authToken, {
-      jwtKey: process.env.CLERK_JWT_KEY,
-    });
-    userId = verifiedToken.sub;
-  } else {
-    userId = opts.auth.userId;
-  }
+  const user = token
+    ? await supabase.auth.getUser(token)
+    : await supabase.auth.getUser();
 
   const source = opts.headers.get("x-trpc-source") ?? "unknown";
-  console.log(">>> tRPC Request from", source, "by", userId);
+  console.log(">>> tRPC Request from", source, "by", user.data.user?.email);
 
   return {
-    userId,
+    user: user.data.user,
     db,
   };
 };
@@ -139,12 +127,13 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
-    if (!ctx.userId) {
+    if (!ctx.user?.id) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next({
       ctx: {
-        userId: ctx.userId,
+        // infers the `user` as non-nullable
+        user: ctx.user,
       },
     });
   });

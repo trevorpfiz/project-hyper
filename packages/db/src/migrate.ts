@@ -1,16 +1,15 @@
-import { RDSDataClient } from "@aws-sdk/client-rds-data";
-import { drizzle } from "drizzle-orm/aws-data-api/pg";
-import { migrate } from "drizzle-orm/aws-data-api/pg/migrator";
-import { Resource } from "sst";
+import { sql } from "@vercel/postgres";
+import { drizzle } from "drizzle-orm/vercel-postgres";
+import { migrate } from "drizzle-orm/vercel-postgres/migrator";
 
-const client = new RDSDataClient({});
+import { env } from "./client";
 
 const runMigrate = async () => {
-  const db = drizzle(client, {
-    database: Resource.MyPostgres.database,
-    secretArn: Resource.MyPostgres.secretArn,
-    resourceArn: Resource.MyPostgres.clusterArn,
-  });
+  if (!env.POSTGRES_URL) {
+    throw new Error("POSTGRES_URL is not defined");
+  }
+
+  const db = drizzle(sql);
 
   console.log("⏳ Running migrations...");
 

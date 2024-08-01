@@ -7,9 +7,17 @@ createJiti(fileURLToPath(import.meta.url))("./src/env");
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  experimental: {
+    taint: true,
+  },
 
   /** Enables hot reloading for local packages without a build step */
-  transpilePackages: ["@hyper/api", "@hyper/db", "@hyper/ui", "@hyper/validators"],
+  transpilePackages: [
+    "@hyper/api",
+    "@hyper/db",
+    "@hyper/ui",
+    "@hyper/validators",
+  ],
 
   // Allow optimizing avatar images from GitHub
   images: {

@@ -5,7 +5,11 @@ import Animated, {
   FadeOutDown,
   LayoutAnimationConfig,
 } from "react-native-reanimated";
-import { SignedIn, useAuth } from "@clerk/clerk-expo";
+import {
+  useSessionContext,
+  useSupabaseClient,
+  useUser,
+} from "@supabase/auth-helpers-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -31,21 +35,24 @@ const GITHUB_AVATAR_URI =
 
 export default function Screen() {
   const [progress, setProgress] = React.useState(78);
+  const user = useUser();
 
   function updateProgressValue() {
     setProgress(Math.floor(Math.random() * 100));
   }
 
   const SignOut = () => {
-    const { isLoaded, signOut } = useAuth();
-    if (!isLoaded) {
+    const { isLoading } = useSessionContext();
+    const supabase = useSupabaseClient();
+
+    if (isLoading) {
       return null;
     }
     return (
       <View>
         <Button
-          onPress={() => {
-            signOut();
+          onPress={async () => {
+            await supabase.auth.signOut();
           }}
         >
           <Text>Sign Out</Text>
@@ -56,9 +63,7 @@ export default function Screen() {
 
   return (
     <View className="flex-1 items-center justify-center gap-5 bg-secondary/30 p-6">
-      <SignedIn>
-        <SignOut />
-      </SignedIn>
+      {user?.id && <SignOut />}
       <Card className="w-full max-w-sm rounded-2xl p-6">
         <CardHeader className="items-center">
           <Avatar alt="Rick Sanchez's Avatar" className="h-24 w-24">

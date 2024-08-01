@@ -13,9 +13,9 @@ import {
 } from "react-native-safe-area-context";
 import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemeProvider } from "@react-navigation/native";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
 
 // import * as SystemUI from "expo-system-ui";
 
@@ -24,7 +24,7 @@ import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/use-color-scheme";
 import { TRPCProvider } from "~/utils/api";
-import { tokenCache } from "~/utils/cache";
+import { supabase } from "~/utils/supabase";
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -50,11 +50,27 @@ export const unstable_settings = {
 
 const InitialLayout = () => {
   const router = useRouter();
-  const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
-    if (!isLoaded) {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsSignedIn(!!session);
+      setIsLoaded(true);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsSignedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
       return;
     }
 
@@ -72,9 +88,9 @@ const InitialLayout = () => {
     } else if (!isSignedIn) {
       router.replace("/");
     }
-  }, [isSignedIn]);
+  }, [isSignedIn, isLoaded, router, segments]);
 
-  if (!isLoaded) {
+  if (isLoaded) {
     return null;
   }
 
@@ -164,10 +180,7 @@ export default function RootLayout() {
   }
 
   return (
-    <ClerkProvider
-      publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? ""}
-      tokenCache={tokenCache}
-    >
+    <SessionContextProvider supabaseClient={supabase}>
       <TRPCProvider>
         <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
           <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
@@ -179,6 +192,6 @@ export default function RootLayout() {
           </GestureHandlerRootView>
         </ThemeProvider>
       </TRPCProvider>
-    </ClerkProvider>
+    </SessionContextProvider>
   );
 }

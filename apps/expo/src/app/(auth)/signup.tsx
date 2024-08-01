@@ -1,30 +1,40 @@
 import { useState } from "react";
-import { Keyboard, ScrollView, TouchableWithoutFeedback } from "react-native";
+import {
+  Alert,
+  Keyboard,
+  ScrollView,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { AvoidSoftInputView } from "react-native-avoid-softinput";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSignIn } from "@clerk/clerk-expo";
+import {
+  useSessionContext,
+  useSupabaseClient,
+} from "@supabase/auth-helpers-react";
 
-import type { SignInFormProps } from "~/components/auth/signin-form";
-import { SignInForm } from "~/components/auth/signin-form";
+import type { SignUpFormProps } from "~/components/auth/signup-form";
+import { SignUpForm } from "~/components/auth/signup-form";
 
-export default function SignInScreen() {
-  const { signIn, setActive, isLoaded } = useSignIn();
+export default function SignUpScreen() {
+  const { isLoading: isLoadingSession } = useSessionContext();
+  const supabase = useSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit: SignInFormProps["onSubmit"] = async (data) => {
-    if (!isLoaded) {
+  const onSubmit: SignUpFormProps["onSubmit"] = async (data) => {
+    if (isLoadingSession) {
       return;
     }
 
     setIsLoading(true);
     try {
-      const completeSignIn = await signIn.create({
-        identifier: data.email,
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
         password: data.password,
       });
-      // This is an important step,
-      // This indicates the user is signed in
-      await setActive({ session: completeSignIn.createdSessionId });
+
+      if (error) {
+        Alert.alert("Error", error.message);
+      }
     } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2));
     } finally {
@@ -44,9 +54,9 @@ export default function SignInScreen() {
             contentInsetAdjustmentBehavior="always"
             overScrollMode="always"
             showsVerticalScrollIndicator={true}
-            className="flex-1 bg-secondary px-4 py-8"
+            className="flex-1 bg-secondary p-4 py-8"
           >
-            <SignInForm onSubmit={onSubmit} isLoading={isLoading} />
+            <SignUpForm />
           </ScrollView>
         </TouchableWithoutFeedback>
       </AvoidSoftInputView>

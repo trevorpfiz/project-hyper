@@ -1,15 +1,19 @@
 import type { z } from "zod";
+import { relations } from "drizzle-orm";
 import { text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { timestamps } from "../lib/utils";
 import { createTable } from "./_table";
+import { Profile } from "./profile";
 
 export const Report = createTable("report", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 256 }).notNull(),
   content: text("content"),
-  userId: text("user_id").notNull(),
+  profileId: uuid("profile_id")
+    .notNull()
+    .references(() => Profile.id),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
@@ -18,20 +22,27 @@ export const Report = createTable("report", {
   }).$onUpdateFn(() => new Date()),
 });
 
+export const ReportRelations = relations(Report, ({ one }) => ({
+  profile: one(Profile, {
+    fields: [Report.profileId],
+    references: [Profile.id],
+  }),
+}));
+
 // Schema for Reports - used to validate API requests
 const baseSchema = createSelectSchema(Report).omit(timestamps);
 
 export const insertReportSchema = createInsertSchema(Report).omit(timestamps);
 export const insertReportParams = insertReportSchema.extend({}).omit({
   id: true,
-  userId: true,
+  profileId: true,
 });
 
 export const updateReportSchema = baseSchema;
 export const updateReportParams = baseSchema
   .extend({})
   .omit({
-    userId: true,
+    profileId: true,
   })
   .partial()
   .extend({

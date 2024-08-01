@@ -1,16 +1,14 @@
 import type { Config } from "drizzle-kit";
-import { Resource } from "sst";
+
+import { env } from "./src/client";
+
+const nonPoolingUrl = env.POSTGRES_URL.replace(":6543", ":5432");
 
 export default {
-  driver: "aws-data-api",
   schema: "./src/schema",
   schemaFilter: ["public"],
   out: "./migrations",
   dialect: "postgresql",
-  dbCredentials: {
-    database: Resource.MyPostgres.database,
-    secretArn: Resource.MyPostgres.secretArn,
-    resourceArn: Resource.MyPostgres.clusterArn,
-  },
-  tablesFilter: ["wc_*"],
+  dbCredentials: { url: nonPoolingUrl },
+  tablesFilter: ["hyper_*"],
 } satisfies Config;

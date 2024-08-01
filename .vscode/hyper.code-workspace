@@ -28,6 +28,7 @@
     "search.useIgnoreFiles": true,
     // use root .gitignore to ignore files from search
     "search.useParentIgnoreFiles": true,
+    "typescript.tsdk": "Root/node_modules/typescript/lib",
   },
   "launch": {
     "version": "0.2.0",

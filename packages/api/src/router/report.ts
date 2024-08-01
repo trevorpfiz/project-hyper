@@ -3,7 +3,11 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { and, desc, eq } from "@hyper/db";
-import { insertReportParams, Report, updateReportParams } from "@hyper/db/schema";
+import {
+  insertReportParams,
+  Report,
+  updateReportParams,
+} from "@hyper/db/schema";
 
 import { protectedProcedure, publicProcedure } from "../trpc";
 
@@ -30,10 +34,10 @@ export const reportRouter = {
     }),
 
   byUser: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.userId;
+    const userId = ctx.user.id;
 
     const rows = await ctx.db.query.Report.findMany({
-      where: eq(Report.userId, userId),
+      where: eq(Report.profileId, userId),
       orderBy: desc(Report.createdAt),
     });
 
@@ -43,16 +47,15 @@ export const reportRouter = {
   create: protectedProcedure
     .input(insertReportParams)
     .mutation(async ({ ctx, input }) => {
-      const { title, content, transcript } = input;
-      const userId = ctx.userId;
+      const { title, content } = input;
+      const userId = ctx.user.id;
 
       const [r] = await ctx.db
         .insert(Report)
         .values({
           title,
           content,
-          transcript,
-          userId,
+          profileId: userId,
         })
         .returning();
 
@@ -63,7 +66,7 @@ export const reportRouter = {
     .input(updateReportParams)
     .mutation(async ({ ctx, input }) => {
       const { id, content, title } = input;
-      const userId = ctx.userId;
+      const userId = ctx.user.id;
 
       const [r] = await ctx.db
         .update(Report)
@@ -71,7 +74,7 @@ export const reportRouter = {
           title,
           content,
         })
-        .where(and(eq(Report.id, id), eq(Report.userId, userId)))
+        .where(and(eq(Report.id, id), eq(Report.profileId, userId)))
         .returning();
 
       return { report: r };
@@ -81,13 +84,13 @@ export const reportRouter = {
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
-      const userId = ctx.userId;
+      const userId = ctx.user.id;
 
       const data = await ctx.db.query.Report.findFirst({
         where: eq(Report.id, id),
       });
 
-      if (data?.userId !== userId) {
+      if (data?.profileId !== userId) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Only the owner is allowed to delete the report",
