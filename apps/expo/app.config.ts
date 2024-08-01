@@ -2,8 +2,8 @@ import type { ConfigContext, ExpoConfig } from "@expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "scribeHC",
-  slug: "scribehc",
+  name: "hyper",
+  slug: "hyper",
   scheme: "expo",
   version: "0.1.0",
   orientation: "portrait",
@@ -19,7 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   assetBundlePatterns: ["**/*"],
   ios: {
-    bundleIdentifier: "com.scribehc.app",
+    bundleIdentifier: "com.projecthyper.app",
     supportsTablet: true,
     usesAppleSignIn: true,
     config: {
@@ -27,7 +27,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
   },
   android: {
-    package: "com.scribehc.app",
+    package: "com.projecthyper.app",
     adaptiveIcon: {
       foregroundImage: "./assets/icon.png",
       backgroundColor: "#18181A",
@@ -47,10 +47,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       origin: false,
     },
     eas: {
-      projectId: "bd3c6023-6da8-4e0d-8a0a-16c6eabd4cb7",
+      projectId: "914f340a-b357-48a8-8536-3c4b68dfcdad",
     },
   },
-  owner: "scribe-hc",
+  owner: "project-hyper",
   plugins: [
     "expo-router",
     "expo-secure-store",
@@ -76,6 +76,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         microphonePermission:
           "Allow $(PRODUCT_NAME) to access your microphone.",
+      },
+    ],
+    [
+      "react-native-vision-camera",
+      {
+        cameraPermissionText: "$(PRODUCT_NAME) needs access to your Camera.",
+
+        // optionally, if you want to record audio:
+        enableMicrophonePermission: true,
+        microphonePermissionText:
+          "$(PRODUCT_NAME) needs access to your Microphone.",
+        enableCodeScanner: true,
       },
     ],
   ],

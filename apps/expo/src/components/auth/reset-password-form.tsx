@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import type { SubmitHandler } from "react-hook-form";
 import { View } from "react-native";
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
-import { useSignIn } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 
@@ -16,30 +15,27 @@ import { Text } from "~/components/ui/text";
 import { Loader2 } from "~/lib/icons/loader-2";
 import { cn } from "~/lib/utils";
 
-const ResetPasswordForm = () => {
-  const { signIn } = useSignIn();
-  const [successfulCreation, setSuccessfulCreation] = useState(false);
-  const [error, setError] = useState("");
+export interface ResetPasswordFormProps {
+  onSubmit: SubmitHandler<RequestPasswordReset>;
+  isLoading: boolean;
+  error: string;
+  successfulCreation: boolean;
+  onVerificationSuccess: () => void;
+}
 
+const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
+  onSubmit,
+  isLoading,
+  error,
+  successfulCreation,
+  onVerificationSuccess,
+}) => {
   const form = useForm<RequestPasswordReset>({
     resolver: zodResolver(RequestPasswordResetSchema),
     defaultValues: {
       email: "",
     },
   });
-
-  const onSubmit = async (data: RequestPasswordReset) => {
-    try {
-      await signIn!.create({
-        strategy: "reset_password_email_code",
-        identifier: data.email,
-      });
-      setSuccessfulCreation(true);
-      setError("");
-    } catch (err: unknown) {
-      setError(err.errors[0].message);
-    }
-  };
 
   return (
     <View className="flex-1 justify-center gap-8">
@@ -88,9 +84,9 @@ const ResetPasswordForm = () => {
             <Button
               size={"lg"}
               onPress={form.handleSubmit(onSubmit)}
-              disabled={form.formState.isSubmitting}
+              disabled={isLoading}
             >
-              {form.formState.isSubmitting ? (
+              {isLoading ? (
                 <View className="flex-row items-center justify-center gap-3">
                   <Loader2
                     size={24}
@@ -114,9 +110,7 @@ const ResetPasswordForm = () => {
       )}
 
       {successfulCreation && (
-        <ResetPasswordVerificationForm
-          onSuccess={() => setSuccessfulCreation(false)}
-        />
+        <ResetPasswordVerificationForm onSuccess={onVerificationSuccess} />
       )}
     </View>
   );

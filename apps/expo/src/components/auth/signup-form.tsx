@@ -19,9 +19,12 @@ import { EyeOff } from "~/lib/icons/eye-off";
 import { Loader2 } from "~/lib/icons/loader-2";
 import { cn } from "~/lib/utils";
 
-const SignUpForm = () => {
-  const { signUp, isLoaded } = useSignUp();
-  const [isLoading, setIsLoading] = useState(false);
+export interface SignUpFormProps {
+  onSubmit: SubmitHandler<SignUp>;
+  isLoading: boolean;
+}
+
+const SignUpForm = ({ onSubmit, isLoading }: SignUpFormProps) => {
   const [pendingVerification, setPendingVerification] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -32,34 +35,6 @@ const SignUpForm = () => {
       password: "",
     },
   });
-
-  const onSubmit: SubmitHandler<SignUp> = async (data) => {
-    if (!isLoaded) {
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      await signUp.create({
-        emailAddress: data.email,
-        password: data.password,
-      });
-
-      console.log("signup create done");
-
-      // Send the email for verification
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-
-      console.log("signup email sent");
-
-      // change the UI to our pending section
-      setPendingVerification(true);
-    } catch (err: unknown) {
-      console.error(JSON.stringify(err, null, 2));
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleVerificationSuccess = () => {
     console.log("handleVerificationSuccess");

@@ -19,22 +19,29 @@ export default function SignUpScreen() {
   const { isLoading: isLoadingSession } = useSessionContext();
   const supabase = useSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingVerification, setPendingVerification] = useState(false);
 
   const onSubmit: SignUpFormProps["onSubmit"] = async (data) => {
-    if (isLoadingSession) {
+    if (!isLoaded) {
       return;
     }
 
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: data.email,
+      await signUp.create({
+        emailAddress: data.email,
         password: data.password,
       });
 
-      if (error) {
-        Alert.alert("Error", error.message);
-      }
+      console.log("signup create done");
+
+      // Send the email for verification
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+
+      console.log("signup email sent");
+
+      // change the UI to our pending section
+      setPendingVerification(true);
     } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2));
     } finally {

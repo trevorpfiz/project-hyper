@@ -19,11 +19,11 @@ import { Loader2 } from "~/lib/icons/loader-2";
 import { cn } from "~/lib/utils";
 
 export interface SignInFormProps {
-  onSubmit?: SubmitHandler<SignIn>;
+  onSubmit: SubmitHandler<SignIn>;
   isLoading: boolean;
 }
 
-const SignInForm = ({ onSubmit = () => {}, isLoading }: SignInFormProps) => {
+const SignInForm = ({ onSubmit, isLoading }: SignInFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<SignIn>({
