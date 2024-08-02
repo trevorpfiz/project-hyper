@@ -12,24 +12,11 @@ const Layout = () => {
   return (
     <Stack>
       <Stack.Screen
-        name="dashboard"
+        name="sandbox"
         options={{
-          title: "Dashboard",
+          title: "Sandbox",
           headerLeft: () => <SignOut />,
           headerRight: () => <ThemeToggle />,
-        }}
-      />
-      <Stack.Screen
-        name="record"
-        options={{
-          title: "Record",
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="notes/[noteId]"
-        options={{
-          title: "Note",
         }}
       />
     </Stack>

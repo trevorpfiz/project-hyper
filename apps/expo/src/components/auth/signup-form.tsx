@@ -2,7 +2,6 @@ import type { SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
-import { useSignUp } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 

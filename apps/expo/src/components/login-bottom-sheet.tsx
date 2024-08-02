@@ -1,16 +1,19 @@
 import type { BottomSheetBackgroundProps } from "@gorhom/bottom-sheet";
 import React, { useMemo, useRef } from "react";
+import { Alert } from "react-native";
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
 } from "react-native-reanimated";
+import * as AppleAuthentication from "expo-apple-authentication";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-import { ContinueWithOAuth } from "~/components/auth/continue-with-oauth";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
+import { initiateAppleSignIn } from "~/utils/auth";
 
 const CustomBackground: React.FC<BottomSheetBackgroundProps> = ({
   style,
@@ -38,6 +41,29 @@ const CustomBackground: React.FC<BottomSheetBackgroundProps> = ({
 const LoginBottomSheet = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["36%"], []);
+  const supabase = useSupabaseClient();
+
+  const signInWithApple = async () => {
+    try {
+      const { token, nonce } = await initiateAppleSignIn();
+      const { error } = await supabase.auth.signInWithIdToken({
+        provider: "apple",
+        token,
+        nonce,
+      });
+      if (error) return Alert.alert("Error", error.message);
+    } catch (e) {
+      if (typeof e === "object" && !!e && "code" in e) {
+        if (e.code === "ERR_REQUEST_CANCELED") {
+          // handle that the user canceled the sign-in flow
+        } else {
+          // handle other errors
+        }
+      } else {
+        console.error("Unexpected error from Apple SignIn: ", e);
+      }
+    }
+  };
 
   return (
     <BottomSheet
@@ -46,9 +72,15 @@ const LoginBottomSheet = () => {
       backgroundComponent={CustomBackground}
     >
       <BottomSheetView className="flex-1 gap-4 p-4">
-        <ContinueWithOAuth provider="apple" />
-        <ContinueWithOAuth provider="google" />
-        <Link href={{ pathname: "/signup" }} asChild>
+        <AppleAuthentication.AppleAuthenticationButton
+          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE}
+          cornerRadius={12}
+          onPress={signInWithApple}
+          style={{ height: 48 }}
+        />
+        {/* Google Button */}
+        <Link href={{ pathname: "/(auth)/signup" }} asChild>
           <Button
             size="lg"
             className="flex-row items-center gap-2 rounded-xl bg-zinc-600"
@@ -57,7 +89,7 @@ const LoginBottomSheet = () => {
             <Text className="font-semibold text-white">Sign up with email</Text>
           </Button>
         </Link>
-        <Link href={{ pathname: "/signin" }} asChild>
+        <Link href={{ pathname: "/(auth)/signin" }} asChild>
           <Button
             variant="outline"
             size="lg"

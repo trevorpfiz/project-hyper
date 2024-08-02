@@ -70,7 +70,7 @@ const InitialLayout = () => {
   }, []);
 
   useEffect(() => {
-    if (isLoaded) {
+    if (!isLoaded) {
       return;
     }
 
@@ -81,16 +81,13 @@ const InitialLayout = () => {
     if (isSignedIn && !inAppGroup) {
       console.log("replace", isSignedIn);
 
-      if (router.canDismiss()) {
-        router.dismiss();
-      }
-      router.replace("/(app)/dashboard");
+      router.replace("/sandbox");
     } else if (!isSignedIn) {
       router.replace("/");
     }
-  }, [isSignedIn, isLoaded, router, segments]);
+  }, [isSignedIn]);
 
-  if (isLoaded) {
+  if (!isLoaded) {
     return null;
   }
 
@@ -103,7 +100,7 @@ const InitialLayout = () => {
         }}
       />
       <Stack.Screen
-        name="signup"
+        name="(auth)/signup"
         options={{
           presentation: "modal",
           title: "Sign Up",
@@ -112,7 +109,7 @@ const InitialLayout = () => {
         }}
       />
       <Stack.Screen
-        name="signin"
+        name="(auth)/signin"
         options={{
           presentation: "modal",
           title: "Sign In",
@@ -121,7 +118,7 @@ const InitialLayout = () => {
         }}
       />
       <Stack.Screen
-        name="reset-password"
+        name="(auth)/reset-password"
         options={{
           presentation: "modal",
           title: "Reset Password",

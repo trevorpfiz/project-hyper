@@ -1,12 +1,12 @@
 {
   "folders": [
     {
-      "name": "Next.js",
-      "path": "../apps/nextjs",
-    },
-    {
       "name": "Expo",
       "path": "../apps/expo",
+    },
+    {
+      "name": "Next.js",
+      "path": "../apps/nextjs",
     },
     {
       "name": "FastAPI",

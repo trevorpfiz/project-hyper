@@ -7,7 +7,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { useSignUp } from "@clerk/clerk-expo";
 
 import { OTPInput } from "~/components/auth/otp-input";
 import { Button } from "~/components/ui/button";
