@@ -15,6 +15,7 @@ import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemeProvider } from "@react-navigation/native";
+import { PortalHost } from "@rn-primitives/portal";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 
 // import * as SystemUI from "expo-system-ui";
@@ -76,58 +77,57 @@ const InitialLayout = () => {
 
     const inAppGroup = segments[0] === "(app)";
 
-    console.log("inAppGroup", inAppGroup, "isSignedIn", isSignedIn);
-
     if (isSignedIn && !inAppGroup) {
-      console.log("replace", isSignedIn);
-
-      router.replace("/sandbox");
-    } else if (!isSignedIn) {
+      router.replace("/(tabs)");
+    } else if (!isSignedIn && inAppGroup) {
       router.replace("/");
     }
-  }, [isSignedIn]);
+  }, [isLoaded, isSignedIn, segments, router]);
 
   if (!isLoaded) {
     return null;
   }
 
   return (
-    <Stack>
-      <Stack.Screen
-        name="index"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="(auth)/signup"
-        options={{
-          presentation: "modal",
-          title: "Sign Up",
-          headerTitle: "",
-          headerLeft: HeaderCloseButton,
-        }}
-      />
-      <Stack.Screen
-        name="(auth)/signin"
-        options={{
-          presentation: "modal",
-          title: "Sign In",
-          headerTitle: "",
-          headerLeft: HeaderCloseButton,
-        }}
-      />
-      <Stack.Screen
-        name="(auth)/reset-password"
-        options={{
-          presentation: "modal",
-          title: "Reset Password",
-          headerTitle: "",
-          headerLeft: HeaderCloseButton,
-        }}
-      />
-      <Stack.Screen name="(app)" options={{ headerShown: false }} />
-    </Stack>
+    <>
+      <Stack>
+        <Stack.Screen
+          name="index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="(auth)/signup"
+          options={{
+            presentation: "modal",
+            title: "Sign Up",
+            headerTitle: "",
+            headerLeft: HeaderCloseButton,
+          }}
+        />
+        <Stack.Screen
+          name="(auth)/signin"
+          options={{
+            presentation: "modal",
+            title: "Sign In",
+            headerTitle: "",
+            headerLeft: HeaderCloseButton,
+          }}
+        />
+        <Stack.Screen
+          name="(auth)/reset-password"
+          options={{
+            presentation: "modal",
+            title: "Reset Password",
+            headerTitle: "",
+            headerLeft: HeaderCloseButton,
+          }}
+        />
+        <Stack.Screen name="(app)" options={{ headerShown: false }} />
+      </Stack>
+      <PortalHost />
+    </>
   );
 };
 
