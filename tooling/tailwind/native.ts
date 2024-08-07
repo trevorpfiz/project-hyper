@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { safeArea } from "nativewind/dist/tailwind/safe-area";
 import animate from "tailwindcss-animate";
 
 import base from "./base";
@@ -25,5 +26,5 @@ export default {
       },
     },
   },
-  plugins: [animate],
+  plugins: [animate, safeArea],
 } satisfies Config;

@@ -30,16 +30,10 @@ catalogs:
     typescript:
       specifier: ^5.5.4
       version: 5.5.4
-    zod:
-      specifier: ^3.23.8
-      version: 3.23.8
   react18:
     '@types/react':
       specifier: ^18.3.3
       version: 18.3.3
-    '@types/react-dom':
-      specifier: ^18.3.0
-      version: 18.3.0
     react:
       specifier: ^18.3.1
       version: 18.3.1
@@ -50,9 +44,6 @@ catalogs:
     '@supabase/auth-helpers-react':
       specifier: ^0.5.0
       version: 0.5.0
-    '@supabase/ssr':
-      specifier: ^0.4.0
-      version: 0.4.0
     '@supabase/supabase-js':
       specifier: ^2.45.0
       version: 2.45.0
@@ -169,7 +160,7 @@ importers:
         version: 0.5.0(@supabase/supabase-js@2.45.0(bufferutil@4.0.8))
       '@supabase/supabase-js':
         specifier: catalog:supabase
-        version: 2.45.0(bufferutil@4.0.8)(utf-8-validate@6.0.4)
+        version: 2.45.0(bufferutil@4.0.8)
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.51.16(react@18.3.1)
@@ -789,7 +780,7 @@ importers:
         version: 7.35.0(eslint@9.8.0)
       eslint-plugin-react-hooks:
         specifier: rc
-        version: 5.1.0-rc-65903583-20240805(eslint@9.8.0)
+        version: 5.1.0-rc-187dd6a7-20240806(eslint@9.8.0)
       eslint-plugin-testing-library:
         specifier: ^6.2.2
         version: 6.2.2(eslint@9.8.0)(typescript@5.5.4)
@@ -5622,8 +5613,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
 
-  eslint-plugin-react-hooks@5.1.0-rc-65903583-20240805:
-    resolution: {integrity: sha512-NEsjgvv/oqnwGu1PIuk0LKo5UrBO0SnvFdavWl56R5SAcHPZi+sEnQ7Onzp6hpRuEAC69bhfTA/9no6JItCM/w==}
+  eslint-plugin-react-hooks@5.1.0-rc-187dd6a7-20240806:
+    resolution: {integrity: sha512-glBBlHhCbg/Jm50sSKiYj2aAa6Bf1IvHHg/sChrXudGHzhYPc3+0i0scSBzgxHEy5CNkA7sQwy8GM46yaSj5wA==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
@@ -11532,7 +11523,7 @@ snapshots:
       text-table: 0.2.0
       url-join: 4.0.0
       wrap-ansi: 7.0.0
-      ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.4)
+      ws: 8.18.0(bufferutil@4.0.8)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -13489,7 +13480,7 @@ snapshots:
 
   '@supabase/auth-helpers-react@0.5.0(@supabase/supabase-js@2.45.0(bufferutil@4.0.8))':
     dependencies:
-      '@supabase/supabase-js': 2.45.0(bufferutil@4.0.8)(utf-8-validate@6.0.4)
+      '@supabase/supabase-js': 2.45.0(bufferutil@4.0.8)
 
   '@supabase/auth-js@2.64.4':
     dependencies:
@@ -13506,6 +13497,16 @@ snapshots:
   '@supabase/postgrest-js@1.15.8':
     dependencies:
       '@supabase/node-fetch': 2.6.15
+
+  '@supabase/realtime-js@2.10.2(bufferutil@4.0.8)':
+    dependencies:
+      '@supabase/node-fetch': 2.6.15
+      '@types/phoenix': 1.6.5
+      '@types/ws': 8.5.12
+      ws: 8.18.0(bufferutil@4.0.8)
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   '@supabase/realtime-js@2.10.2(bufferutil@4.0.8)(utf-8-validate@6.0.4)':
     dependencies:
@@ -13527,6 +13528,18 @@ snapshots:
   '@supabase/storage-js@2.6.0':
     dependencies:
       '@supabase/node-fetch': 2.6.15
+
+  '@supabase/supabase-js@2.45.0(bufferutil@4.0.8)':
+    dependencies:
+      '@supabase/auth-js': 2.64.4
+      '@supabase/functions-js': 2.4.1
+      '@supabase/node-fetch': 2.6.15
+      '@supabase/postgrest-js': 1.15.8
+      '@supabase/realtime-js': 2.10.2(bufferutil@4.0.8)
+      '@supabase/storage-js': 2.6.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   '@supabase/supabase-js@2.45.0(bufferutil@4.0.8)(utf-8-validate@6.0.4)':
     dependencies:
@@ -15771,7 +15784,7 @@ snapshots:
       safe-regex-test: 1.0.3
       string.prototype.includes: 2.0.0
 
-  eslint-plugin-react-hooks@5.1.0-rc-65903583-20240805(eslint@9.8.0):
+  eslint-plugin-react-hooks@5.1.0-rc-187dd6a7-20240806(eslint@9.8.0):
     dependencies:
       eslint: 9.8.0
 
@@ -17517,7 +17530,7 @@ snapshots:
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
-      ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.4)
+      ws: 8.18.0(bufferutil@4.0.8)
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -20940,6 +20953,10 @@ snapshots:
       bufferutil: 4.0.8
 
   ws@7.5.10(bufferutil@4.0.8):
+    optionalDependencies:
+      bufferutil: 4.0.8
+
+  ws@8.18.0(bufferutil@4.0.8):
     optionalDependencies:
       bufferutil: 4.0.8
 
