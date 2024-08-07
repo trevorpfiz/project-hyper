@@ -8,18 +8,21 @@ import { fromDateId, toDateId } from "@marceloterreiro/flash-calendar";
 import { add, sub } from "date-fns";
 import { format } from "date-fns/fp";
 
-import { BasicCalendar } from "~/components/calendar";
+import { BasicCalendar } from "~/components/basic-calendar";
+import { useDateStore } from "~/stores/dateStore";
 
 export function HomeCalendar() {
-  const [currentCalendarMonth, setCurrentCalendarMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date>(
-    sub(new Date(), { days: 1 }),
-  );
+  const { selectedDate, setSelectedDate } = useDateStore();
+  const [currentCalendarMonth, setCurrentCalendarMonth] =
+    useState(selectedDate);
 
-  const handleDayPress = useCallback<CalendarOnDayPress>((dateId) => {
-    setCurrentCalendarMonth(fromDateId(dateId));
-    setSelectedDate(fromDateId(dateId));
-  }, []);
+  const handleDayPress = useCallback<CalendarOnDayPress>(
+    (dateId) => {
+      setCurrentCalendarMonth(fromDateId(dateId));
+      setSelectedDate(fromDateId(dateId));
+    },
+    [setSelectedDate],
+  );
 
   const calendarActiveDateRanges = useMemo<CalendarActiveDateRange[]>(
     () => [

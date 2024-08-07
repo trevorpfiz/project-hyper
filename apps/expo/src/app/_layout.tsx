@@ -5,7 +5,8 @@ import "@bacons/text-decoder/install";
 
 import type { Theme } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Platform } from "react-native";
+import { Platform, View } from "react-native";
+import { useSafeAreaEnv } from "react-native-css-interop/dist/runtime/api";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   initialWindowMetrics,
@@ -90,43 +91,46 @@ const InitialLayout = () => {
 
   return (
     <>
-      <Stack>
-        <Stack.Screen
-          name="index"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="(auth)/signup"
-          options={{
-            presentation: "modal",
-            title: "Sign Up",
-            headerTitle: "",
-            headerLeft: HeaderCloseButton,
-          }}
-        />
-        <Stack.Screen
-          name="(auth)/signin"
-          options={{
-            presentation: "modal",
-            title: "Sign In",
-            headerTitle: "",
-            headerLeft: HeaderCloseButton,
-          }}
-        />
-        <Stack.Screen
-          name="(auth)/reset-password"
-          options={{
-            presentation: "modal",
-            title: "Reset Password",
-            headerTitle: "",
-            headerLeft: HeaderCloseButton,
-          }}
-        />
-        <Stack.Screen name="(app)" options={{ headerShown: false }} />
-      </Stack>
-      <PortalHost />
+      <SafeAreaEnv>
+        <Stack>
+          <Stack.Screen
+            name="index"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="(auth)/signup"
+            options={{
+              presentation: "modal",
+              title: "Sign Up",
+              headerTitle: "",
+              headerLeft: HeaderCloseButton,
+            }}
+          />
+          <Stack.Screen
+            name="(auth)/signin"
+            options={{
+              presentation: "modal",
+              title: "Sign In",
+              headerTitle: "",
+              headerLeft: HeaderCloseButton,
+            }}
+          />
+          <Stack.Screen
+            name="(auth)/reset-password"
+            options={{
+              presentation: "modal",
+              title: "Reset Password",
+              headerTitle: "",
+              headerLeft: HeaderCloseButton,
+            }}
+          />
+          <Stack.Screen name="(app)" options={{ headerShown: false }} />
+        </Stack>
+
+        <PortalHost />
+      </SafeAreaEnv>
     </>
   );
 };
@@ -193,4 +197,9 @@ export default function RootLayout() {
       </TRPCProvider>
     </SessionContextProvider>
   );
+}
+
+function SafeAreaEnv({ children }: { children: React.ReactNode }) {
+  // Add the safe area insets to the render tree
+  return <View style={[{ flex: 1 }, useSafeAreaEnv()]}>{children}</View>;
 }

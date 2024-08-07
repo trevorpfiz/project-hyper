@@ -24,7 +24,7 @@ export default function HomeHeader() {
         </DialogTrigger>
         <DialogContent
           className="rounded-none border-0"
-          overlayClassName="justify-start p-0"
+          overlayClassName="justify-start px-0 py-safe"
           noClose
         >
           <View className="max-h-80">

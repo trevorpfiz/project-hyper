@@ -2,7 +2,6 @@ import type { StyleProp, ViewStyle } from "react-native";
 import * as React from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
 import * as DialogPrimitive from "@rn-primitives/dialog";
 
 import { X } from "~/lib/icons/x";
@@ -44,7 +43,7 @@ const DialogOverlayNative = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
   return (
     <DialogPrimitive.Overlay
-      style={StyleSheet.absoluteFill}
+      style={StyleSheet.absoluteFill} // TODO: can allow tab bar to be interacted with
       className={cn(
         "z-50 flex items-center justify-center bg-black/80 p-2",
         className,
@@ -87,36 +86,34 @@ const DialogContent = React.forwardRef<
     return (
       <DialogPortal hostName={portalHost}>
         <DialogOverlay className={overlayClassName}>
-          <SafeAreaView>
-            <DialogPrimitive.Content
-              ref={ref}
-              className={cn(
-                "web:cursor-default web:duration-200 z-50 max-w-lg gap-4 rounded-lg border border-border bg-background p-6 shadow-lg",
-                open
-                  ? "web:animate-in web:fade-in-0 web:zoom-in-95"
-                  : "web:animate-out web:fade-out-0 web:zoom-out-95",
-                className,
-              )}
-              {...props}
-            >
-              {children}
-              {!noClose && (
-                <DialogPrimitive.Close
-                  className={
-                    "web:group web:ring-offset-background web:transition-opacity web:hover:opacity-100 web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 web:disabled:pointer-events-none absolute right-4 top-4 rounded-sm p-0.5 opacity-70"
-                  }
-                >
-                  <X
-                    size={Platform.OS === "web" ? 16 : 18}
-                    className={cn(
-                      "text-muted-foreground",
-                      open && "text-accent-foreground",
-                    )}
-                  />
-                </DialogPrimitive.Close>
-              )}
-            </DialogPrimitive.Content>
-          </SafeAreaView>
+          <DialogPrimitive.Content
+            ref={ref}
+            className={cn(
+              "web:cursor-default web:duration-200 z-50 max-w-lg gap-4 rounded-lg border border-border bg-background p-6 shadow-lg",
+              open
+                ? "web:animate-in web:fade-in-0 web:zoom-in-95"
+                : "web:animate-out web:fade-out-0 web:zoom-out-95",
+              className,
+            )}
+            {...props}
+          >
+            {children}
+            {!noClose && (
+              <DialogPrimitive.Close
+                className={
+                  "web:group web:ring-offset-background web:transition-opacity web:hover:opacity-100 web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 web:disabled:pointer-events-none absolute right-4 top-4 rounded-sm p-0.5 opacity-70"
+                }
+              >
+                <X
+                  size={Platform.OS === "web" ? 16 : 18}
+                  className={cn(
+                    "text-muted-foreground",
+                    open && "text-accent-foreground",
+                  )}
+                />
+              </DialogPrimitive.Close>
+            )}
+          </DialogPrimitive.Content>
         </DialogOverlay>
       </DialogPortal>
     );
