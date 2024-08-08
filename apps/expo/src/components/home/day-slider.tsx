@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Dimensions, Pressable, View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { format } from "date-fns";
@@ -8,24 +8,25 @@ import { cn } from "~/lib/utils";
 import { useDateStore } from "~/stores/dateStore";
 
 const mockScoreData = [
-  { date: new Date(2024, 6, 29), score: 75 },
-  { date: new Date(2024, 6, 30), score: 82 },
-  { date: new Date(2024, 6, 31), score: 58 },
-  { date: new Date(2024, 7, 1), score: 93 },
-  { date: new Date(2024, 7, 2), score: 69 },
-  { date: new Date(2024, 7, 3), score: 87 },
-  { date: new Date(2024, 7, 4), score: 45 },
-  { date: new Date(2024, 7, 5), score: 91 },
-  { date: new Date(2024, 7, 6), score: 63 },
+  { date: new Date(2024, 7, 8), score: 99 },
   { date: new Date(2024, 7, 7), score: 79 },
+  { date: new Date(2024, 7, 6), score: 63 },
+  { date: new Date(2024, 7, 5), score: 91 },
+  { date: new Date(2024, 7, 4), score: 45 },
+  { date: new Date(2024, 7, 3), score: 87 },
+  { date: new Date(2024, 7, 2), score: 69 },
+  { date: new Date(2024, 7, 1), score: 93 },
+  { date: new Date(2024, 6, 31), score: 58 },
+  { date: new Date(2024, 6, 30), score: 82 },
+  { date: new Date(2024, 6, 29), score: 75 },
 ];
 
 export type ScoreData = (typeof mockScoreData)[number];
 
 const screenWidth = Dimensions.get("window").width;
-const itemWidth = 48; // 12 (width) + 4 (separator) * 3
+// IMPORTANT: w-16 = 4rem = 14 (default rem value in nativewind) * 4 = 56
+const itemWidth = 56;
 const centerOffset = (screenWidth - itemWidth) / 2;
-const lastIndex = mockScoreData.length - 1;
 
 const DayItem = React.memo(
   ({
@@ -67,16 +68,39 @@ export function DaySlider() {
   const { selectedDate, setSelectedDate } = useDateStore();
   const listRef = useRef<FlashList<ScoreData> | null>(null);
 
-  const scrollToIndex = (index: number) => {
-    listRef.current?.scrollToIndex({
-      index,
+  //   const scrollToIndex = useCallback((index: number) => {
+  //     listRef.current?.scrollToIndex({
+  //       index,
+  //       animated: true,
+  //       viewPosition: 0.5, // This centers the item
+  //     });
+  //   }, []);
+
+  const scrollToOffset = useCallback((index: number) => {
+    const offset = index * itemWidth;
+    listRef.current?.scrollToOffset({
+      offset,
       animated: true,
-      viewPosition: 0.5, // This centers the item
     });
-  };
+  }, []);
+
+  const scrollToSelectedDate = useCallback(() => {
+    const selectedIndex = mockScoreData.findIndex(
+      (item) => item.date.toDateString() === selectedDate.toDateString(),
+    );
+
+    if (selectedIndex !== -1) {
+      // scrollToIndex(selectedIndex);
+      scrollToOffset(selectedIndex);
+    }
+  }, [selectedDate, scrollToOffset]);
+
+  useEffect(() => {
+    scrollToSelectedDate();
+  }, [selectedDate, scrollToSelectedDate]);
 
   const renderItem = useCallback(
-    ({ item, index }: { item: ScoreData; index: number }) => {
+    ({ item }: { item: ScoreData }) => {
       const isSelected =
         item.date.toDateString() === selectedDate.toDateString();
       return (
@@ -85,7 +109,6 @@ export function DaySlider() {
           isSelected={isSelected}
           onPress={() => {
             setSelectedDate(item.date);
-            scrollToIndex(index);
           }}
         />
       );
@@ -105,15 +128,18 @@ export function DaySlider() {
       extraData={selectedDate}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      estimatedItemSize={48}
+      estimatedItemSize={56}
+      estimatedListSize={{ height: 78, width: screenWidth }}
+      estimatedFirstItemOffset={centerOffset}
       horizontal
       showsHorizontalScrollIndicator={false}
-      initialScrollIndex={lastIndex}
+      disableHorizontalListHeightMeasurement={false}
+      inverted
       //   ItemSeparatorComponent={() => <View className="w-4" />}
       contentContainerStyle={{
         paddingBottom: 4,
         paddingTop: 4,
-        paddingLeft: 8,
+        paddingLeft: centerOffset,
         paddingRight: centerOffset,
       }}
     />
