@@ -1,4 +1,5 @@
 import { View } from "react-native";
+import { format, isToday } from "date-fns";
 
 import { HomeCalendar } from "~/components/home/home-calendar";
 import { Button } from "~/components/ui/button";
@@ -11,15 +12,22 @@ import {
 import { Text } from "~/components/ui/text";
 import { Bell } from "~/lib/icons/bell";
 import { Calendar } from "~/lib/icons/calendar";
+import { useDateStore } from "~/stores/dateStore";
 
 export default function HomeHeader() {
+  const { selectedDate } = useDateStore();
+
+  const formattedDate = isToday(selectedDate)
+    ? "Today"
+    : format(selectedDate, "MMMM do, yyyy");
+
   return (
     <View className="flex-row items-center justify-between px-2">
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="ghost" className="flex-row items-center gap-2">
             <Calendar className="text-foreground" size={24} />
-            <Text>TODAY</Text>
+            <Text>{formattedDate}</Text>
           </Button>
         </DialogTrigger>
         <DialogContent

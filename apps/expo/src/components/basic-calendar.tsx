@@ -38,7 +38,7 @@ export function BasicCalendar(props: BasicCalendarProps) {
           >
             <ChevronLeft className="text-foreground" size={48} />
           </Button>
-          <Text>{calendarRowMonth.split(" ")[0]?.toUpperCase()}</Text>
+          <Text>{calendarRowMonth.toUpperCase()}</Text>
           <Button
             onPress={props.onNextMonthPress}
             size={"icon"}
