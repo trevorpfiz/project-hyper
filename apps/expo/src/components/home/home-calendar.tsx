@@ -12,7 +12,7 @@ import { BasicCalendar } from "~/components/basic-calendar";
 import { useDateStore } from "~/stores/dateStore";
 
 export function HomeCalendar() {
-  const { selectedDate, setSelectedDate } = useDateStore();
+  const { selectedDate, setSelectedDate, setIsCalendarOpen } = useDateStore();
   const [currentCalendarMonth, setCurrentCalendarMonth] =
     useState(selectedDate);
 
@@ -20,8 +20,9 @@ export function HomeCalendar() {
     (dateId) => {
       setCurrentCalendarMonth(fromDateId(dateId));
       setSelectedDate(fromDateId(dateId));
+      setIsCalendarOpen(false); // Close the dialog after selecting a date
     },
-    [setSelectedDate],
+    [setSelectedDate, setIsCalendarOpen],
   );
 
   const calendarActiveDateRanges = useMemo<CalendarActiveDateRange[]>(

@@ -15,7 +15,7 @@ import { Calendar } from "~/lib/icons/calendar";
 import { useDateStore } from "~/stores/dateStore";
 
 export default function HomeHeader() {
-  const { selectedDate } = useDateStore();
+  const { selectedDate, isCalendarOpen, setIsCalendarOpen } = useDateStore();
 
   const formattedDate = isToday(selectedDate)
     ? "Today"
@@ -23,7 +23,7 @@ export default function HomeHeader() {
 
   return (
     <View className="flex-row items-center justify-between px-2">
-      <Dialog>
+      <Dialog open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
         <DialogTrigger asChild>
           <Button variant="ghost" className="flex-row items-center gap-2">
             <Calendar className="text-foreground" size={24} />
