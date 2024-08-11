@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import { format, isToday } from "date-fns";
 
-import { HomeCalendar } from "~/components/home/home-calendar";
+import { HomeCalendar } from "~/components/calendar/home-calendar";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -31,15 +31,15 @@ export default function HomeHeader() {
           </Button>
         </DialogTrigger>
         <DialogContent
-          className="rounded-none border-0"
-          overlayClassName="justify-start px-0 py-safe"
+          className="rounded-none border-0 p-0"
+          overlayClassName="justify-start p-0"
           noClose
         >
-          <View className="max-h-80">
-            <HomeCalendar />
-          </View>
-          <DialogFooter className="flex-row-reverse">
-            <Text>TIR</Text>
+          <HomeCalendar />
+          <DialogFooter className="flex-row-reverse p-4">
+            <Text className="font-semibold text-green-500">{`\u2022 >=70`}</Text>
+            <Text className="font-semibold text-yellow-500">{`\u2022 50-69`}</Text>
+            <Text className="font-semibold text-red-500">{`\u2022 <50`}</Text>
           </DialogFooter>
         </DialogContent>
       </Dialog>

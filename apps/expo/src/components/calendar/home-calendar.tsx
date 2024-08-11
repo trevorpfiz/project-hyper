@@ -8,7 +8,7 @@ import { fromDateId, toDateId } from "@marceloterreiro/flash-calendar";
 import { add, sub } from "date-fns";
 import { format } from "date-fns/fp";
 
-import { BasicCalendar } from "~/components/basic-calendar";
+import { BasicCalendar } from "~/components/calendar/basic-calendar";
 import { useDateStore } from "~/stores/dateStore";
 
 export function HomeCalendar() {
@@ -44,10 +44,13 @@ export function HomeCalendar() {
   }, [currentCalendarMonth]);
 
   return (
-    <View>
+    <View className="py-safe max-h-96 flex-1 px-1">
       <BasicCalendar
         calendarActiveDateRanges={calendarActiveDateRanges}
+        calendarMinDateId="2024-07-11"
+        calendarMaxDateId="2024-08-11" // current date
         calendarMonthId={toDateId(currentCalendarMonth)}
+        calendarRowVerticalSpacing={4}
         getCalendarWeekDayFormat={format("E")}
         calendarFirstDayOfWeek="sunday"
         onCalendarDayPress={handleDayPress}

@@ -12,7 +12,7 @@ import { Separator } from "~/components/ui/separator";
 export default function HomeScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
-      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true}>
         {/* Header */}
         <HomeHeader />
 
