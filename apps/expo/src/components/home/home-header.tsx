@@ -36,13 +36,13 @@ export default function HomeHeader() {
           </Button>
         </DialogTrigger>
         <DialogContent
-          className="py-safe max-h-[32rem] max-w-full rounded-none border-0 px-1"
+          className="pt-safe max-h-[32rem] max-w-full flex-1 rounded-none border-0 px-1 pb-0"
           overlayClassName="justify-start p-0"
           style={{ backgroundColor: theme.background }}
           noClose
         >
           <HomeCalendar />
-          <DialogFooter className="flex-row-reverse px-4 py-12">
+          <DialogFooter className="flex-row-reverse px-4 pb-4">
             <Text className="font-semibold" style={{ color: theme.good }}>
               {"\u2022 >=70"}
             </Text>

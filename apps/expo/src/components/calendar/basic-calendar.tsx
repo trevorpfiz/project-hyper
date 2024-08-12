@@ -114,7 +114,7 @@ export function BasicCalendar(props: BasicCalendarProps) {
   };
 
   return (
-    <View>
+    <View className="flex-1">
       <Calendar.VStack spacing={props.calendarRowVerticalSpacing}>
         <Calendar.HStack
           alignItems="center"

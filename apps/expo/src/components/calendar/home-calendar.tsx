@@ -46,7 +46,7 @@ export function HomeCalendar() {
   }, [currentCalendarMonth]);
 
   return (
-    <View>
+    <View className="flex-1">
       <BasicCalendar
         calendarActiveDateRanges={calendarActiveDateRanges}
         calendarDisabledDateIds={[]}

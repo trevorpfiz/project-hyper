@@ -49,7 +49,7 @@ const DayItem = React.memo(
           <Text
             className={cn(
               "text-xs font-semibold text-gray-400",
-              isSelected ? "text-black" : "text-gray-400",
+              isSelected && "text-secondary",
             )}
           >
             {format(item.date, "EEEEE").toUpperCase()}
