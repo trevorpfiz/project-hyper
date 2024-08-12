@@ -43,13 +43,13 @@ export default function HomeHeader() {
         >
           <HomeCalendar />
           <DialogFooter className="flex-row-reverse px-4 pb-4">
-            <Text className="font-semibold" style={{ color: theme.good }}>
+            <Text className="font-semibold" style={{ color: theme.good.text }}>
               {"\u2022 >=70"}
             </Text>
-            <Text className="font-semibold" style={{ color: theme.ok }}>
+            <Text className="font-semibold" style={{ color: theme.ok.text }}>
               {"\u2022 50-69"}
             </Text>
-            <Text className="font-semibold" style={{ color: theme.bad }}>
+            <Text className="font-semibold" style={{ color: theme.bad.text }}>
               {"\u2022 <50"}
             </Text>
           </DialogFooter>

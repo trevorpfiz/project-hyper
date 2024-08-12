@@ -13,6 +13,7 @@ import { CALENDAR_THEME } from "~/lib/constants";
 import { ChevronLeft } from "~/lib/icons/chevron-left";
 import { ChevronRight } from "~/lib/icons/chevron-right";
 import { useColorScheme } from "~/lib/use-color-scheme";
+import { getScoreColors } from "~/lib/utils";
 
 const DAY_HEIGHT = 40;
 const MONTH_HEADER_HEIGHT = 40;
@@ -28,12 +29,6 @@ export function BasicCalendar(props: BasicCalendarProps) {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const theme = isDark ? CALENDAR_THEME.dark : CALENDAR_THEME.light;
-
-  function getScoreColor(score: number) {
-    if (score >= 70) return theme.good;
-    if (score >= 50) return theme.ok;
-    return theme.bad;
-  }
 
   const calendarTheme: CalendarTheme = {
     rowMonth: {
@@ -64,7 +59,9 @@ export function BasicCalendar(props: BasicCalendarProps) {
     itemDay: {
       base: ({ isPressed, isDisabled, id }) => {
         const score = mockScoresData.find((s) => s.date === id)?.value;
-        const scoreColor = score ? getScoreColor(score) : theme.text;
+        const scoreColor = score
+          ? getScoreColors(score, isDark).text
+          : theme.text;
 
         return {
           container: {

@@ -12,17 +12,18 @@ import { Separator } from "~/components/ui/separator";
 export default function HomeScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
+      {/* Header */}
+      <HomeHeader />
+
+      {/* Metabolic Scores Slider */}
+      <View>
+        <DaySlider />
+        <Separator />
+        {/* <Separator className="mx-auto mb-4 bg-red-500" orientation="vertical" /> */}
+      </View>
+
+      {/* Main Content */}
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true}>
-        {/* Header */}
-        <HomeHeader />
-
-        {/* Metabolic Scores Slider */}
-        <View>
-          <DaySlider />
-          <Separator />
-          {/* <Separator className="mx-auto mb-4 bg-red-500" orientation="vertical" /> */}
-        </View>
-
         {/* Overview Pager */}
         <View className="h-64">
           <OverviewPager />
