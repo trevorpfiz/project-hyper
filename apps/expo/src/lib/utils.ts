@@ -38,3 +38,11 @@ export function getScoreColors(score: number, isDark: boolean) {
   if (score >= 50) return theme.ok;
   return theme.bad;
 }
+
+export function getBloodSugarColors(value: number, isDark: boolean) {
+  const theme = isDark ? CALENDAR_THEME.dark : CALENDAR_THEME.light;
+
+  if (value < 70 || value > 180) return theme.bad;
+  if (value >= 70 && value <= 140) return theme.good;
+  return theme.ok; // for 140 < value <= 180
+}

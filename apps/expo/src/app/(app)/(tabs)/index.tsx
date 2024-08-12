@@ -3,9 +3,11 @@ import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import MyChart from "~/components/charts/line-chart";
+import BloodSugarWidget from "~/components/home/blood-sugar-widget";
 import { DaySlider } from "~/components/home/day-slider";
 import HomeHeader from "~/components/home/home-header";
 import { OverviewPager } from "~/components/home/overview-pager";
+import { TempWidget } from "~/components/home/temp-widget";
 import Timeline from "~/components/home/timeline";
 import { Separator } from "~/components/ui/separator";
 
@@ -25,15 +27,22 @@ export default function HomeScreen() {
       {/* Main Content */}
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true}>
         {/* Overview Pager */}
-        <View className="h-64">
-          <OverviewPager />
+        <View className="h-64 flex-1">
+          <OverviewPager>
+            <BloodSugarWidget />
+            <TempWidget />
+          </OverviewPager>
         </View>
 
         {/* CGM Chart */}
-        <MyChart />
+        <View className="flex-1">
+          <MyChart />
+        </View>
 
         {/* Timeline */}
-        <Timeline />
+        <View className="flex-1">
+          <Timeline />
+        </View>
 
         {/* Zones */}
       </ScrollView>

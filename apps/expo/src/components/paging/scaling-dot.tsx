@@ -8,7 +8,7 @@ import Animated, {
 
 import type { PagingDotsProps } from "./paging-dots";
 
-type Props = Omit<PagingDotsProps, "data" | "style" | "dotType"> & {
+type Props = Omit<PagingDotsProps, "count" | "style" | "dotType"> & {
   index: number;
 };
 

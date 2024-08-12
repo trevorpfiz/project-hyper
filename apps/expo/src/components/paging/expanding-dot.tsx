@@ -9,7 +9,7 @@ import Animated, {
 
 import type { PagingDotsProps } from "./paging-dots";
 
-type Props = Omit<PagingDotsProps, "data" | "style" | "dotType"> & {
+type Props = Omit<PagingDotsProps, "count" | "style" | "dotType"> & {
   index: number;
 };
 
@@ -19,11 +19,11 @@ const ExpandingDot: React.FC<Props> = ({
   dotStyle,
   inactiveDotOpacity = 0.5,
   inactiveDotColor = "#347af0",
-  expandingDotWidth = 20,
+  expandingDotWidth = 32,
   activeDotColor = "#347af0",
 }) => {
   const { width } = useWindowDimensions();
-  const dotWidth = (dotStyle?.width as number) || 10;
+  const dotWidth = (dotStyle?.width as number) || 16;
 
   const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
 

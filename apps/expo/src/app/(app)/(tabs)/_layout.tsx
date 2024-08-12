@@ -27,13 +27,13 @@ const TabsLayout = () => {
           tabBarIcon: ({ size }) => (
             <View
               style={{
-                width: size + 10,
-                height: size + 10,
+                width: size + 20,
+                height: size + 20,
                 borderRadius: 9999,
                 backgroundColor: colors.blue[600],
                 justifyContent: "center",
                 alignItems: "center",
-                top: 10,
+                top: 12,
               }}
             >
               <Plus size={size} color="white" />

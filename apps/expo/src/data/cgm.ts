@@ -1,4 +1,3 @@
-// mock cgm data
 export const mockCGMData = [
   {
     dateTime: "2024-08-09T07:30:00",
