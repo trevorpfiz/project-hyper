@@ -46,7 +46,7 @@ export function HomeCalendar() {
   }, [currentCalendarMonth]);
 
   return (
-    <View className="py-safe max-h-96 flex-1 px-1">
+    <View>
       <BasicCalendar
         calendarActiveDateRanges={calendarActiveDateRanges}
         calendarDisabledDateIds={[]}

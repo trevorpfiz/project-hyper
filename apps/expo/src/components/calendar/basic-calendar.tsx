@@ -5,12 +5,11 @@ import type {
 import React from "react";
 import { View } from "react-native";
 import { Calendar, useCalendar } from "@marceloterreiro/flash-calendar";
-import colors from "tailwindcss/colors";
 
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { mockScoresData } from "~/data/scores";
-import { NAV_THEME } from "~/lib/constants";
+import { CALENDAR_THEME } from "~/lib/constants";
 import { ChevronLeft } from "~/lib/icons/chevron-left";
 import { ChevronRight } from "~/lib/icons/chevron-right";
 import { useColorScheme } from "~/lib/use-color-scheme";
@@ -24,28 +23,27 @@ interface BasicCalendarProps extends CalendarProps {
   onNextMonthPress: () => void;
 }
 
-function getScoreColor(score: number) {
-  if (score >= 70) return colors.green[500];
-  if (score >= 50) return colors.yellow[500];
-  return colors.red[500];
-}
-
 export function BasicCalendar(props: BasicCalendarProps) {
   const { calendarRowMonth, weekDaysList, weeksList } = useCalendar(props);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
-  const theme = isDark ? NAV_THEME.dark : NAV_THEME.light;
+  const theme = isDark ? CALENDAR_THEME.dark : CALENDAR_THEME.light;
+
+  function getScoreColor(score: number) {
+    if (score >= 70) return theme.good;
+    if (score >= 50) return theme.ok;
+    return theme.bad;
+  }
 
   const calendarTheme: CalendarTheme = {
     rowMonth: {
       container: {
         height: MONTH_HEADER_HEIGHT,
-        backgroundColor: theme.background,
         paddingHorizontal: 4,
       },
       content: {
-        color: theme.primary,
-        fontSize: 16,
+        color: theme.text,
+        fontSize: 14,
         fontWeight: "bold",
         textAlign: "center",
       },
@@ -57,8 +55,10 @@ export function BasicCalendar(props: BasicCalendarProps) {
     },
     itemWeekName: {
       content: {
-        color: isDark ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
+        color: theme.primary,
+        opacity: 0.3,
         fontSize: 12,
+        fontWeight: "bold",
       },
     },
     itemDay: {
@@ -70,7 +70,7 @@ export function BasicCalendar(props: BasicCalendarProps) {
           container: {
             padding: 0,
             borderRadius: DAY_HEIGHT / 2,
-            backgroundColor: isPressed ? "transparent" : "transparent",
+            backgroundColor: isPressed ? theme.highlight : "transparent",
           },
           content: {
             fontSize: 14,
@@ -80,48 +80,41 @@ export function BasicCalendar(props: BasicCalendarProps) {
           },
         };
       },
-      idle: ({ isPressed, id }) => {
-        const score = mockScoresData.find((s) => s.date === id)?.value;
-        const scoreColor = score ? getScoreColor(score) : theme.text;
-
+      idle: () => {
         return {
           container: {
-            backgroundColor: isPressed ? theme.primary : "transparent",
+            // backgroundColor: isPressed ? theme.highlight : "transparent",
           },
           content: {
-            color: scoreColor,
-            // color: isPressed ? theme.background : theme.text,
+            // color: scoreColor,
           },
         };
       },
-      today: ({ isPressed }) => ({
+      today: () => ({
         container: {
           borderColor: theme.primary,
           borderWidth: 1,
-          backgroundColor: isPressed ? theme.primary : "transparent",
           padding: 0,
         },
-        content: {
-          color: isPressed ? theme.background : theme.text,
-        },
+        content: {},
       }),
-      active: () => ({
+      active: ({ isToday }) => ({
         container: {
-          backgroundColor: theme.primary,
+          backgroundColor: theme.active,
           borderTopLeftRadius: DAY_HEIGHT / 2,
           borderTopRightRadius: DAY_HEIGHT / 2,
           borderBottomLeftRadius: DAY_HEIGHT / 2,
           borderBottomRightRadius: DAY_HEIGHT / 2,
+          borderColor: theme.primary,
+          borderWidth: isToday ? 1 : 0,
         },
-        content: {
-          color: theme.background,
-        },
+        content: {},
       }),
     },
   };
 
   return (
-    <View className="flex-1 bg-background">
+    <View>
       <Calendar.VStack spacing={props.calendarRowVerticalSpacing}>
         <Calendar.HStack
           alignItems="center"
@@ -134,11 +127,7 @@ export function BasicCalendar(props: BasicCalendarProps) {
             size={"icon"}
             className="bg-transparent active:opacity-50"
           >
-            <ChevronLeft
-              size={40}
-              strokeWidth={1.5}
-              className="text-foreground"
-            />
+            <ChevronLeft size={40} strokeWidth={1.5} color={theme.text} />
           </Button>
           <Text style={calendarTheme.rowMonth?.content}>
             {calendarRowMonth.toUpperCase()}
@@ -148,11 +137,7 @@ export function BasicCalendar(props: BasicCalendarProps) {
             size={"icon"}
             className="bg-transparent active:opacity-50"
           >
-            <ChevronRight
-              className="text-foreground"
-              size={40}
-              strokeWidth={1.5}
-            />
+            <ChevronRight color={theme.text} size={40} strokeWidth={1.5} />
           </Button>
         </Calendar.HStack>
 

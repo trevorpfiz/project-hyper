@@ -10,12 +10,17 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Text } from "~/components/ui/text";
+import { CALENDAR_THEME } from "~/lib/constants";
 import { Bell } from "~/lib/icons/bell";
 import { Calendar } from "~/lib/icons/calendar";
+import { useColorScheme } from "~/lib/use-color-scheme";
 import { useDateStore } from "~/stores/dateStore";
 
 export default function HomeHeader() {
   const { selectedDate, isCalendarOpen, setIsCalendarOpen } = useDateStore();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const theme = isDark ? CALENDAR_THEME.dark : CALENDAR_THEME.light;
 
   const formattedDate = isToday(selectedDate)
     ? "Today"
@@ -31,15 +36,22 @@ export default function HomeHeader() {
           </Button>
         </DialogTrigger>
         <DialogContent
-          className="rounded-none border-0 p-0"
+          className="py-safe max-h-[32rem] max-w-full rounded-none border-0 px-1"
           overlayClassName="justify-start p-0"
+          style={{ backgroundColor: theme.background }}
           noClose
         >
           <HomeCalendar />
-          <DialogFooter className="flex-row-reverse p-4">
-            <Text className="font-semibold text-green-500">{`\u2022 >=70`}</Text>
-            <Text className="font-semibold text-yellow-500">{`\u2022 50-69`}</Text>
-            <Text className="font-semibold text-red-500">{`\u2022 <50`}</Text>
+          <DialogFooter className="flex-row-reverse px-4 py-12">
+            <Text className="font-semibold" style={{ color: theme.good }}>
+              {"\u2022 >=70"}
+            </Text>
+            <Text className="font-semibold" style={{ color: theme.ok }}>
+              {"\u2022 50-69"}
+            </Text>
+            <Text className="font-semibold" style={{ color: theme.bad }}>
+              {"\u2022 <50"}
+            </Text>
           </DialogFooter>
         </DialogContent>
       </Dialog>

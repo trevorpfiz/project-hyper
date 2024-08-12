@@ -21,6 +21,31 @@ export const NAV_THEME = {
   },
 };
 
+export const CALENDAR_THEME = {
+  light: {
+    background: colors.white,
+    text: colors.gray[900],
+    primary: colors.gray[900],
+    disabled: "rgba(0, 0, 0, .3)",
+    active: "rgba(0, 0, 0, .1)",
+    highlight: "rgba(0, 0, 0, .1)",
+    good: colors.green[500],
+    ok: colors.yellow[500],
+    bad: colors.red[500],
+  },
+  dark: {
+    background: colors.gray[900],
+    primary: colors.white,
+    text: colors.gray[100],
+    disabled: "rgba(255, 255, 255, .3)",
+    active: "rgba(255, 255, 255, .1)",
+    highlight: "rgba(255, 255, 255, .1)",
+    good: colors.green[400],
+    ok: colors.yellow[400],
+    bad: colors.red[500],
+  },
+};
+
 export const INTRO_CONTENT = [
   {
     title: "scribeHC",
