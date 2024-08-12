@@ -8,6 +8,7 @@ export const NAV_THEME = {
     notification: "hsl(0 84.2% 60.2%)", // destructive
     primary: "hsl(240 5.9% 10%)", // primary
     text: "hsl(240 10% 3.9%)", // foreground
+    disabled: "rgba(0, 0, 0, .3)",
   },
   dark: {
     background: "hsl(240 10% 3.9%)", // background
@@ -16,6 +17,7 @@ export const NAV_THEME = {
     notification: "hsl(0 72% 51%)", // destructive
     primary: "hsl(0 0% 98%)", // primary
     text: "hsl(0 0% 98%)", // foreground
+    disabled: "rgba(255, 255, 255, .3)",
   },
 };
 

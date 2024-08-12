@@ -16,6 +16,8 @@ export function HomeCalendar() {
   const [currentCalendarMonth, setCurrentCalendarMonth] =
     useState(selectedDate);
 
+  const currentDate = new Date();
+
   const handleDayPress = useCallback<CalendarOnDayPress>(
     (dateId) => {
       setCurrentCalendarMonth(fromDateId(dateId));
@@ -47,8 +49,9 @@ export function HomeCalendar() {
     <View className="py-safe max-h-96 flex-1 px-1">
       <BasicCalendar
         calendarActiveDateRanges={calendarActiveDateRanges}
+        calendarDisabledDateIds={[]}
         calendarMinDateId="2024-07-11"
-        calendarMaxDateId="2024-08-11" // current date
+        calendarMaxDateId={toDateId(currentDate)} // current date
         calendarMonthId={toDateId(currentCalendarMonth)}
         calendarRowVerticalSpacing={4}
         getCalendarWeekDayFormat={format("E")}

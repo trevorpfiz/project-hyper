@@ -5,9 +5,11 @@ import type {
 import React from "react";
 import { View } from "react-native";
 import { Calendar, useCalendar } from "@marceloterreiro/flash-calendar";
+import colors from "tailwindcss/colors";
 
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
+import { mockScoresData } from "~/data/scores";
 import { NAV_THEME } from "~/lib/constants";
 import { ChevronLeft } from "~/lib/icons/chevron-left";
 import { ChevronRight } from "~/lib/icons/chevron-right";
@@ -22,6 +24,12 @@ interface BasicCalendarProps extends CalendarProps {
   onNextMonthPress: () => void;
 }
 
+function getScoreColor(score: number) {
+  if (score >= 70) return colors.green[500];
+  if (score >= 50) return colors.yellow[500];
+  return colors.red[500];
+}
+
 export function BasicCalendar(props: BasicCalendarProps) {
   const { calendarRowMonth, weekDaysList, weeksList } = useCalendar(props);
   const { colorScheme } = useColorScheme();
@@ -33,6 +41,7 @@ export function BasicCalendar(props: BasicCalendarProps) {
       container: {
         height: MONTH_HEADER_HEIGHT,
         backgroundColor: theme.background,
+        paddingHorizontal: 4,
       },
       content: {
         color: theme.primary,
@@ -53,42 +62,59 @@ export function BasicCalendar(props: BasicCalendarProps) {
       },
     },
     itemDay: {
-      base: () => ({
-        container: {
-          padding: 0,
-          borderRadius: 0,
-        },
-      }),
-      idle: ({ isPressed }) => ({
-        container: {
-          backgroundColor: isPressed ? theme.primary : "transparent",
-          borderRadius: 0,
-        },
-        content: {
-          color: theme.text,
-          fontSize: 16,
-        },
-      }),
+      base: ({ isPressed, isDisabled, id }) => {
+        const score = mockScoresData.find((s) => s.date === id)?.value;
+        const scoreColor = score ? getScoreColor(score) : theme.text;
+
+        return {
+          container: {
+            padding: 0,
+            borderRadius: DAY_HEIGHT / 2,
+            backgroundColor: isPressed ? "transparent" : "transparent",
+          },
+          content: {
+            fontSize: 14,
+            fontWeight: "bold",
+            opacity: isDisabled ? 0.5 : 1,
+            color: isDisabled ? theme.disabled : scoreColor,
+          },
+        };
+      },
+      idle: ({ isPressed, id }) => {
+        const score = mockScoresData.find((s) => s.date === id)?.value;
+        const scoreColor = score ? getScoreColor(score) : theme.text;
+
+        return {
+          container: {
+            backgroundColor: isPressed ? theme.primary : "transparent",
+          },
+          content: {
+            color: scoreColor,
+            // color: isPressed ? theme.background : theme.text,
+          },
+        };
+      },
       today: ({ isPressed }) => ({
         container: {
           borderColor: theme.primary,
           borderWidth: 1,
-          borderRadius: 0,
           backgroundColor: isPressed ? theme.primary : "transparent",
+          padding: 0,
         },
         content: {
-          color: theme.text,
-          fontSize: 16,
+          color: isPressed ? theme.background : theme.text,
         },
       }),
       active: () => ({
         container: {
           backgroundColor: theme.primary,
-          borderRadius: 0,
+          borderTopLeftRadius: DAY_HEIGHT / 2,
+          borderTopRightRadius: DAY_HEIGHT / 2,
+          borderBottomLeftRadius: DAY_HEIGHT / 2,
+          borderBottomRightRadius: DAY_HEIGHT / 2,
         },
         content: {
           color: theme.background,
-          fontSize: 16,
         },
       }),
     },
@@ -109,7 +135,7 @@ export function BasicCalendar(props: BasicCalendarProps) {
             className="bg-transparent active:opacity-50"
           >
             <ChevronLeft
-              size={48}
+              size={40}
               strokeWidth={1.5}
               className="text-foreground"
             />
@@ -124,7 +150,7 @@ export function BasicCalendar(props: BasicCalendarProps) {
           >
             <ChevronRight
               className="text-foreground"
-              size={48}
+              size={40}
               strokeWidth={1.5}
             />
           </Button>
