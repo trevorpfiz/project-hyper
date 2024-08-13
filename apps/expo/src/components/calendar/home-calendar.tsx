@@ -9,7 +9,7 @@ import { add, sub } from "date-fns";
 import { format } from "date-fns/fp";
 
 import { BasicCalendar } from "~/components/calendar/basic-calendar";
-import { useDateStore } from "~/stores/dateStore";
+import { useDateStore } from "~/stores/data-store";
 
 export function HomeCalendar() {
   const { selectedDate, setSelectedDate, setIsCalendarOpen } = useDateStore();

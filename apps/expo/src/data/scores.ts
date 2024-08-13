@@ -32,6 +32,7 @@ export const mockScoresData = [
   { date: "2024-08-09", value: 64 },
   //   { date: "2024-08-10", value: 68 },
   { date: "2024-08-11", value: 72 },
+  { date: "2024-08-12", value: 87 },
 ];
 
 export type ScoresData = (typeof mockScoresData)[number];

@@ -2,7 +2,7 @@ import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import MyChart from "~/components/charts/line-chart";
+import CGMChart from "~/components/charts/cgm-chart";
 import BloodSugarWidget from "~/components/home/blood-sugar-widget";
 import { DaySlider } from "~/components/home/day-slider";
 import HomeHeader from "~/components/home/home-header";
@@ -36,7 +36,7 @@ export default function HomeScreen() {
 
         {/* CGM Chart */}
         <View className="flex-1">
-          <MyChart />
+          <CGMChart />
         </View>
 
         {/* Timeline */}

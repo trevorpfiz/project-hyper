@@ -15,7 +15,7 @@ import { ReText } from "react-native-redash";
 
 import WaveformIntroAnimation from "~/components/intro/waveform-intro-animation";
 import { INTRO_CONTENT } from "~/lib/constants";
-import { useAnimationStore } from "~/stores/animationStore";
+import { useAnimationStore } from "~/stores/animation-store";
 
 const AnimatedIntro = () => {
   const isFanningOut = useAnimationStore((state) => state.isFanningOut);

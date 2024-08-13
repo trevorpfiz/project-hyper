@@ -19,8 +19,6 @@ export const convertHexToRGBA = (hexCode: string, opacity = 1) => {
   return `rgba(${r},${g},${b},${opacity})`;
 };
 
-console.log(convertHexToRGBA(colors.green[400], 0.2), "testesset");
-
 export const NAV_THEME = {
   light: {
     background: "hsl(0 0% 100%)", // background

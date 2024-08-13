@@ -141,8 +141,6 @@ export default function RootLayout() {
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = useState(false);
 
-  console.log(colorScheme);
-
   useEffect(() => {
     (async () => {
       const theme = await AsyncStorage.getItem("theme");
