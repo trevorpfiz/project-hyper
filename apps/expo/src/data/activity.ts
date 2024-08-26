@@ -19,7 +19,7 @@ export const mockActivityData = [
   },
   {
     type: "work",
-    dateTime: "2024-08-12T09:00:00",
+    dateTime: "2024-08-12T09:01:00",
     title: "Start Work",
     description: "Begin workday at the office",
   },

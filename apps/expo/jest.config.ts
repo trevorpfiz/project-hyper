@@ -2,7 +2,11 @@ import type { Config } from "jest";
 
 const config: Config = {
   preset: "jest-expo",
-  setupFilesAfterEnv: ["<rootDir>/jest-setup.ts", "<rootDir>/setup.ts"],
+  setupFilesAfterEnv: [
+    "<rootDir>/jest-setup.ts",
+    "<rootDir>/setup.ts",
+    "<rootDir>/node_modules/@react-native-google-signin/google-signin/jest/build/jest/setup.js",
+  ],
   testMatch: ["**/?(*.)+(spec|test).ts?(x)"],
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",

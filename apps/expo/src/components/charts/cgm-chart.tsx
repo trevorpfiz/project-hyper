@@ -1,8 +1,8 @@
 import type { SharedValue } from "react-native-reanimated";
-import type { ChartBounds } from "victory-native";
+import type { ChartBounds, PointsArray } from "victory-native";
 import { useMemo } from "react";
 import { View } from "react-native";
-import { useDerivedValue, useSharedValue } from "react-native-reanimated";
+import { useDerivedValue } from "react-native-reanimated";
 import { Inter_500Medium } from "@expo-google-fonts/inter";
 import {
   Circle,
@@ -47,7 +47,7 @@ const activityTypeToEmoji = {
 
 export default function CGMChart() {
   const { colorScheme } = useColorScheme();
-  const { selectedActivity, setSelectedActivity } = useActivityStore();
+  // const { selectedActivity, setSelectedActivity } = useActivityStore();
   const font = useFont(Inter_500Medium, 12);
 
   // Preprocess the data to use hour numbers for x-axis
@@ -60,6 +60,7 @@ export default function CGMChart() {
     [],
   );
 
+  // Preprocess the activity data to use hour numbers for x-axis
   const processedActivityData = useMemo(
     () =>
       mockActivityData.map((item) => ({
@@ -73,36 +74,6 @@ export default function CGMChart() {
     x: 0,
     y: { amount: 0 },
   });
-
-  const selectedActivityIndex = useSharedValue<number | null>(null);
-
-  useDerivedValue(() => {
-    if (isActive) {
-      const pressedXValue = state.x.value.value;
-      const nearestActivityIndex = processedActivityData.reduce(
-        (nearest, current, index) => {
-          const currentDiff = Math.abs(current.hour - pressedXValue);
-          const nearestDiff = Math.abs(
-            processedActivityData[nearest].hour - pressedXValue,
-          );
-          return currentDiff < nearestDiff ? index : nearest;
-        },
-        0,
-      );
-
-      if (
-        Math.abs(
-          processedActivityData[nearestActivityIndex].hour - pressedXValue,
-        ) <= 0.5
-      ) {
-        selectedActivityIndex.value = nearestActivityIndex;
-      } else {
-        selectedActivityIndex.value = null;
-      }
-    } else {
-      selectedActivityIndex.value = null;
-    }
-  }, [isActive, state.x.value]);
 
   const labelColor = colorScheme === "dark" ? "white" : "black";
   const lineColor =
@@ -166,25 +137,22 @@ export default function CGMChart() {
               strokeWidth={3}
               animate={{ type: "timing", duration: 500 }}
               connectMissingData={false}
+              curveType="natural"
             />
             {processedActivityData.map((activity, index) => (
               <ActivityIndicator
                 key={index}
                 activity={activity}
                 chartBounds={chartBounds}
-                isSelected={selectedActivityIndex.value === index}
+                points={points.amount}
               />
             ))}
-            {(isActive || selectedActivity) && (
+            {isActive && (
               <ActiveValueIndicator
-                xPosition={
-                  selectedActivity ? selectedActivity.hour : state.x.position
-                }
+                xPosition={state.x.position}
                 yPosition={state.y.amount.position}
                 activeValue={state.y.amount.value}
-                activeTime={
-                  selectedActivity ? selectedActivity.hour : state.x.value
-                }
+                activeTime={state.x.value}
                 bottom={chartBounds.bottom}
                 top={chartBounds.top}
                 textColor={labelColor}
@@ -202,27 +170,36 @@ export default function CGMChart() {
 const ActivityIndicator = (props: {
   activity: ProcessedActivityData;
   chartBounds: ChartBounds;
-  isSelected: boolean;
+  points: PointsArray;
 }) => {
-  const { activity, chartBounds, isSelected } = props;
+  const { activity, chartBounds, points } = props;
 
-  const xPosition =
-    (activity.hour / 24) * (chartBounds.right - chartBounds.left) +
-    chartBounds.left;
-  const yPosition = chartBounds.bottom - 20; // Place it slightly above the bottom of the chart
+  // Find the closest point to the activity's hour
+  const closestPoint = points.reduce((prev, curr) =>
+    Math.abs((curr.xValue as number) - activity.hour) <
+    Math.abs((prev.xValue as number) - activity.hour)
+      ? curr
+      : prev,
+  );
+
+  // Calculate x position based on the closest point
+  const xPosition = closestPoint.x;
+
+  // Calculate y position based on the closest point
+  const yPosition = closestPoint.y ?? chartBounds.bottom - 20;
 
   return (
     <>
       <Circle
         cx={xPosition}
         cy={yPosition}
-        r={isSelected ? 15 : 10}
-        color={isSelected ? "rgba(0, 255, 0, 0.5)" : "rgba(200, 200, 200, 0.5)"}
+        r={10}
+        color="rgba(200, 200, 200, 0.5)"
       />
       <SKText
-        x={xPosition - 10}
+        x={xPosition - 5}
         y={yPosition + 5}
-        text={activityTypeToEmoji[activity.type]}
+        text={"a"}
         font={useFont(Inter_500Medium, 20)}
       />
     </>

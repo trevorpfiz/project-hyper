@@ -1,4 +1,5 @@
 import { View } from "react-native";
+import { useRouter } from "expo-router";
 import {
   useSessionContext,
   useSupabaseClient,
@@ -10,6 +11,8 @@ import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 
 export default function AccountScreen() {
+  const router = useRouter();
+
   const user = useUser();
 
   const SignOut = () => {
@@ -27,6 +30,13 @@ export default function AccountScreen() {
           }}
         >
           <Text>Sign Out</Text>
+        </Button>
+        <Button
+          onPress={() => {
+            router.replace("/(home)");
+          }}
+        >
+          <Text>root</Text>
         </Button>
         <ThemeToggle />
       </View>

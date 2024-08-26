@@ -47,7 +47,7 @@ SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
-  initialRouteName: "index",
+  initialRouteName: "(home)/index",
 };
 
 const InitialLayout = () => {
@@ -55,9 +55,6 @@ const InitialLayout = () => {
   const segments = useSegments();
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
-
-  console.log("isLoaded", isLoaded);
-  console.log("isSignedIn", isSignedIn);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -84,7 +81,7 @@ const InitialLayout = () => {
     if (isSignedIn && !inAppGroup) {
       router.replace("/(tabs)");
     } else if (!isSignedIn && inAppGroup) {
-      router.replace("/");
+      router.replace("/(home)");
     }
   }, [isLoaded, isSignedIn, segments, router]);
 
@@ -97,7 +94,7 @@ const InitialLayout = () => {
       <SafeAreaEnv>
         <Stack>
           <Stack.Screen
-            name="index"
+            name="(home)/index"
             options={{
               headerShown: false,
             }}
@@ -143,8 +140,6 @@ const InitialLayout = () => {
 export default function RootLayout() {
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = useState(false);
-
-  console.log("isColorSchemeLoaded", isColorSchemeLoaded);
 
   useEffect(() => {
     (async () => {
