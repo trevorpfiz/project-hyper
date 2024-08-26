@@ -47,6 +47,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 dist/
+.cache
 
 # turbo
 .turbo

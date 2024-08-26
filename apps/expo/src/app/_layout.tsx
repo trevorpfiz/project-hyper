@@ -56,6 +56,9 @@ const InitialLayout = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
 
+  console.log("isLoaded", isLoaded);
+  console.log("isSignedIn", isSignedIn);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsSignedIn(!!session);
@@ -140,6 +143,8 @@ const InitialLayout = () => {
 export default function RootLayout() {
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = useState(false);
+
+  console.log("isColorSchemeLoaded", isColorSchemeLoaded);
 
   useEffect(() => {
     (async () => {

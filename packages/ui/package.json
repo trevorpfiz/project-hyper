@@ -10,13 +10,16 @@
     },
     "./*": {
       "types": "./dist/src/*.d.ts",
-      "default": "./src/*.tsx"
+      "default": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ]
     }
   },
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf .turbo dist node_modules",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsc",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
@@ -24,7 +27,7 @@
     "ui-add": "pnpm dlx shadcn-ui add && prettier src --write --list-different"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.7.0",
+    "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
@@ -37,21 +40,19 @@
     "class-variance-authority": "^0.7.0",
     "cmdk": "^1.0.0",
     "next-themes": "^0.3.0",
-    "react-hook-form": "^7.52.1",
+    "react-hook-form": "^7.53.0",
     "sonner": "^1.5.0",
-    "tailwind-merge": "^2.3.0",
+    "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "catalog:tailwind"
   },
   "devDependencies": {
     "@hyper/eslint-config": "workspace:*",
     "@hyper/prettier-config": "workspace:*",
-    "@hyper/tailwind-config": "workspace:*",
     "@hyper/tsconfig": "workspace:*",
     "@types/react": "catalog:react18",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "react": "catalog:react18",
-    "tailwindcss": "catalog:tailwind",
     "typescript": "catalog:",
     "zod": "catalog:"
   },
