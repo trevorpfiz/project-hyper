@@ -95,7 +95,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       "@react-native-google-signin/google-signin",
       {
-        iosUrlScheme: "com.googleusercontent.apps._some_id_here_",
+        iosUrlScheme:
+          "com.googleusercontent.apps.871950139217-2knn7tplni9li14l489lpv9i964ujt0h",
       },
     ],
   ],

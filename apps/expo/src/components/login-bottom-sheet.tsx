@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
+import { GoogleNative } from "~/components/auth/google-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { initiateAppleSignIn } from "~/utils/auth";
@@ -72,6 +73,7 @@ const LoginBottomSheet = () => {
       backgroundComponent={CustomBackground}
     >
       <BottomSheetView className="flex-1 gap-4 p-4">
+        {/* Apple Button */}
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
           buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE}
@@ -80,6 +82,8 @@ const LoginBottomSheet = () => {
           style={{ height: 48 }}
         />
         {/* Google Button */}
+        <GoogleNative />
+        {/* Email Sign Up Button */}
         <Link href={{ pathname: "/(auth)/signup" }} asChild>
           <Button
             size="lg"
@@ -89,6 +93,7 @@ const LoginBottomSheet = () => {
             <Text className="font-semibold text-white">Sign up with email</Text>
           </Button>
         </Link>
+        {/* Email Log In Button */}
         <Link href={{ pathname: "/(auth)/signin" }} asChild>
           <Button
             variant="outline"

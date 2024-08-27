@@ -31,13 +31,6 @@ export default function AccountScreen() {
         >
           <Text>Sign Out</Text>
         </Button>
-        <Button
-          onPress={() => {
-            router.replace("/(home)");
-          }}
-        >
-          <Text>root</Text>
-        </Button>
         <ThemeToggle />
       </View>
     );

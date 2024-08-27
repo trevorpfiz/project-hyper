@@ -37,17 +37,9 @@ const formatTime = (hour: number) => {
   return `${formattedHours}:${formattedMinutes} ${ampm}`;
 };
 
-const activityTypeToEmoji = {
-  sleep: "🛌",
-  exercise: "🏋️",
-  nutrition: "🍽️",
-  work: "💼",
-  leisure: "🎭",
-};
-
 export default function CGMChart() {
   const { colorScheme } = useColorScheme();
-  // const { selectedActivity, setSelectedActivity } = useActivityStore();
+  const { selectedActivity } = useActivityStore();
   const font = useFont(Inter_500Medium, 12);
 
   // Preprocess the data to use hour numbers for x-axis
@@ -100,7 +92,7 @@ export default function CGMChart() {
         xKey="hour"
         yKeys={["amount"]}
         domainPadding={{ top: 30 }}
-        gestureLongPressDelay={0}
+        gestureLongPressDelay={100}
         axisOptions={{
           font,
           labelColor,
@@ -145,6 +137,7 @@ export default function CGMChart() {
                 activity={activity}
                 chartBounds={chartBounds}
                 points={points.amount}
+                isSelected={activity.hour === selectedActivity?.hour}
               />
             ))}
             {isActive && (
@@ -171,8 +164,9 @@ const ActivityIndicator = (props: {
   activity: ProcessedActivityData;
   chartBounds: ChartBounds;
   points: PointsArray;
+  isSelected: boolean;
 }) => {
-  const { activity, chartBounds, points } = props;
+  const { activity, chartBounds, points, isSelected } = props;
 
   // Find the closest point to the activity's hour
   const closestPoint = points.reduce((prev, curr) =>
@@ -194,7 +188,7 @@ const ActivityIndicator = (props: {
         cx={xPosition}
         cy={yPosition}
         r={10}
-        color="rgba(200, 200, 200, 0.5)"
+        color={isSelected ? "rgba(255, 0, 0, 0.5)" : "rgba(200, 200, 200, 0.5)"}
       />
       <SKText
         x={xPosition - 5}
@@ -207,10 +201,10 @@ const ActivityIndicator = (props: {
 };
 
 const ActiveValueIndicator = (props: {
-  xPosition: number | SharedValue<number>;
+  xPosition: SharedValue<number>;
   yPosition: SharedValue<number>;
   activeValue: SharedValue<number>;
-  activeTime: number | SharedValue<number>;
+  activeTime: SharedValue<number>;
   bottom: number;
   top: number;
   textColor: string;
