@@ -52,7 +52,13 @@
       "interactive": true
     }
   },
-  "globalEnv": ["POSTGRES_URL", "PORT"],
+  "globalEnv": [
+    "POSTGRES_URL",
+    "NEXT_PUBLIC_DEXCOM_CLIENT_ID",
+    "EXPO_PUBLIC_DEXCOM_CLIENT_ID",
+    "DEXCOM_CLIENT_SECRET",
+    "PORT"
+  ],
   "globalPassThroughEnv": [
     "NODE_ENV",
     "CI",

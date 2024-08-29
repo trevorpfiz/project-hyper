@@ -6,8 +6,8 @@ import { Link } from "expo-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 
-import type { SignIn } from "@hyper/validators";
-import { SignInSchema } from "@hyper/validators";
+import type { SignIn } from "@hyper/validators/auth";
+import { SignInSchema } from "@hyper/validators/auth";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";

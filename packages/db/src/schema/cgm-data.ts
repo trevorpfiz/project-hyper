@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
-  decimal,
+  doublePrecision,
   integer,
   timestamp,
   uuid,
@@ -12,20 +12,26 @@ import { Profile } from "./profile";
 
 export const CGMData = createTable("cgm_data", {
   id: uuid("id").primaryKey().defaultRandom(),
-  dexcomUserId: varchar("dexcom_user_id", { length: 255 }),
+  dexcomUserId: varchar("dexcom_user_id", { length: 255 }).notNull(),
   recordId: varchar("record_id", { length: 255 }).notNull().unique(),
-  systemTime: timestamp("system_time").notNull(),
-  displayTime: timestamp("display_time").notNull(),
-  glucoseValue: integer("glucose_value").notNull(),
-  trend: varchar("trend", { length: 50 }),
-  trendRate: decimal("trend_rate", { precision: 5, scale: 2 }),
+  systemTime: timestamp("system_time", { withTimezone: true }).notNull(),
+  displayTime: timestamp("display_time", { withTimezone: true }).notNull(),
   transmitterId: varchar("transmitter_id", { length: 255 }),
-  transmitterGeneration: varchar("transmitter_generation", { length: 50 }),
-  displayDevice: varchar("display_device", { length: 50 }),
+  transmitterTicks: integer("transmitter_ticks").notNull(),
+  value: integer("value"),
+  status: varchar("status", { length: 20 }),
+  trend: varchar("trend", { length: 20 }),
+  trendRate: doublePrecision("trend_rate"),
+  unit: varchar("unit", { length: 10 }).notNull(),
+  rateUnit: varchar("rate_unit", { length: 20 }).notNull(),
+  displayDevice: varchar("display_device", { length: 20 }).notNull(),
+  transmitterGeneration: varchar("transmitter_generation", {
+    length: 20,
+  }).notNull(),
+
   profileId: uuid("profile_id")
     .notNull()
     .references(() => Profile.id),
-
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
     mode: "date",

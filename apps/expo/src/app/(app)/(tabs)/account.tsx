@@ -1,18 +1,16 @@
 import { View } from "react-native";
-import { useRouter } from "expo-router";
 import {
   useSessionContext,
   useSupabaseClient,
   useUser,
 } from "@supabase/auth-helpers-react";
 
+import { DexcomLogin } from "~/components/dexcom/dexcom-login";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 
 export default function AccountScreen() {
-  const router = useRouter();
-
   const user = useUser();
 
   const SignOut = () => {
@@ -40,6 +38,8 @@ export default function AccountScreen() {
     <View>
       <Text>Account Screen</Text>
       {user?.id && <SignOut />}
+
+      <DexcomLogin />
     </View>
   );
 }

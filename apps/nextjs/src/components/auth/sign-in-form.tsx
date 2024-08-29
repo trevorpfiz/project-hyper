@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useAction } from "next-safe-action/hooks";
 
-import type { SignIn } from "@hyper/validators";
+import type { SignIn } from "@hyper/validators/auth";
 import { Button } from "@hyper/ui/button";
 import {
   Form,
@@ -15,7 +15,7 @@ import {
   useForm,
 } from "@hyper/ui/form";
 import { Input } from "@hyper/ui/input";
-import { SignInSchema } from "@hyper/validators";
+import { SignInSchema } from "@hyper/validators/auth";
 
 import { FormError } from "~/components/auth/form-error";
 import { signInWithPassword } from "~/lib/actions/auth";
