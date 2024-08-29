@@ -1,6 +1,7 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
+import { and, desc, eq, gte, lte } from "@hyper/db";
 import { CGMData } from "@hyper/db/schema";
 import { EGVsResponseSchema } from "@hyper/validators/dexcom";
 
@@ -37,7 +38,7 @@ export const dexcomRouter = {
       };
     }),
 
-  fetchEGVs: protectedProcedure
+  fetchAndStoreEGVs: protectedProcedure
     .input(
       z.object({
         accessToken: z.string(),
@@ -47,7 +48,7 @@ export const dexcomRouter = {
         endDate: z.string(),
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       let tokens: TokenData = {
         accessToken: input.accessToken,
         refreshToken: input.refreshToken,
@@ -73,7 +74,7 @@ export const dexcomRouter = {
         displayTime: new Date(egv.displayTime),
         transmitterId: egv.transmitterId,
         transmitterTicks: egv.transmitterTicks,
-        value: egv.value,
+        glucoseValue: egv.value,
         status: egv.status,
         trend: egv.trend,
         trendRate: egv.trendRate,
@@ -88,8 +89,31 @@ export const dexcomRouter = {
       await ctx.db.insert(CGMData).values(cgmDataToInsert);
 
       return {
-        cgmData: validatedData,
+        success: true,
         newTokens: tokens,
       };
+    }),
+
+  getStoredEGVs: protectedProcedure
+    .input(
+      z.object({
+        startDate: z.string(),
+        endDate: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const storedData = await ctx.db
+        .select()
+        .from(CGMData)
+        .where(
+          and(
+            gte(CGMData.displayTime, new Date(input.startDate)),
+            lte(CGMData.displayTime, new Date(input.endDate)),
+            eq(CGMData.profileId, ctx.user.id),
+          ),
+        )
+        .orderBy(desc(CGMData.displayTime));
+
+      return storedData;
     }),
 } satisfies TRPCRouterRecord;

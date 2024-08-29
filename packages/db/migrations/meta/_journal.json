@@ -15,6 +15,13 @@
       "when": 1724784271172,
       "tag": "0001_long_fixer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1724914079691,
+      "tag": "0002_rare_the_anarchist",
+      "breakpoints": true
     }
   ]
 }

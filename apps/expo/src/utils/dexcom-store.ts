@@ -12,14 +12,11 @@ export interface DexcomTokens {
   refreshTokenCreated: number;
 }
 
-export const getDexcomTokens = async (): Promise<DexcomTokens | null> => {
-  const [accessToken, refreshToken, expiresAtStr, refreshTokenCreatedStr] =
-    await Promise.all([
-      SecureStore.getItemAsync(ACCESS_TOKEN_KEY),
-      SecureStore.getItemAsync(REFRESH_TOKEN_KEY),
-      SecureStore.getItemAsync(TOKEN_EXPIRY_KEY),
-      SecureStore.getItemAsync(REFRESH_TOKEN_CREATED_KEY),
-    ]);
+export const getDexcomTokens = (): DexcomTokens | null => {
+  const accessToken = SecureStore.getItem(ACCESS_TOKEN_KEY);
+  const refreshToken = SecureStore.getItem(REFRESH_TOKEN_KEY);
+  const expiresAtStr = SecureStore.getItem(TOKEN_EXPIRY_KEY);
+  const refreshTokenCreatedStr = SecureStore.getItem(REFRESH_TOKEN_CREATED_KEY);
 
   if (accessToken && refreshToken && expiresAtStr && refreshTokenCreatedStr) {
     return {
@@ -32,16 +29,14 @@ export const getDexcomTokens = async (): Promise<DexcomTokens | null> => {
   return null;
 };
 
-export const setDexcomTokens = async (tokens: DexcomTokens): Promise<void> => {
-  await Promise.all([
-    SecureStore.setItemAsync(ACCESS_TOKEN_KEY, tokens.accessToken),
-    SecureStore.setItemAsync(REFRESH_TOKEN_KEY, tokens.refreshToken),
-    SecureStore.setItemAsync(TOKEN_EXPIRY_KEY, tokens.expiresAt.toString()),
-    SecureStore.setItemAsync(
-      REFRESH_TOKEN_CREATED_KEY,
-      tokens.refreshTokenCreated.toString(),
-    ),
-  ]);
+export const setDexcomTokens = (tokens: DexcomTokens): void => {
+  SecureStore.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
+  SecureStore.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
+  SecureStore.setItem(TOKEN_EXPIRY_KEY, tokens.expiresAt.toString());
+  SecureStore.setItem(
+    REFRESH_TOKEN_CREATED_KEY,
+    tokens.refreshTokenCreated.toString(),
+  );
 };
 
 export const deleteDexcomTokens = async (): Promise<void> => {
@@ -53,33 +48,31 @@ export const deleteDexcomTokens = async (): Promise<void> => {
   ]);
 };
 
-export const isAccessTokenExpired = async (): Promise<boolean> => {
-  const expiresAtStr = await SecureStore.getItemAsync(TOKEN_EXPIRY_KEY);
+export const isAccessTokenExpired = (): boolean => {
+  const expiresAtStr = SecureStore.getItem(TOKEN_EXPIRY_KEY);
   if (!expiresAtStr) return true;
   const expiresAt = parseInt(expiresAtStr, 10);
   return Date.now() >= expiresAt;
 };
 
-export const isRefreshTokenExpired = async (): Promise<boolean> => {
-  const refreshTokenCreatedStr = await SecureStore.getItemAsync(
-    REFRESH_TOKEN_CREATED_KEY,
-  );
+export const isRefreshTokenExpired = (): boolean => {
+  const refreshTokenCreatedStr = SecureStore.getItem(REFRESH_TOKEN_CREATED_KEY);
   if (!refreshTokenCreatedStr) return true;
   const refreshTokenCreated = parseInt(refreshTokenCreatedStr, 10);
   const oneYearInMs = 365 * 24 * 60 * 60 * 1000;
   return Date.now() >= refreshTokenCreated + oneYearInMs;
 };
 
-export const updateDexcomTokens = async (
+export const updateDexcomTokens = (
   accessToken: string,
   refreshToken: string,
   expiresIn: number,
-): Promise<void> => {
+): void => {
   const now = Date.now();
   const expiresAt = now + expiresIn * 1000;
   const refreshTokenCreated = now;
 
-  await setDexcomTokens({
+  setDexcomTokens({
     accessToken,
     refreshToken,
     expiresAt,

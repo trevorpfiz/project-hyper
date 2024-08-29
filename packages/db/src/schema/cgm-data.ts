@@ -6,6 +6,8 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 import { createTable } from "./_table";
 import { Profile } from "./profile";
@@ -18,7 +20,7 @@ export const CGMData = createTable("cgm_data", {
   displayTime: timestamp("display_time", { withTimezone: true }).notNull(),
   transmitterId: varchar("transmitter_id", { length: 255 }),
   transmitterTicks: integer("transmitter_ticks").notNull(),
-  value: integer("value"),
+  glucoseValue: integer("glucose_value"),
   status: varchar("status", { length: 20 }),
   trend: varchar("trend", { length: 20 }),
   trendRate: doublePrecision("trend_rate"),
@@ -45,3 +47,24 @@ export const CGMDataRelations = relations(CGMData, ({ one }) => ({
     references: [Profile.id],
   }),
 }));
+
+// Schema for inserting CGM data
+export const insertCGMDataSchema = createInsertSchema(CGMData, {
+  glucoseValue: (schema) => schema.glucoseValue.positive(),
+  transmitterTicks: (schema) => schema.transmitterTicks.positive(),
+});
+
+// Schema for selecting CGM data
+export const selectCGMDataSchema = createSelectSchema(CGMData);
+
+// Create a type for CGMDataPoint based on the select schema
+export type CGMDataPoint = z.infer<typeof selectCGMDataSchema>;
+
+// Create a schema for the query input
+export const cgmDataQueryInputSchema = z.object({
+  startDate: z.string(),
+  endDate: z.string(),
+});
+
+// Type for the query input
+export type CGMDataQueryInput = z.infer<typeof cgmDataQueryInputSchema>;

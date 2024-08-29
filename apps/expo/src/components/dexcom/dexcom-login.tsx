@@ -7,11 +7,7 @@ import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { useWarmUpBrowser } from "~/hooks/use-warm-up-browser";
 import { api } from "~/utils/api";
-import {
-  deleteDexcomTokens,
-  getDexcomTokens,
-  updateDexcomTokens,
-} from "~/utils/dexcom-store";
+import { getDexcomTokens, updateDexcomTokens } from "~/utils/dexcom-store";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -37,17 +33,13 @@ const DexcomLogin: React.FC = () => {
   const dexcomAuthMutation = api.dexcom.authorize.useMutation();
 
   useEffect(() => {
-    const fetchTokens = async () => {
-      // Delete any existing tokens
-      // await deleteDexcomTokens();
+    // Uncomment the following line if you want to delete existing tokens on component mount
+    // void deleteDexcomTokens();
 
-      const storedTokens = await getDexcomTokens();
-      if (storedTokens) {
-        setTokens(storedTokens);
-      }
-    };
-
-    void fetchTokens();
+    const storedTokens = getDexcomTokens();
+    if (storedTokens) {
+      setTokens(storedTokens);
+    }
   }, []);
 
   const handleLogin = useCallback(async () => {
@@ -104,11 +96,18 @@ const DexcomLogin: React.FC = () => {
         const tokenData = await dexcomAuthMutation.mutateAsync({ code });
 
         // Store the tokens securely using the updated dexcom-store utility
-        await updateDexcomTokens(
+        updateDexcomTokens(
           tokenData.accessToken,
           tokenData.refreshToken,
           tokenData.expiresIn,
         );
+
+        // Update the local state
+        setTokens({
+          accessToken: tokenData.accessToken,
+          refreshToken: tokenData.refreshToken,
+          expiresAt: tokenData.expiresIn,
+        });
 
         Alert.alert("Success", "Successfully connected to Dexcom!");
         // TODO: Handle successful authentication (e.g., navigate to a new screen)
