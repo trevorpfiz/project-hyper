@@ -13,6 +13,8 @@ import { ZodError } from "zod";
 
 import { db } from "@hyper/db/client";
 
+import type { TokenData } from "./utils/dexcom";
+
 /**
  * 1. CONTEXT
  *
@@ -42,9 +44,24 @@ export const createTRPCContext = async (opts: {
   const source = opts.headers.get("x-trpc-source") ?? "unknown";
   console.log(">>> tRPC Request from", source, "by", user.data.user?.email);
 
+  // Handle Dexcom tokens
+  let dexcomTokens: TokenData | null = null;
+  const dexcomAccessToken = opts.headers.get("X-Dexcom-Access-Token");
+  const dexcomRefreshToken = opts.headers.get("X-Dexcom-Refresh-Token");
+  const dexcomExpiresAt = opts.headers.get("X-Dexcom-Expires-At");
+
+  if (dexcomAccessToken && dexcomRefreshToken && dexcomExpiresAt) {
+    dexcomTokens = {
+      accessToken: dexcomAccessToken,
+      refreshToken: dexcomRefreshToken,
+      expiresAt: parseInt(dexcomExpiresAt, 10),
+    };
+  }
+
   return {
     user: user.data.user,
     db,
+    dexcomTokens,
   };
 };
 
@@ -107,6 +124,33 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
+/** Reusable middleware that enforces users are logged in before running the procedure. */
+const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
+  if (!ctx.user?.id) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      // infers the `user` as non-nullable
+      user: ctx.user,
+    },
+  });
+});
+
+const enforceDexcomAuth = t.middleware(({ ctx, next }) => {
+  if (!ctx.dexcomTokens) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Dexcom authentication required",
+    });
+  }
+  return next({
+    ctx: {
+      dexcomTokens: ctx.dexcomTokens,
+    },
+  });
+});
+
 /**
  * Public (unauthed) procedure
  *
@@ -126,14 +170,8 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
-  .use(({ ctx, next }) => {
-    if (!ctx.user?.id) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return next({
-      ctx: {
-        // infers the `user` as non-nullable
-        user: ctx.user,
-      },
-    });
-  });
+  .use(enforceUserIsAuthed);
+export const protectedDexcomProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(enforceUserIsAuthed)
+  .use(enforceDexcomAuth);

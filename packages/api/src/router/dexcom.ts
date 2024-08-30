@@ -3,20 +3,21 @@ import { z } from "zod";
 
 import { and, desc, eq, gte, lte } from "@hyper/db";
 import { CGMData } from "@hyper/db/schema";
-import { EGVsResponseSchema } from "@hyper/validators/dexcom";
-
-import type { TokenData } from "../utils/dexcom";
-import { protectedProcedure, publicProcedure } from "../trpc";
 import {
+  DevicesResponseSchema,
+  EGVsResponseSchema,
+} from "@hyper/validators/dexcom";
+
+import { protectedDexcomProcedure, protectedProcedure } from "../trpc";
+import {
+  DateRangeSchema,
   DEXCOM_SANDBOX_BASE_URL,
   exchangeAuthorizationCode,
   fetchDexcomData,
-  refreshAccessToken,
-  refreshTokenIfNeeded,
 } from "../utils/dexcom";
 
 export const dexcomRouter = {
-  authorize: publicProcedure
+  authorize: protectedProcedure
     .input(z.object({ code: z.string() }))
     .mutation(async ({ input }) => {
       const tokenData = await exchangeAuthorizationCode(input.code);
@@ -27,42 +28,17 @@ export const dexcomRouter = {
       };
     }),
 
-  refreshToken: publicProcedure
-    .input(z.object({ refreshToken: z.string() }))
-    .mutation(async ({ input }) => {
-      const tokenData = await refreshAccessToken(input.refreshToken);
-      return {
-        accessToken: tokenData.access_token,
-        refreshToken: tokenData.refresh_token,
-        expiresIn: tokenData.expires_in,
-      };
-    }),
-
-  fetchAndStoreEGVs: protectedProcedure
-    .input(
-      z.object({
-        accessToken: z.string(),
-        refreshToken: z.string(),
-        tokenExpiresAt: z.number(),
-        startDate: z.string(),
-        endDate: z.string(),
-      }),
-    )
+  fetchAndStoreEGVs: protectedDexcomProcedure
+    .input(DateRangeSchema)
     .mutation(async ({ input, ctx }) => {
-      let tokens: TokenData = {
-        accessToken: input.accessToken,
-        refreshToken: input.refreshToken,
-        expiresAt: input.tokenExpiresAt,
-      };
-
-      tokens = await refreshTokenIfNeeded(tokens);
+      const { dexcomTokens } = ctx;
 
       const url = `${DEXCOM_SANDBOX_BASE_URL}/v3/users/self/egvs?startDate=${input.startDate}&endDate=${input.endDate}`;
 
       // Fetch and validate the response
       const validatedData = await fetchDexcomData(
         url,
-        tokens.accessToken,
+        dexcomTokens.accessToken,
         EGVsResponseSchema,
       );
 
@@ -88,19 +64,11 @@ export const dexcomRouter = {
       // Perform bulk insert
       await ctx.db.insert(CGMData).values(cgmDataToInsert);
 
-      return {
-        success: true,
-        newTokens: tokens,
-      };
+      return { success: true };
     }),
 
   getStoredEGVs: protectedProcedure
-    .input(
-      z.object({
-        startDate: z.string(),
-        endDate: z.string(),
-      }),
-    )
+    .input(DateRangeSchema)
     .query(async ({ input, ctx }) => {
       const storedData = await ctx.db
         .select()
@@ -116,4 +84,18 @@ export const dexcomRouter = {
 
       return storedData;
     }),
+
+  fetchDevices: protectedDexcomProcedure.query(async ({ ctx }) => {
+    const { dexcomTokens } = ctx;
+
+    const url = `${DEXCOM_SANDBOX_BASE_URL}/v3/users/self/devices`;
+
+    const validatedData = await fetchDexcomData(
+      url,
+      dexcomTokens.accessToken,
+      DevicesResponseSchema,
+    );
+
+    return { devices: validatedData.records };
+  }),
 } satisfies TRPCRouterRecord;

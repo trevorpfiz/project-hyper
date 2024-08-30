@@ -5,6 +5,7 @@ import {
   useUser,
 } from "@supabase/auth-helpers-react";
 
+import DexcomDevicesList from "~/components/dexcom/dexcom-devices";
 import { DexcomLogin } from "~/components/dexcom/dexcom-login";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { Button } from "~/components/ui/button";
@@ -40,6 +41,8 @@ export default function AccountScreen() {
       {user?.id && <SignOut />}
 
       <DexcomLogin />
+
+      <DexcomDevicesList />
     </View>
   );
 }

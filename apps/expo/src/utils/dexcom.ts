@@ -14,22 +14,14 @@ export const TokenDataSchema = z.object({
 });
 export type TokenData = z.infer<typeof TokenDataSchema>;
 
-export const DateRangeSchema = z.object({
-  startDate: z.string(),
-  endDate: z.string(),
-});
-export type DateRange = z.infer<typeof DateRangeSchema>;
-
 export const DEXCOM_SANDBOX_BASE_URL = "https://sandbox-api.dexcom.com";
-export const DEXCOM_BASE_URL = "https://api.dexcom.com";
 
-export async function exchangeAuthorizationCode(code: string) {
+export async function refreshAccessToken(refreshToken: string) {
   return exchangeToken({
     client_id: process.env.NEXT_PUBLIC_DEXCOM_CLIENT_ID ?? "",
     client_secret: process.env.DEXCOM_CLIENT_SECRET ?? "",
-    code,
-    grant_type: "authorization_code",
-    redirect_uri: "expo:///(app)/(tabs)/account",
+    refresh_token: refreshToken,
+    grant_type: "refresh_token",
   });
 }
 
@@ -80,51 +72,18 @@ export async function exchangeToken(params: {
   return result.data;
 }
 
-/**
- * Fetches and validates data from the Dexcom API.
- * @param url - The API endpoint URL.
- * @param accessToken - The OAuth access token.
- * @param schema - The Zod schema to validate the response against.
- * @returns The validated data with the correct TypeScript type.
- * @throws {TRPCError} Throws an error if the fetch fails or validation fails.
- */
-export async function fetchDexcomData<T extends z.ZodTypeAny>(
-  url: string,
-  accessToken: string,
-  schema: T,
-): Promise<z.infer<T>> {
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  if (!response.ok) {
-    if (response.status === 401) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "Access token expired",
-      });
-    }
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to fetch data from Dexcom",
-    });
+export async function refreshTokenIfNeeded(
+  tokens: TokenData,
+): Promise<TokenData | null> {
+  const now = Date.now();
+  if (tokens.expiresAt - now < 300000) {
+    // 5 minutes
+    const refreshedData = await refreshAccessToken(tokens.refreshToken);
+    return {
+      accessToken: refreshedData.access_token,
+      refreshToken: refreshedData.refresh_token,
+      expiresAt: now + refreshedData.expires_in * 1000,
+    };
   }
-
-  const data: unknown = await response.json();
-  console.log("data", data);
-
-  // Validate the data against the provided schema
-  const result = schema.safeParse(data);
-  if (!result.success) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: `Failed to parse data from Dexcom: ${result.error.message}`,
-    });
-  }
-
-  // Return the validated data with the correct type
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return result.data as z.infer<T>;
+  return null;
 }

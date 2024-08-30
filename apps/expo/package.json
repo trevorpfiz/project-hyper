@@ -87,6 +87,7 @@
     "lucide-react-native": "^0.436.0",
     "nativewind": "4.0.36",
     "openai": "^4.56.0",
+    "p-queue": "^8.0.1",
     "react": "catalog:react18",
     "react-dom": "catalog:react18",
     "react-hook-form": "^7.52.2",
@@ -116,6 +117,7 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "catalog:tailwind",
     "tailwindcss-animate": "catalog:tailwind",
+    "trpc-token-refresh-link": "^0.5.0",
     "victory-native": "^41.1.0",
     "zeego": "^1.10.0",
     "zustand": "^4.5.5"

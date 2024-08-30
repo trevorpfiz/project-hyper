@@ -8,6 +8,8 @@ import superjson from "superjson";
 import type { AppRouter } from "@hyper/api";
 
 import { getBaseUrl } from "~/utils/base-url";
+import { getDexcomTokens } from "~/utils/dexcom-store";
+import { tokenRefreshLink } from "~/utils/token-refresh";
 
 /**
  * A set of typesafe hooks for consuming your API.
@@ -32,6 +34,7 @@ export const TRPCProvider = (props: { children: React.ReactNode }) => {
             (opts.direction === "down" && opts.result instanceof Error),
           colorMode: "ansi",
         }),
+        tokenRefreshLink,
         httpBatchLink({
           transformer: superjson,
           url: `${getBaseUrl()}/api/trpc`,
@@ -42,6 +45,17 @@ export const TRPCProvider = (props: { children: React.ReactNode }) => {
             const { data } = await supabase.auth.getSession();
             const token = data.session?.access_token;
             if (token) headers.set("Authorization", token);
+
+            // Add Dexcom tokens to headers
+            const dexcomTokens = getDexcomTokens();
+            if (dexcomTokens) {
+              headers.set("X-Dexcom-Access-Token", dexcomTokens.accessToken);
+              headers.set("X-Dexcom-Refresh-Token", dexcomTokens.refreshToken);
+              headers.set(
+                "X-Dexcom-Expires-At",
+                dexcomTokens.expiresAt.toString(),
+              );
+            }
 
             return Object.fromEntries(headers);
           },

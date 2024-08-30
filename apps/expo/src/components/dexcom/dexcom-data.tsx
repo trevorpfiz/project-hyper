@@ -4,7 +4,6 @@ import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { api } from "~/utils/api";
-import { getDexcomTokens, updateDexcomTokens } from "~/utils/dexcom-store";
 
 const DexcomCGMData: React.FC = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -26,31 +25,7 @@ const DexcomCGMData: React.FC = () => {
   const handleFetchData = async () => {
     setIsFetching(true);
     try {
-      const tokens = getDexcomTokens();
-      if (!tokens) {
-        Alert.alert(
-          "Error",
-          "No Dexcom tokens found. Please connect to Dexcom first.",
-        );
-        return;
-      }
-
-      const result = await fetchAndStoreEGVsMutation.mutateAsync({
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        tokenExpiresAt: tokens.expiresAt,
-        startDate,
-        endDate,
-      });
-
-      if (result.newTokens) {
-        updateDexcomTokens(
-          result.newTokens.accessToken,
-          result.newTokens.refreshToken,
-          result.newTokens.expiresAt,
-        );
-      }
-
+      await fetchAndStoreEGVsMutation.mutateAsync(queryInput);
       await refetchStoredData();
       Alert.alert("Success", "CGM data fetched and stored successfully.");
     } catch (error) {
