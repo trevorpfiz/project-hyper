@@ -66,10 +66,10 @@ export const isRefreshTokenExpired = (): boolean => {
 export const updateDexcomTokens = (
   accessToken: string,
   refreshToken: string,
-  expiresIn: number,
+  expiresIn: number, // This is in seconds
 ): void => {
   const now = Date.now();
-  const expiresAt = now + expiresIn * 1000;
+  const expiresAt = now + expiresIn * 1000; // Convert seconds to milliseconds
   const refreshTokenCreated = now;
 
   setDexcomTokens({

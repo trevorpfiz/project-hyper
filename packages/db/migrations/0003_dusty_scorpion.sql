@@ -1,0 +1,1 @@
+ALTER TABLE "hyper_profile" ADD COLUMN "last_synced_time" timestamp with time zone;

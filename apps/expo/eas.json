@@ -13,12 +13,7 @@
     "development": {
       "extends": "base",
       "developmentClient": true,
-      "distribution": "internal",
-      "env": {
-        "EXPO_PUBLIC_SUPABASE_URL": "https://dnnqvouwzxzejzkvmqfk.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRubnF2b3V3enh6ZWp6a3ZtcWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjI0NTY0NjQsImV4cCI6MjAzODAzMjQ2NH0.I12jE7YC7h7B1qu1zYsBgzu3LQFj8CXNolevtxYpxU0",
-        "EXPO_PUBLIC_FASTAPI_URL": "http://localhost:8000"
-      }
+      "distribution": "internal"
     },
     "preview": {
       "extends": "base",

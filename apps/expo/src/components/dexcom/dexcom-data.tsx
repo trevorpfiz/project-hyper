@@ -1,75 +1,102 @@
-import React, { useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
+import { useEffect } from "react";
+import { Alert, View } from "react-native";
 
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
+import { useSyncStore } from "~/stores/sync-store";
 import { api } from "~/utils/api";
 
 const DexcomCGMData: React.FC = () => {
-  const [isFetching, setIsFetching] = useState(false);
+  const utils = api.useUtils();
+  const { lastSyncedTime, setLastSyncedTime } = useSyncStore();
 
-  const fetchAndStoreEGVsMutation = api.dexcom.fetchAndStoreEGVs.useMutation();
+  const fetchDataRangeQuery = api.dexcom.fetchDataRange.useQuery({});
 
-  const today = new Date();
-  const startDate = new Date(today.setHours(0, 0, 0, 0)).toISOString();
-  const endDate = new Date().toISOString();
+  const fetchAndStoreEGVsMutation = api.dexcom.fetchAndStoreEGVs.useMutation({
+    async onSuccess(data) {
+      if (data.recordsInserted > 0) {
+        Alert.alert(
+          "Success",
+          `${data.recordsInserted} CGM records fetched and stored successfully.`,
+        );
+        await utils.dexcom.getStoredEGVs.invalidate();
+        if (data.latestEGVTimestamp) {
+          setLastSyncedTime(new Date(data.latestEGVTimestamp));
+        }
+      } else {
+        Alert.alert("Info", "No new CGM data available.");
+      }
+    },
+  });
 
-  const queryInput = { startDate, endDate };
+  useEffect(() => {
+    if (fetchDataRangeQuery.data) {
+      console.log("Data range fetched:", fetchDataRangeQuery.data);
+    }
+  }, [fetchDataRangeQuery.data]);
 
-  const {
-    data: cgmData,
-    isLoading: isLoadingStoredData,
-    refetch: refetchStoredData,
-  } = api.dexcom.getStoredEGVs.useQuery(queryInput);
+  const handleFetchData = () => {
+    if (fetchDataRangeQuery.data?.egvs) {
+      const augustStart = new Date("2024-08-01T00:00:00Z");
+      const augustEnd = new Date("2024-08-31T23:59:59Z");
 
-  const handleFetchData = async () => {
-    setIsFetching(true);
-    try {
-      await fetchAndStoreEGVsMutation.mutateAsync(queryInput);
-      await refetchStoredData();
-      Alert.alert("Success", "CGM data fetched and stored successfully.");
-    } catch (error) {
-      console.error("Error fetching and storing CGM data:", error);
-      Alert.alert(
-        "Error",
-        "Failed to fetch and store CGM data. Please try again.",
+      const dataRangeStart = new Date(
+        fetchDataRangeQuery.data.egvs.start.systemTime,
       );
-    } finally {
-      setIsFetching(false);
+      const dataRangeEnd = new Date(
+        fetchDataRangeQuery.data.egvs.end.systemTime,
+      );
+
+      const startDate =
+        dataRangeStart > augustStart
+          ? dataRangeStart.toISOString()
+          : augustStart.toISOString();
+      const endDate =
+        dataRangeEnd < augustEnd
+          ? dataRangeEnd.toISOString()
+          : augustEnd.toISOString();
+
+      const queryInput = {
+        startDate,
+        endDate,
+      };
+
+      fetchAndStoreEGVsMutation.mutate(queryInput);
+    } else {
+      Alert.alert("Error", "Unable to fetch data range. Please try again.");
     }
   };
 
-  if (isLoadingStoredData) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-        <Text>Loading CGM data...</Text>
-      </View>
-    );
+  if (fetchDataRangeQuery.isPending) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (fetchDataRangeQuery.isError) {
+    return <Text>Error: {fetchDataRangeQuery.error.message}</Text>;
   }
 
   return (
-    <ScrollView style={{ padding: 16 }}>
-      <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 16 }}>
-        Today's CGM Data
-      </Text>
-      <Button onPress={handleFetchData} disabled={isFetching}>
-        <Text>{isFetching ? "Fetching..." : "Fetch New CGM Data"}</Text>
+    <View>
+      <Button
+        onPress={handleFetchData}
+        disabled={fetchAndStoreEGVsMutation.isPending}
+      >
+        <Text>
+          {fetchAndStoreEGVsMutation.isPending
+            ? "Fetching..."
+            : "Fetch August 2024 CGM Data"}
+        </Text>
       </Button>
-      {!cgmData || cgmData.length === 0 ? (
-        <Text>No CGM data available for today.</Text>
-      ) : (
-        cgmData.map((dataPoint) => (
-          <View key={dataPoint.id} style={{ marginBottom: 12 }}>
-            <Text>
-              Time: {new Date(dataPoint.displayTime).toLocaleTimeString()}
-            </Text>
-            <Text>Glucose Value: {dataPoint.glucoseValue} mg/dL</Text>
-            <Text>Trend: {dataPoint.trend}</Text>
-          </View>
-        ))
-      )}
-    </ScrollView>
+      {fetchAndStoreEGVsMutation.isError ? (
+        <Text>
+          An error occurred: {fetchAndStoreEGVsMutation.error.message}
+        </Text>
+      ) : null}
+      <Text>
+        Last Synced:{" "}
+        {lastSyncedTime ? lastSyncedTime.toLocaleString() : "Never"}
+      </Text>
+    </View>
   );
 };
 

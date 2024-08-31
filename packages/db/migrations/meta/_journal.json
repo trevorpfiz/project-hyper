@@ -22,6 +22,13 @@
       "when": 1724914079691,
       "tag": "0002_rare_the_anarchist",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1724989648181,
+      "tag": "0003_dusty_scorpion",
+      "breakpoints": true
     }
   ]
 }

@@ -1,10 +1,11 @@
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import {
   useSessionContext,
   useSupabaseClient,
   useUser,
 } from "@supabase/auth-helpers-react";
 
+import DexcomCGMData from "~/components/dexcom/dexcom-data";
 import DexcomDevicesList from "~/components/dexcom/dexcom-devices";
 import { DexcomLogin } from "~/components/dexcom/dexcom-login";
 import { ThemeToggle } from "~/components/theme-toggle";
@@ -36,13 +37,15 @@ export default function AccountScreen() {
   };
 
   return (
-    <View>
+    <ScrollView>
       <Text>Account Screen</Text>
       {user?.id && <SignOut />}
 
       <DexcomLogin />
 
+      <DexcomCGMData />
+
       <DexcomDevicesList />
-    </View>
+    </ScrollView>
   );
 }

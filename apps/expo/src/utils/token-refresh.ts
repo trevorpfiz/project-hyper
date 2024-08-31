@@ -4,13 +4,8 @@ import PQueue from "p-queue";
 
 import type { AppRouter } from "@hyper/api";
 
-import type { DexcomTokens } from "~/utils/dexcom-store";
-import { refreshTokenIfNeeded } from "~/utils/dexcom";
-import {
-  deleteDexcomTokens,
-  getDexcomTokens,
-  setDexcomTokens,
-} from "~/utils/dexcom-store";
+import { getDexcomTokens, updateDexcomTokens } from "~/utils/dexcom-store";
+import { helperClient } from "~/utils/helper-client";
 
 export const RENEW_MS_BEFORE_EXPIRATION = 5000; // 5 seconds
 
@@ -23,26 +18,28 @@ export const tokenRefreshLink: TRPCLink<AppRouter> = () => {
       void queue.add(async () => {
         if (op.path.startsWith("dexcom.")) {
           const tokens = getDexcomTokens();
+
           if (
             tokens &&
             Date.now() >= tokens.expiresAt - RENEW_MS_BEFORE_EXPIRATION
           ) {
             try {
-              const newTokens = await refreshTokenIfNeeded(tokens);
-              if (newTokens !== null) {
-                const updatedTokens: DexcomTokens = {
-                  accessToken: newTokens.accessToken,
-                  refreshToken: newTokens.refreshToken,
-                  expiresAt: newTokens.expiresAt,
-                  refreshTokenCreated: Date.now(), // Set current time as refresh token creation time
-                };
-                setDexcomTokens(updatedTokens);
-                // Update the operation context with new tokens
-                op.context.dexcomTokens = updatedTokens;
-              }
+              const newTokens =
+                await helperClient.auth.refreshDexcomToken.mutate();
+
+              const updatedTokens = {
+                ...newTokens,
+              };
+
+              updateDexcomTokens(
+                updatedTokens.accessToken,
+                updatedTokens.refreshToken,
+                updatedTokens.expiresIn,
+              );
+              // Update the operation context with new tokens
+              op.context.dexcomTokens = updatedTokens;
             } catch (error) {
               console.error("Error refreshing Dexcom token:", error);
-              await deleteDexcomTokens();
               throw error; // Propagate the error
             }
           }

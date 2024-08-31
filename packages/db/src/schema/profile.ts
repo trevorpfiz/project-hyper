@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { uuid, varchar } from "drizzle-orm/pg-core";
+import { timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { createTable } from "./_table";
 import { Users } from "./auth";
@@ -13,6 +13,7 @@ export const Profile = createTable("profile", {
   name: varchar("name", { length: 256 }).notNull(),
   image: varchar("image", { length: 256 }),
   email: varchar("email", { length: 256 }),
+  lastSyncedTime: timestamp("last_synced_time", { withTimezone: true }),
 });
 
 export const ProfileRelations = relations(Profile, ({ many }) => ({

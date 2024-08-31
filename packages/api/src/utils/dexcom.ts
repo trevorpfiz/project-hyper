@@ -108,7 +108,7 @@ export async function fetchDexcomData<T extends z.ZodTypeAny>(
     }
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to fetch data from Dexcom",
+      message: `${response.statusText} (${response.status})`,
     });
   }
 
@@ -127,4 +127,13 @@ export async function fetchDexcomData<T extends z.ZodTypeAny>(
   // Return the validated data with the correct type
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return result.data as z.infer<T>;
+}
+
+export async function refreshAccessToken(refreshToken: string) {
+  return exchangeToken({
+    client_id: process.env.NEXT_PUBLIC_DEXCOM_CLIENT_ID ?? "",
+    client_secret: process.env.DEXCOM_CLIENT_SECRET ?? "",
+    refresh_token: refreshToken,
+    grant_type: "refresh_token",
+  });
 }

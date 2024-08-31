@@ -1,18 +1,28 @@
 import { z } from "zod";
 
-// Define the DataRangeMoment schema
+const customDateTimeSchema = z.string().refine(
+  (value) => {
+    // This regex allows ISO 8601 format with or without milliseconds and with or without UTC offset
+    const regex =
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?(Z|[+-]\d{2}:\d{2})?$/;
+    return regex.test(value);
+  },
+  {
+    message:
+      "Invalid datetime format. Expected ISO 8601 format (with or without milliseconds, with or without UTC offset).",
+  },
+);
+
 const DataRangeMomentSchema = z.object({
-  systemTime: z.string().datetime(),
-  displayTime: z.string().datetime(),
+  systemTime: customDateTimeSchema,
+  displayTime: customDateTimeSchema,
 });
 
-// Define the DataRangeStartAndEnd schema
 const DataRangeStartAndEndSchema = z.object({
   start: DataRangeMomentSchema,
   end: DataRangeMomentSchema,
 });
 
-// Define the DataRange response schema
 const DataRangeResponseSchema = z.object({
   recordType: z.literal("dataRange"),
   recordVersion: z.string(),
