@@ -3,12 +3,12 @@ import { Alert, View } from "react-native";
 
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
-import { useSyncStore } from "~/stores/sync-store";
+import { useGlucoseStore } from "~/stores/glucose-store";
 import { api } from "~/utils/api";
 
 const DexcomCGMData: React.FC = () => {
   const utils = api.useUtils();
-  const { lastSyncedTime, setLastSyncedTime } = useSyncStore();
+  const { lastSyncedTime, setLastSyncedTime } = useGlucoseStore();
 
   const fetchDataRangeQuery = api.dexcom.fetchDataRange.useQuery({});
 

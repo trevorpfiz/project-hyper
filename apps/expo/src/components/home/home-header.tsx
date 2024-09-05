@@ -14,7 +14,7 @@ import { CALENDAR_THEME } from "~/lib/constants";
 import { Bell } from "~/lib/icons/bell";
 import { Calendar } from "~/lib/icons/calendar";
 import { useColorScheme } from "~/lib/use-color-scheme";
-import { useDateStore } from "~/stores/data-store";
+import { useDateStore } from "~/stores/date-store";
 
 export default function HomeHeader() {
   const { selectedDate, isCalendarOpen, setIsCalendarOpen } = useDateStore();

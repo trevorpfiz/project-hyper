@@ -26,6 +26,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     config: {
       usesNonExemptEncryption: false,
     },
+    infoPlist: {
+      UIBackgroundModes: ["fetch", "remote-notification", "processing"],
+    },
   },
   android: {
     userInterfaceStyle: "automatic",

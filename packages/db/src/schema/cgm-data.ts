@@ -34,6 +34,7 @@ export const CGMData = createTable("cgm_data", {
   profileId: uuid("profile_id")
     .notNull()
     .references(() => Profile.id),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
     mode: "date",

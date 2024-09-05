@@ -1,6 +1,5 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
-import { format } from "date-fns";
 import { z } from "zod";
 
 import { and, desc, eq, gte, lte } from "@hyper/db";
@@ -12,12 +11,14 @@ import {
 } from "@hyper/validators/dexcom";
 
 import { protectedDexcomProcedure, protectedProcedure } from "../trpc";
+import { formatDexcomDate, getDateChunks } from "../utils";
 import {
   DateRangeSchema,
   DEXCOM_SANDBOX_BASE_URL,
   exchangeAuthorizationCode,
   fetchDexcomData,
 } from "../utils/dexcom";
+import { conflictUpdateAllExcept } from "../utils/drizzle";
 
 export const dexcomRouter = {
   authorize: protectedProcedure
@@ -31,91 +32,99 @@ export const dexcomRouter = {
       };
     }),
 
-  fetchAndStoreEGVs: protectedDexcomProcedure
-    .input(DateRangeSchema)
-    .mutation(async ({ input, ctx }) => {
+  fetchDataRange: protectedDexcomProcedure
+    .input(z.object({ lastSyncTime: z.string().datetime().optional() }))
+    .query(async ({ input, ctx }) => {
       const { dexcomTokens } = ctx;
 
-      console.log("Original input date range:", input);
+      const query = new URLSearchParams();
+      if (input.lastSyncTime) {
+        query.append("lastSyncTime", input.lastSyncTime);
+      }
 
-      // Format dates to remove milliseconds and use the correct format
-      const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return format(date, "yyyy-MM-dd'T'HH:mm:ss");
-      };
+      const url = `${DEXCOM_SANDBOX_BASE_URL}/v3/users/self/dataRange${query.toString() ? `?${query.toString()}` : ""}`;
 
-      const formattedStartDate = formatDate(input.startDate);
-      const formattedEndDate = formatDate(input.endDate);
-
-      console.log("Formatted date range:", {
-        formattedStartDate,
-        formattedEndDate,
-      });
-
-      // Construct query parameters
-      const query = new URLSearchParams({
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-      }).toString();
-
-      const url = `${DEXCOM_SANDBOX_BASE_URL}/v3/users/self/egvs?${query}`;
-
-      console.log("Fetching data from:", url);
-
-      // Fetch and validate the response
       const validatedData = await fetchDexcomData(
         url,
         dexcomTokens.accessToken,
-        EGVsResponseSchema,
+        DataRangeResponseSchema,
       );
 
-      // Prepare bulk insert data
-      const cgmDataToInsert = validatedData.records.map((egv) => ({
-        dexcomUserId: validatedData.userId,
-        recordId: egv.recordId,
-        systemTime: new Date(egv.systemTime),
-        displayTime: new Date(egv.displayTime),
-        transmitterId: egv.transmitterId,
-        transmitterTicks: egv.transmitterTicks,
-        glucoseValue: egv.value,
-        status: egv.status,
-        trend: egv.trend,
-        trendRate: egv.trendRate,
-        unit: egv.unit,
-        rateUnit: egv.rateUnit,
-        displayDevice: egv.displayDevice,
-        transmitterGeneration: egv.transmitterGeneration,
-        profileId: ctx.user.id,
-      }));
+      return validatedData;
+    }),
 
-      if (cgmDataToInsert.length === 0 || !cgmDataToInsert[0]) {
-        return {
-          recordsInserted: 0,
-          dateRange: null,
-          latestEGVTimestamp: null,
-        };
+  fetchAndStoreEGVs: protectedDexcomProcedure
+    .input(DateRangeSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { dexcomTokens, db } = ctx;
+
+      const chunks = getDateChunks(input.startDate, input.endDate);
+      let totalRecordsInserted = 0;
+      let latestEGVTimestamp = null;
+
+      for (const chunk of chunks) {
+        const query = new URLSearchParams({
+          startDate: formatDexcomDate(chunk.start),
+          endDate: formatDexcomDate(chunk.end),
+        }).toString();
+
+        const url = `${DEXCOM_SANDBOX_BASE_URL}/v3/users/self/egvs?${query}`;
+        // Fetch and validate the response
+        const validatedData = await fetchDexcomData(
+          url,
+          dexcomTokens.accessToken,
+          EGVsResponseSchema,
+        );
+
+        const cgmDataToUpsert = validatedData.records.map((egv) => ({
+          dexcomUserId: validatedData.userId,
+          recordId: egv.recordId,
+          systemTime: new Date(egv.systemTime),
+          displayTime: new Date(egv.displayTime),
+          transmitterId: egv.transmitterId,
+          transmitterTicks: egv.transmitterTicks,
+          glucoseValue: egv.value,
+          status: egv.status,
+          trend: egv.trend,
+          trendRate: egv.trendRate,
+          unit: egv.unit,
+          rateUnit: egv.rateUnit,
+          displayDevice: egv.displayDevice,
+          transmitterGeneration: egv.transmitterGeneration,
+          profileId: ctx.user.id,
+        }));
+
+        // Use an upsert operation to handle potential duplicates
+        const result = await db
+          .insert(CGMData)
+          .values(cgmDataToUpsert)
+          .onConflictDoUpdate({
+            target: CGMData.recordId,
+            set: conflictUpdateAllExcept(CGMData, [
+              "id",
+              "recordId",
+              "dexcomUserId",
+              "createdAt",
+              "updatedAt",
+            ]),
+          })
+          .returning();
+        const recordsAffected = result.length;
+        totalRecordsInserted += recordsAffected;
+
+        const lastResult = result[result.length - 1];
+        if (lastResult) {
+          latestEGVTimestamp = lastResult.systemTime.toISOString();
+        }
       }
 
-      // Perform bulk insert
-      await ctx.db.insert(CGMData).values(cgmDataToInsert);
-
-      // Calculate the actual date range of inserted data
-      const actualStartDate = cgmDataToInsert.reduce(
-        (min, egv) => (egv.systemTime < min ? egv.systemTime : min),
-        cgmDataToInsert[0].systemTime,
-      );
-      const actualEndDate = cgmDataToInsert.reduce(
-        (max, egv) => (egv.systemTime > max ? egv.systemTime : max),
-        cgmDataToInsert[0].systemTime,
-      );
-
       return {
-        recordsInserted: cgmDataToInsert.length,
+        recordsInserted: totalRecordsInserted,
         dateRange: {
-          start: actualStartDate.toISOString(),
-          end: actualEndDate.toISOString(),
+          start: input.startDate,
+          end: input.endDate,
         },
-        latestEGVTimestamp: actualEndDate.toISOString(),
+        latestEGVTimestamp,
       };
     }),
 
@@ -150,27 +159,6 @@ export const dexcomRouter = {
 
     return { devices: validatedData.records };
   }),
-
-  fetchDataRange: protectedDexcomProcedure
-    .input(z.object({ lastSyncTime: z.string().datetime().optional() }))
-    .query(async ({ input, ctx }) => {
-      const { dexcomTokens } = ctx;
-
-      const query = new URLSearchParams();
-      if (input.lastSyncTime) {
-        query.append("lastSyncTime", input.lastSyncTime);
-      }
-
-      const url = `${DEXCOM_SANDBOX_BASE_URL}/v3/users/self/dataRange${query.toString() ? `?${query.toString()}` : ""}`;
-
-      const validatedData = await fetchDexcomData(
-        url,
-        dexcomTokens.accessToken,
-        DataRangeResponseSchema,
-      );
-
-      return validatedData;
-    }),
 
   syncEGVs: protectedDexcomProcedure.mutation(async ({ ctx }) => {
     const { dexcomTokens, user, db } = ctx;

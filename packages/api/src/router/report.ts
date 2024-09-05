@@ -99,7 +99,7 @@ export const reportRouter = {
 
       const [r] = await ctx.db
         .delete(Report)
-        .where(eq(Report.id, id))
+        .where(and(eq(Report.id, id), eq(Report.profileId, userId)))
         .returning();
 
       return { report: r };

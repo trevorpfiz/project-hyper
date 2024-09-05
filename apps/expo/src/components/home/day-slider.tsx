@@ -8,7 +8,7 @@ import { Text } from "~/components/ui/text";
 import { mockScoresData } from "~/data/scores";
 import { useColorScheme } from "~/lib/use-color-scheme";
 import { cn, getScoreColors } from "~/lib/utils";
-import { useDateStore } from "~/stores/data-store";
+import { useDateStore } from "~/stores/date-store";
 
 const screenWidth = Dimensions.get("window").width;
 // IMPORTANT: w-16 = 4rem = 14 (default rem value in nativewind) * 4 = 56

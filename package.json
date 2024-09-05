@@ -24,9 +24,9 @@
   },
   "devDependencies": {
     "@hyper/prettier-config": "workspace:*",
-    "@turbo/gen": "^2.0.14",
+    "@turbo/gen": "^2.1.1",
     "prettier": "catalog:",
-    "turbo": "^2.0.14",
+    "turbo": "^2.1.1",
     "typescript": "catalog:"
   },
   "prettier": "@hyper/prettier-config"

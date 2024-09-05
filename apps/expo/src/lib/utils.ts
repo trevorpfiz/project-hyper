@@ -8,6 +8,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Dates
 export const getFormattedDate = () => {
   const today = new Date();
   const year = today.getFullYear();
@@ -31,11 +32,12 @@ export const getFormattedDateTime = () => {
   return `${month}/${day}/${year} ${hours}:${minutes} ${ampm}`;
 };
 
-export function getScoreColors(score: number, isDark: boolean) {
+// Glucose
+export function getGlucoseRangeColors(timeInRange: number, isDark: boolean) {
   const theme = isDark ? CALENDAR_THEME.dark : CALENDAR_THEME.light;
 
-  if (score >= 70) return theme.good;
-  if (score >= 50) return theme.ok;
+  if (timeInRange >= 70) return theme.good;
+  if (timeInRange >= 50) return theme.ok;
   return theme.bad;
 }
 
