@@ -2,9 +2,10 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import type { TimeInRanges } from "@hyper/db/schema";
+import type { NewRecapParams, TimeInRanges } from "@hyper/db/schema";
 import { and, desc, eq, gte, lte } from "@hyper/db";
 import {
+  CGMData,
   DailyRecap,
   insertRecapParams,
   updateRecapParams,
@@ -12,6 +13,15 @@ import {
 
 import { protectedProcedure } from "../trpc";
 import { DateRangeSchema } from "../utils/dexcom";
+
+import "../utils/";
+
+import { conflictUpdateAllExcept } from "../utils/drizzle";
+import {
+  calculateAverageGlucose,
+  calculateGlucoseVariability,
+  calculateTimeInRanges,
+} from "../utils/glucose";
 
 export const recapRouter = {
   getDailyRecaps: protectedProcedure
@@ -42,6 +52,105 @@ export const recapRouter = {
 
     return row;
   }),
+
+  calculateAndStoreRecapsForRange: protectedProcedure
+    .input(DateRangeSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { startDate, endDate } = input;
+      const userId = ctx.user.id;
+
+      // Fetch EGVs for the date range
+      const storedEGVs = await ctx.db
+        .select()
+        .from(CGMData)
+        .where(
+          and(
+            gte(CGMData.displayTime, new Date(startDate)),
+            lte(CGMData.displayTime, new Date(endDate)),
+            eq(CGMData.profileId, userId),
+          ),
+        )
+        .orderBy(desc(CGMData.displayTime));
+
+      // Group EGVs by date
+      const egvsByDate = storedEGVs.reduce(
+        (acc, egv) => {
+          if (egv.glucoseValue !== null) {
+            const date =
+              new Date(egv.displayTime).toISOString().split("T")[0] ?? "";
+            if (!acc[date]) {
+              acc[date] = [];
+            }
+            acc[date].push({
+              value: egv.glucoseValue,
+              timestamp: egv.displayTime,
+            });
+          }
+          return acc;
+        },
+        {} as Record<string, { value: number; timestamp: Date }[]>,
+      );
+
+      const recapsToUpsert: NewRecapParams[] = [];
+
+      // Calculate recap for each date
+      for (const [date, readings] of Object.entries(egvsByDate)) {
+        const timeInRanges = calculateTimeInRanges(readings);
+        const averageGlucose = Math.round(calculateAverageGlucose(readings));
+        const glucoseVariability =
+          calculateGlucoseVariability(readings).toFixed(2);
+
+        const totalReadings = readings.length;
+        const minimumGlucose = Math.min(...readings.map((r) => r.value));
+        const maximumGlucose = Math.max(...readings.map((r) => r.value));
+
+        recapsToUpsert.push({
+          date: new Date(date),
+          averageGlucose,
+          minimumGlucose,
+          maximumGlucose,
+          glucoseVariability,
+          timeInRanges,
+          totalReadings,
+        });
+      }
+
+      // Create a schema for an array of recaps
+      const recapsArraySchema = z.array(insertRecapParams);
+
+      // Validate recapsToUpsert
+      const validatedRecaps = recapsArraySchema.parse(recapsToUpsert);
+
+      // Upsert all recaps
+      const result = await ctx.db
+        .insert(DailyRecap)
+        .values(
+          validatedRecaps.map((recap) => ({
+            ...recap,
+            timeInRanges: recap.timeInRanges as TimeInRanges,
+            profileId: userId,
+          })),
+        )
+        .onConflictDoUpdate({
+          target: [DailyRecap.date, DailyRecap.profileId],
+          set: conflictUpdateAllExcept(DailyRecap, [
+            "id",
+            "date",
+            "createdAt",
+            "updatedAt",
+          ]),
+        })
+        .returning();
+
+      if (!result.length) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create or update recaps",
+        });
+      }
+
+      return result;
+    }),
 
   createRecap: protectedProcedure
     .input(insertRecapParams)

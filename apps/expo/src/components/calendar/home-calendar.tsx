@@ -5,8 +5,8 @@ import type {
 import { useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
 import { fromDateId, toDateId } from "@marceloterreiro/flash-calendar";
-import { add, endOfMonth, startOfMonth, sub } from "date-fns";
-import { format } from "date-fns/fp";
+import { add, endOfMonth, format, startOfMonth, sub } from "date-fns";
+import { format as formatFP } from "date-fns/fp";
 
 import { BasicCalendar } from "~/components/calendar/basic-calendar";
 import { Text } from "~/components/ui/text";
@@ -16,7 +16,7 @@ import { api } from "~/utils/api";
 
 export function HomeCalendar() {
   const { selectedDate, setSelectedDate, setIsCalendarOpen } = useDateStore();
-  const { rangeView, setRangeView } = useGlucoseStore();
+  const { rangeView } = useGlucoseStore();
   const [currentCalendarMonth, setCurrentCalendarMonth] =
     useState(selectedDate);
 
@@ -70,13 +70,13 @@ export function HomeCalendar() {
         calendarMaxDateId={toDateId(currentDate)}
         calendarMonthId={toDateId(currentCalendarMonth)}
         calendarRowVerticalSpacing={4}
-        getCalendarWeekDayFormat={format("E")}
+        getCalendarWeekDayFormat={formatFP("E")}
         calendarFirstDayOfWeek="sunday"
         onCalendarDayPress={handleDayPress}
         // extends
         onNextMonthPress={handleNextMonth}
         onPreviousMonthPress={handlePreviousMonth}
-        dailyRecaps={dailyRecaps || []}
+        dailyRecaps={dailyRecaps ?? []}
         rangeView={rangeView}
       />
     </View>

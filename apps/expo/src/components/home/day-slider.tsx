@@ -1,14 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Dimensions, Pressable, View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { format, parseISO } from "date-fns";
+import { endOfDay, format, startOfDay } from "date-fns";
 
-import type { ScoresData } from "~/data/scores";
+import type { DailyRecap, GlucoseRangeTypes } from "@hyper/db/schema";
+
 import { Text } from "~/components/ui/text";
-import { mockScoresData } from "~/data/scores";
 import { useColorScheme } from "~/lib/use-color-scheme";
-import { cn, getScoreColors } from "~/lib/utils";
+import { cn, getGlucoseRangeColors } from "~/lib/utils";
 import { useDateStore } from "~/stores/date-store";
+import { useGlucoseStore } from "~/stores/glucose-store";
+import { api } from "~/utils/api";
 
 const screenWidth = Dimensions.get("window").width;
 // IMPORTANT: w-16 = 4rem = 14 (default rem value in nativewind) * 4 = 56
@@ -21,14 +23,19 @@ const DayItem = React.memo(
     isSelected,
     onPress,
     isDark,
+    rangeView,
   }: {
-    item: ScoresData;
+    item: DailyRecap;
     isSelected: boolean;
     onPress: () => void;
     isDark: boolean;
+    rangeView: GlucoseRangeTypes;
   }) => {
-    const date = parseISO(item.date);
-    const scoreColors = getScoreColors(item.value, isDark);
+    const date = new Date(item.date);
+    const glucoseColors = getGlucoseRangeColors(
+      item.timeInRanges?.[rangeView] ?? 0,
+      isDark,
+    );
 
     return (
       <Pressable onPress={onPress} className="h-20 w-16">
@@ -52,16 +59,16 @@ const DayItem = React.memo(
           <View
             className="h-12 w-12 items-center justify-center rounded-full"
             style={{
-              backgroundColor: scoreColors.background,
+              backgroundColor: glucoseColors.background,
             }}
           >
             <Text
               className="text-xl font-semibold"
               style={{
-                color: scoreColors.text,
+                color: glucoseColors.text,
               }}
             >
-              {item.value}
+              {item.timeInRanges?.[rangeView] ?? "?"}
             </Text>
           </View>
         </View>
@@ -72,15 +79,29 @@ const DayItem = React.memo(
 
 export function DaySlider() {
   const { selectedDate, setSelectedDate } = useDateStore();
-  const listRef = useRef<FlashList<ScoresData> | null>(null);
+  const { rangeView } = useGlucoseStore();
+  const listRef = useRef<FlashList<DailyRecap> | null>(null);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
+  // Fetch data for the last 30 days
+  const endDate = endOfDay(new Date());
+  const startDate = startOfDay(
+    new Date(endDate.getTime() - 29 * 24 * 60 * 60 * 1000),
+  );
+
+  const { data: dailyRecaps, isPending } = api.recap.getDailyRecaps.useQuery({
+    startDate: startDate.toISOString(),
+    endDate: endDate.toISOString(),
+  });
+
   const sortedData = useMemo(() => {
-    return [...mockScoresData].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
-  }, []);
+    return dailyRecaps
+      ? [...dailyRecaps].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+        )
+      : [];
+  }, [dailyRecaps]);
 
   //   const scrollToIndex = useCallback((index: number) => {
   //     listRef.current?.scrollToIndex({
@@ -101,7 +122,7 @@ export function DaySlider() {
   const scrollToSelectedDate = useCallback(() => {
     const selectedIndex = sortedData.findIndex(
       (item) =>
-        parseISO(item.date).toDateString() === selectedDate.toDateString(),
+        new Date(item.date).toDateString() === selectedDate.toDateString(),
     );
 
     if (selectedIndex !== -1) {
@@ -115,8 +136,8 @@ export function DaySlider() {
   }, [selectedDate, scrollToSelectedDate]);
 
   const renderItem = useCallback(
-    ({ item }: { item: ScoresData }) => {
-      const itemDate = parseISO(item.date);
+    ({ item }: { item: DailyRecap }) => {
+      const itemDate = new Date(item.date);
       const isSelected =
         itemDate.toDateString() === selectedDate.toDateString();
       return (
@@ -127,13 +148,21 @@ export function DaySlider() {
             setSelectedDate(itemDate);
           }}
           isDark={isDark}
+          rangeView={rangeView}
         />
       );
     },
-    [selectedDate, setSelectedDate, isDark],
+    [selectedDate, setSelectedDate, isDark, rangeView],
   );
 
-  const keyExtractor = useCallback((item: ScoresData) => item.date, []);
+  const keyExtractor = useCallback(
+    (item: DailyRecap) => item.date.toDateString(),
+    [],
+  );
+
+  if (isPending) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <FlashList

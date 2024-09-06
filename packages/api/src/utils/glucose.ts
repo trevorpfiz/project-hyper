@@ -1,13 +1,11 @@
-import type { TimeInRanges } from "../schema/daily-recap";
+import type { TimeInRanges } from "@hyper/db/schema";
 
 interface GlucoseReading {
   value: number;
   timestamp: Date;
 }
 
-export function calculateTimeInRanges(
-  readings: GlucoseReading[],
-): TimeInRanges {
+export function calculateTimeInRanges(readings: GlucoseReading[]) {
   const total = readings.length;
   const counts = {
     veryLow: 0, // <54 mg/dL
@@ -42,15 +40,13 @@ export function calculateTimeInRanges(
   }, {} as TimeInRanges);
 }
 
-export function calculateAverageGlucose(readings: GlucoseReading[]): number {
+export function calculateAverageGlucose(readings: GlucoseReading[]) {
   return (
     readings.reduce((sum, reading) => sum + reading.value, 0) / readings.length
   );
 }
 
-export function calculateGlucoseVariability(
-  readings: GlucoseReading[],
-): number {
+export function calculateGlucoseVariability(readings: GlucoseReading[]) {
   const mean = calculateAverageGlucose(readings);
   const squaredDiffs = readings.map((r) => Math.pow(r.value - mean, 2));
   const variance =

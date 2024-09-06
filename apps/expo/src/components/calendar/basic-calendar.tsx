@@ -5,15 +5,17 @@ import type {
 import React from "react";
 import { View } from "react-native";
 import { Calendar, useCalendar } from "@marceloterreiro/flash-calendar";
+import { format } from "date-fns";
+
+import type { DailyRecap, GlucoseRangeTypes } from "@hyper/db/schema";
 
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
-import { mockScoresData } from "~/data/scores";
 import { CALENDAR_THEME } from "~/lib/constants";
 import { ChevronLeft } from "~/lib/icons/chevron-left";
 import { ChevronRight } from "~/lib/icons/chevron-right";
 import { useColorScheme } from "~/lib/use-color-scheme";
-import { getScoreColors } from "~/lib/utils";
+import { getGlucoseRangeColors } from "~/lib/utils";
 
 const DAY_HEIGHT = 40;
 const MONTH_HEADER_HEIGHT = 40;
@@ -22,13 +24,29 @@ const WEEK_DAYS_HEIGHT = 30;
 interface BasicCalendarProps extends CalendarProps {
   onPreviousMonthPress: () => void;
   onNextMonthPress: () => void;
+  dailyRecaps: DailyRecap[];
+  rangeView: GlucoseRangeTypes;
 }
 
 export function BasicCalendar(props: BasicCalendarProps) {
+  const { dailyRecaps, rangeView } = props;
+
   const { calendarRowMonth, weekDaysList, weeksList } = useCalendar(props);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const theme = isDark ? CALENDAR_THEME.dark : CALENDAR_THEME.light;
+
+  const getColorForDay = (dayId: string) => {
+    const recap = dailyRecaps.find(
+      (r) => format(r.date, "yyyy-MM-dd") === dayId,
+    );
+    if (!recap?.timeInRanges) {
+      return theme.text;
+    }
+
+    const timeInRange = recap.timeInRanges[rangeView];
+    return getGlucoseRangeColors(timeInRange, isDark).text;
+  };
 
   const calendarTheme: CalendarTheme = {
     rowMonth: {
@@ -58,10 +76,7 @@ export function BasicCalendar(props: BasicCalendarProps) {
     },
     itemDay: {
       base: ({ isPressed, isDisabled, id }) => {
-        const score = mockScoresData.find((s) => s.date === id)?.value;
-        const scoreColor = score
-          ? getScoreColors(score, isDark).text
-          : theme.text;
+        const dayColor = getColorForDay(id);
 
         return {
           container: {
@@ -73,7 +88,7 @@ export function BasicCalendar(props: BasicCalendarProps) {
             fontSize: 14,
             fontWeight: "bold",
             opacity: isDisabled ? 0.5 : 1,
-            color: isDisabled ? theme.disabled : scoreColor,
+            color: isDisabled ? theme.disabled : dayColor,
           },
         };
       },
@@ -83,7 +98,7 @@ export function BasicCalendar(props: BasicCalendarProps) {
             // backgroundColor: isPressed ? theme.highlight : "transparent",
           },
           content: {
-            // color: scoreColor,
+            // color: dayColor,
           },
         };
       },
