@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Dimensions, Pressable, View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { endOfDay, format, startOfDay } from "date-fns";
+import { format } from "date-fns";
 
 import type { DailyRecap, GlucoseRangeTypes } from "@hyper/db/schema";
 
+import { Skeleton } from "~/components/ui/skeleton";
 import { Text } from "~/components/ui/text";
 import { useColorScheme } from "~/lib/use-color-scheme";
 import { cn, getGlucoseRangeColors } from "~/lib/utils";
@@ -19,23 +20,24 @@ const centerOffset = (screenWidth - itemWidth) / 2;
 
 const DayItem = React.memo(
   ({
-    item,
+    date,
+    recap,
     isSelected,
     onPress,
     isDark,
     rangeView,
+    isLoading,
   }: {
-    item: DailyRecap;
+    date: Date;
+    recap?: DailyRecap;
     isSelected: boolean;
     onPress: () => void;
     isDark: boolean;
     rangeView: GlucoseRangeTypes;
+    isLoading: boolean;
   }) => {
-    const date = new Date(item.date);
-    const glucoseColors = getGlucoseRangeColors(
-      item.timeInRanges?.[rangeView] ?? 0,
-      isDark,
-    );
+    const timeInRange = recap?.timeInRanges?.[rangeView] ?? 0;
+    const glucoseColors = getGlucoseRangeColors(timeInRange, isDark);
 
     return (
       <Pressable onPress={onPress} className="h-20 w-16">
@@ -56,21 +58,25 @@ const DayItem = React.memo(
             </Text>
           </View>
 
-          <View
-            className="h-12 w-12 items-center justify-center rounded-full"
-            style={{
-              backgroundColor: glucoseColors.background,
-            }}
-          >
-            <Text
-              className="text-xl font-semibold"
+          {isLoading ? (
+            <Skeleton className="h-12 w-12 rounded-full" />
+          ) : (
+            <View
+              className="h-12 w-12 items-center justify-center rounded-full"
               style={{
-                color: glucoseColors.text,
+                backgroundColor: glucoseColors.background,
               }}
             >
-              {item.timeInRanges?.[rangeView] ?? "?"}
-            </Text>
-          </View>
+              <Text
+                className="text-xl font-semibold"
+                style={{
+                  color: glucoseColors.text,
+                }}
+              >
+                {Math.floor(timeInRange)}
+              </Text>
+            </View>
+          )}
         </View>
       </Pressable>
     );
@@ -78,30 +84,21 @@ const DayItem = React.memo(
 );
 
 export function DaySlider() {
-  const { selectedDate, setSelectedDate } = useDateStore();
+  const { selectedDate, setSelectedDate, visibleDates } = useDateStore();
   const { rangeView } = useGlucoseStore();
-  const listRef = useRef<FlashList<DailyRecap> | null>(null);
+  const listRef = useRef<FlashList<Date> | null>(null);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  // Fetch data for the last 30 days
-  const endDate = endOfDay(new Date());
-  const startDate = startOfDay(
-    new Date(endDate.getTime() - 29 * 24 * 60 * 60 * 1000),
-  );
+  const { data: allRecaps, isPending } = api.recap.all.useQuery();
 
-  const { data: dailyRecaps, isPending } = api.recap.getDailyRecaps.useQuery({
-    startDate: startDate.toISOString(),
-    endDate: endDate.toISOString(),
-  });
-
-  const sortedData = useMemo(() => {
-    return dailyRecaps
-      ? [...dailyRecaps].sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-        )
-      : [];
-  }, [dailyRecaps]);
+  const recapsMap = useMemo(() => {
+    const map = new Map<string, DailyRecap>();
+    allRecaps?.forEach((recap) => {
+      map.set(new Date(recap.date).toDateString(), recap);
+    });
+    return map;
+  }, [allRecaps]);
 
   //   const scrollToIndex = useCallback((index: number) => {
   //     listRef.current?.scrollToIndex({
@@ -120,55 +117,50 @@ export function DaySlider() {
   }, []);
 
   const scrollToSelectedDate = useCallback(() => {
-    const selectedIndex = sortedData.findIndex(
-      (item) =>
-        new Date(item.date).toDateString() === selectedDate.toDateString(),
+    const selectedIndex = visibleDates.findIndex(
+      (date) => date.toDateString() === selectedDate.toDateString(),
     );
 
     if (selectedIndex !== -1) {
       // scrollToIndex(selectedIndex);
       scrollToOffset(selectedIndex);
     }
-  }, [selectedDate, scrollToOffset, sortedData]);
+  }, [selectedDate, scrollToOffset, visibleDates]);
 
   useEffect(() => {
     scrollToSelectedDate();
   }, [selectedDate, scrollToSelectedDate]);
 
   const renderItem = useCallback(
-    ({ item }: { item: DailyRecap }) => {
-      const itemDate = new Date(item.date);
-      const isSelected =
-        itemDate.toDateString() === selectedDate.toDateString();
+    ({ item: date }: { item: Date }) => {
+      const isSelected = date.toDateString() === selectedDate.toDateString();
+      const recap = recapsMap.get(date.toDateString());
+      const isLoading = !recap && isPending;
+
       return (
         <DayItem
-          item={item}
+          date={date}
+          recap={recap}
           isSelected={isSelected}
           onPress={() => {
-            setSelectedDate(itemDate);
+            setSelectedDate(date);
           }}
           isDark={isDark}
           rangeView={rangeView}
+          isLoading={isLoading}
         />
       );
     },
-    [selectedDate, setSelectedDate, isDark, rangeView],
+    [selectedDate, setSelectedDate, isDark, rangeView, recapsMap, isPending],
   );
 
-  const keyExtractor = useCallback(
-    (item: DailyRecap) => item.date.toDateString(),
-    [],
-  );
-
-  if (isPending) {
-    return <Text>Loading...</Text>;
-  }
+  const keyExtractor = useCallback((date: Date) => date.toDateString(), []);
 
   return (
     <FlashList
       ref={listRef}
-      data={sortedData}
-      extraData={selectedDate}
+      data={visibleDates}
+      extraData={[selectedDate, isDark, rangeView, recapsMap]}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       estimatedItemSize={56}

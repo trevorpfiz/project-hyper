@@ -5,38 +5,44 @@ import type {
 import { useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
 import { fromDateId, toDateId } from "@marceloterreiro/flash-calendar";
-import { add, endOfMonth, format, startOfMonth, sub } from "date-fns";
+import { add, sub } from "date-fns";
 import { format as formatFP } from "date-fns/fp";
 
 import { BasicCalendar } from "~/components/calendar/basic-calendar";
-import { Text } from "~/components/ui/text";
+import { Progress } from "~/components/ui/progress";
 import { useDateStore } from "~/stores/date-store";
 import { useGlucoseStore } from "~/stores/glucose-store";
 import { api } from "~/utils/api";
 
 export function HomeCalendar() {
-  const { selectedDate, setSelectedDate, setIsCalendarOpen } = useDateStore();
+  const {
+    selectedDate,
+    setSelectedDate,
+    setIsCalendarOpen,
+    updateVisibleDates,
+  } = useDateStore();
   const { rangeView } = useGlucoseStore();
   const [currentCalendarMonth, setCurrentCalendarMonth] =
     useState(selectedDate);
 
-  const startDate = startOfMonth(selectedDate);
-  const endDate = endOfMonth(selectedDate);
-
-  const { data: dailyRecaps, isPending } = api.recap.getDailyRecaps.useQuery({
-    startDate: format(startDate, "yyyy-MM-dd"),
-    endDate: format(endDate, "yyyy-MM-dd"),
-  });
+  const { data: allRecaps, isPending } = api.recap.all.useQuery();
 
   const currentDate = new Date();
+  const minDate = allRecaps
+    ? new Date(
+        Math.min(...allRecaps.map((recap) => new Date(recap.date).getTime())),
+      )
+    : new Date("2024-08-01");
 
   const handleDayPress = useCallback<CalendarOnDayPress>(
     (dateId) => {
-      setCurrentCalendarMonth(fromDateId(dateId));
-      setSelectedDate(fromDateId(dateId));
+      const newDate = fromDateId(dateId);
+      setCurrentCalendarMonth(newDate);
+      setSelectedDate(newDate);
+      updateVisibleDates(newDate);
       setIsCalendarOpen(false); // Close the dialog after selecting a date
     },
-    [setSelectedDate, setIsCalendarOpen],
+    [setSelectedDate, setIsCalendarOpen, updateVisibleDates],
   );
 
   const calendarActiveDateRanges = useMemo<CalendarActiveDateRange[]>(
@@ -57,16 +63,12 @@ export function HomeCalendar() {
     setCurrentCalendarMonth(add(currentCalendarMonth, { months: 1 }));
   }, [currentCalendarMonth]);
 
-  if (isPending) {
-    return <Text>Loading...</Text>;
-  }
-
   return (
     <View className="flex-1">
       <BasicCalendar
         calendarActiveDateRanges={calendarActiveDateRanges}
         calendarDisabledDateIds={[]}
-        calendarMinDateId="2024-07-11"
+        calendarMinDateId={toDateId(minDate)}
         calendarMaxDateId={toDateId(currentDate)}
         calendarMonthId={toDateId(currentCalendarMonth)}
         calendarRowVerticalSpacing={4}
@@ -76,9 +78,10 @@ export function HomeCalendar() {
         // extends
         onNextMonthPress={handleNextMonth}
         onPreviousMonthPress={handlePreviousMonth}
-        dailyRecaps={dailyRecaps ?? []}
+        dailyRecaps={allRecaps ?? []}
         rangeView={rangeView}
       />
+      {isPending && <Progress value={null} className="w-full" />}
     </View>
   );
 }

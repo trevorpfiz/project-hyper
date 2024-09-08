@@ -1,16 +1,14 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { GlucoseRangeTypes } from "@hyper/db/schema";
+import type { GlucoseRangeTypes } from "@hyper/db/schema";
 
 import { zustandStorage } from "~/lib/storage";
-
-type RangeView = "standard" | "tight" | "optimal";
 
 interface GlucoseState {
   rangeView: GlucoseRangeTypes;
   lastSyncedTime: Date | null;
-  setRangeView: (view: RangeView) => void;
+  setRangeView: (view: GlucoseRangeTypes) => void;
   setLastSyncedTime: (date: Date) => void;
 }
 

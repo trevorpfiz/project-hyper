@@ -6,6 +6,8 @@ import {
   jsonb,
   numeric,
   timestamp,
+  unique,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -27,26 +29,41 @@ export interface TimeInRanges {
   veryHigh: number; // >250 mg/dL and <5%
 }
 
-export const DailyRecap = createTable("daily_recap", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  date: date("date", { mode: "date" }).notNull(),
-  averageGlucose: integer("average_glucose"),
-  minimumGlucose: integer("minimum_glucose"),
-  maximumGlucose: integer("maximum_glucose"),
-  glucoseVariability: numeric("glucose_variability"), // Standard deviation or coefficient of variation
-  timeInRanges: jsonb("time_in_ranges").$type<TimeInRanges>(),
-  totalReadings: integer("total_readings"),
+export const DailyRecap = createTable(
+  "daily_recap",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    date: date("date", { mode: "date" }).notNull(),
+    averageGlucose: integer("average_glucose"),
+    minimumGlucose: integer("minimum_glucose"),
+    maximumGlucose: integer("maximum_glucose"),
+    glucoseVariability: numeric("glucose_variability"), // Standard deviation or coefficient of variation
+    timeInRanges: jsonb("time_in_ranges").$type<TimeInRanges>(),
+    totalReadings: integer("total_readings"),
 
-  profileId: uuid("profile_id")
-    .notNull()
-    .references(() => Profile.id),
+    profileId: uuid("profile_id")
+      .notNull()
+      .references(() => Profile.id),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", {
-    mode: "date",
-    withTimezone: true,
-  }).$onUpdateFn(() => new Date()),
-});
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt", {
+      mode: "date",
+      withTimezone: true,
+    }).$onUpdateFn(() => new Date()),
+  },
+  (table) => {
+    return {
+      profileIdDateIdx: uniqueIndex("daily_recap_profile_id_date_idx").on(
+        table.profileId,
+        table.date,
+      ),
+      // This unique constraint allows for efficient upserts
+      // It ensures only one recap per day per profile
+      // and enables the use of ON CONFLICT for updates
+      dateProfileUnique: unique().on(table.date, table.profileId),
+    };
+  },
+);
 
 export const DailyRecapRelations = relations(DailyRecap, ({ one }) => ({
   profile: one(Profile, {

@@ -42,6 +42,8 @@
     "@rn-primitives/label": "^1.0.3",
     "@rn-primitives/portal": "^1.0.3",
     "@rn-primitives/progress": "^1.0.3",
+    "@rn-primitives/radio-group": "^1.0.3",
+    "@rn-primitives/select": "^1.0.4",
     "@rn-primitives/separator": "^1.0.3",
     "@rn-primitives/slot": "^1.0.3",
     "@rn-primitives/tooltip": "^1.0.3",

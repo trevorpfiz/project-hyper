@@ -8,6 +8,8 @@ import {
 import DexcomCGMData from "~/components/dexcom/dexcom-data";
 import DexcomDevicesList from "~/components/dexcom/dexcom-devices";
 import { DexcomLogin } from "~/components/dexcom/dexcom-login";
+import { ChangeRangeSetting } from "~/components/glucose/change-range-setting";
+import { CalculateRecap } from "~/components/glucose/create-recap";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -41,9 +43,13 @@ export default function AccountScreen() {
       <Text>Account Screen</Text>
       {user?.id && <SignOut />}
 
+      <ChangeRangeSetting />
+
       <DexcomLogin />
 
       <DexcomCGMData />
+
+      <CalculateRecap />
 
       <DexcomDevicesList />
     </ScrollView>

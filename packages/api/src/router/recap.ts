@@ -24,6 +24,17 @@ import {
 } from "../utils/glucose";
 
 export const recapRouter = {
+  all: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.user.id;
+
+    const rows = await ctx.db.query.DailyRecap.findMany({
+      where: eq(DailyRecap.profileId, userId),
+      orderBy: desc(DailyRecap.date),
+    });
+
+    return rows;
+  }),
+
   getDailyRecaps: protectedProcedure
     .input(DateRangeSchema)
     .query(async ({ ctx, input }) => {
