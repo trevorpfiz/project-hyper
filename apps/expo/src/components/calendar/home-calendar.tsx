@@ -3,13 +3,11 @@ import type {
   CalendarOnDayPress,
 } from "@marceloterreiro/flash-calendar";
 import { useCallback, useMemo, useState } from "react";
-import { View } from "react-native";
 import { fromDateId, toDateId } from "@marceloterreiro/flash-calendar";
 import { add, sub } from "date-fns";
 import { format as formatFP } from "date-fns/fp";
 
 import { BasicCalendar } from "~/components/calendar/basic-calendar";
-import { Progress } from "~/components/ui/progress";
 import { useDateStore } from "~/stores/date-store";
 import { useGlucoseStore } from "~/stores/glucose-store";
 import { api } from "~/utils/api";
@@ -25,7 +23,7 @@ export function HomeCalendar() {
   const [currentCalendarMonth, setCurrentCalendarMonth] =
     useState(selectedDate);
 
-  const { data: allRecaps, isPending } = api.recap.all.useQuery();
+  const { data: allRecaps } = api.recap.all.useQuery();
 
   const currentDate = new Date();
   const minDate = allRecaps
@@ -64,24 +62,21 @@ export function HomeCalendar() {
   }, [currentCalendarMonth]);
 
   return (
-    <View className="flex-1">
-      <BasicCalendar
-        calendarActiveDateRanges={calendarActiveDateRanges}
-        calendarDisabledDateIds={[]}
-        calendarMinDateId={toDateId(minDate)}
-        calendarMaxDateId={toDateId(currentDate)}
-        calendarMonthId={toDateId(currentCalendarMonth)}
-        calendarRowVerticalSpacing={4}
-        getCalendarWeekDayFormat={formatFP("E")}
-        calendarFirstDayOfWeek="sunday"
-        onCalendarDayPress={handleDayPress}
-        // extends
-        onNextMonthPress={handleNextMonth}
-        onPreviousMonthPress={handlePreviousMonth}
-        dailyRecaps={allRecaps ?? []}
-        rangeView={rangeView}
-      />
-      {isPending && <Progress value={null} className="w-full" />}
-    </View>
+    <BasicCalendar
+      calendarActiveDateRanges={calendarActiveDateRanges}
+      calendarDisabledDateIds={[]}
+      calendarMinDateId={toDateId(minDate)}
+      calendarMaxDateId={toDateId(currentDate)}
+      calendarMonthId={toDateId(currentCalendarMonth)}
+      calendarRowVerticalSpacing={4}
+      getCalendarWeekDayFormat={formatFP("E")}
+      calendarFirstDayOfWeek="sunday"
+      onCalendarDayPress={handleDayPress}
+      // extends
+      onNextMonthPress={handleNextMonth}
+      onPreviousMonthPress={handlePreviousMonth}
+      dailyRecaps={allRecaps ?? []}
+      rangeView={rangeView}
+    />
   );
 }
