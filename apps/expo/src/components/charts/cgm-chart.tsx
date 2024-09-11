@@ -11,13 +11,15 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
+import { endOfDay, startOfDay } from "date-fns";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
 
 import type { ProcessedActivityData } from "~/stores/activity-store";
 import { mockActivityData } from "~/data/activity";
-import { mockCGMData } from "~/data/cgm";
 import { useColorScheme } from "~/lib/use-color-scheme";
 import { useActivityStore } from "~/stores/activity-store";
+import { useDateStore } from "~/stores/date-store";
+import { api } from "~/utils/api";
 
 // Helper function to convert ISO string to hour number
 const dateTimeToHour = (dateTimeString: string) => {
@@ -39,18 +41,39 @@ const formatTime = (hour: number) => {
 
 export default function CGMChart() {
   const { colorScheme } = useColorScheme();
+  const { selectedDate } = useDateStore();
   const { selectedActivity } = useActivityStore();
   const font = useFont(Inter_500Medium, 12);
 
+  // Fetch CGM data from the database
+  const { startDate, endDate } = useMemo(() => {
+    const start = startOfDay(selectedDate);
+    const end = endOfDay(selectedDate);
+    return {
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
+    };
+  }, [selectedDate]);
+
+  const { data: cgmData } = api.dexcom.getStoredEGVs.useQuery({
+    startDate,
+    endDate,
+  });
+
   // Preprocess the data to use hour numbers for x-axis
-  const processedData = useMemo(
-    () =>
-      mockCGMData.map((item) => ({
-        ...item,
-        hour: dateTimeToHour(item.dateTime),
-      })),
-    [],
-  );
+  const processedData = useMemo(() => {
+    if (!cgmData || cgmData.length === 0) {
+      return [];
+    }
+
+    return cgmData
+      .filter((item) => item.glucoseValue !== null)
+      .map((item) => ({
+        hour: dateTimeToHour(item.systemTime.toISOString()),
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        amount: item.glucoseValue!,
+      }));
+  }, [cgmData]);
 
   // Preprocess the activity data to use hour numbers for x-axis
   const processedActivityData = useMemo(
@@ -167,6 +190,11 @@ const ActivityIndicator = (props: {
   isSelected: boolean;
 }) => {
   const { activity, chartBounds, points, isSelected } = props;
+  const inter = useFont(Inter_500Medium, 20);
+
+  if (points.length === 0) {
+    return null;
+  }
 
   // Find the closest point to the activity's hour
   const closestPoint = points.reduce((prev, curr) =>
@@ -190,12 +218,7 @@ const ActivityIndicator = (props: {
         r={10}
         color={isSelected ? "rgba(255, 0, 0, 0.5)" : "rgba(200, 200, 200, 0.5)"}
       />
-      <SKText
-        x={xPosition - 5}
-        y={yPosition + 5}
-        text={"a"}
-        font={useFont(Inter_500Medium, 20)}
-      />
+      <SKText x={xPosition - 5} y={yPosition + 5} text={"a"} font={inter} />
     </>
   );
 };

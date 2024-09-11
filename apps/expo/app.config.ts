@@ -61,6 +61,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-secure-store",
     "expo-apple-authentication",
     "expo-font",
+    "expo-localization",
     [
       "expo-build-properties",
       {

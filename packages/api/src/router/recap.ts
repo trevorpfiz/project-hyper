@@ -16,6 +16,8 @@ import { DateRangeSchema } from "../utils/dexcom";
 
 import "../utils/";
 
+import { DateTime } from "luxon";
+
 import { conflictUpdateAllExcept } from "../utils/drizzle";
 import {
   calculateAverageGlucose,
@@ -65,10 +67,16 @@ export const recapRouter = {
   }),
 
   calculateAndStoreRecapsForRange: protectedProcedure
-    .input(DateRangeSchema)
+    .input(DateRangeSchema.extend({ timezone: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { startDate, endDate } = input;
+      const { startDate, endDate, timezone } = input;
       const userId = ctx.user.id;
+
+      // Convert input dates to UTC, considering the user's timezone
+      const startDateUTC = DateTime.fromISO(startDate, {
+        zone: timezone,
+      }).toUTC();
+      const endDateUTC = DateTime.fromISO(endDate, { zone: timezone }).toUTC();
 
       // Fetch EGVs for the date range
       const storedEGVs = await ctx.db
@@ -76,25 +84,27 @@ export const recapRouter = {
         .from(CGMData)
         .where(
           and(
-            gte(CGMData.displayTime, new Date(startDate)),
-            lte(CGMData.displayTime, new Date(endDate)),
+            gte(CGMData.systemTime, startDateUTC.toJSDate()),
+            lte(CGMData.systemTime, endDateUTC.toJSDate()),
             eq(CGMData.profileId, userId),
           ),
         )
-        .orderBy(desc(CGMData.displayTime));
+        .orderBy(desc(CGMData.systemTime));
 
-      // Group EGVs by date
+      // Group EGVs by date in user's timezone
       const egvsByDate = storedEGVs.reduce(
         (acc, egv) => {
           if (egv.glucoseValue !== null) {
-            const date =
-              new Date(egv.displayTime).toISOString().split("T")[0] ?? "";
-            if (!acc[date]) {
-              acc[date] = [];
+            const zonedDate = DateTime.fromJSDate(egv.systemTime, {
+              zone: "UTC",
+            }).setZone(timezone);
+            const dateKey = zonedDate.startOf("day").toISO() ?? "";
+            if (!acc[dateKey]) {
+              acc[dateKey] = [];
             }
-            acc[date].push({
+            acc[dateKey].push({
               value: egv.glucoseValue,
-              timestamp: egv.displayTime,
+              timestamp: egv.systemTime,
             });
           }
           return acc;
@@ -105,7 +115,8 @@ export const recapRouter = {
       const recapsToUpsert: NewRecapParams[] = [];
 
       // Calculate recap for each date
-      for (const [date, readings] of Object.entries(egvsByDate)) {
+      for (const [dateKey, readings] of Object.entries(egvsByDate)) {
+        const zonedDate = DateTime.fromISO(dateKey, { zone: timezone });
         const timeInRanges = calculateTimeInRanges(readings);
         const averageGlucose = Math.round(calculateAverageGlucose(readings));
         const glucoseVariability =
@@ -116,7 +127,7 @@ export const recapRouter = {
         const maximumGlucose = Math.max(...readings.map((r) => r.value));
 
         recapsToUpsert.push({
-          date: new Date(date),
+          date: zonedDate.toJSDate(),
           averageGlucose,
           minimumGlucose,
           maximumGlucose,

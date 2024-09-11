@@ -1,5 +1,6 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
+import { parseISO } from "date-fns";
 import { z } from "zod";
 
 import { and, desc, eq, gte, lte } from "@hyper/db";
@@ -11,7 +12,7 @@ import {
 } from "@hyper/validators/dexcom";
 
 import { protectedDexcomProcedure, protectedProcedure } from "../trpc";
-import { formatDexcomDate, getDateChunks } from "../utils";
+import { getDateChunks } from "../utils";
 import {
   DateRangeSchema,
   DEXCOM_SANDBOX_BASE_URL,
@@ -60,12 +61,12 @@ export const dexcomRouter = {
 
       const chunks = getDateChunks(input.startDate, input.endDate);
       let totalRecordsInserted = 0;
-      let latestEGVTimestamp = null;
+      let latestEGVTimestamp: string | null = null;
 
       for (const chunk of chunks) {
         const query = new URLSearchParams({
-          startDate: formatDexcomDate(chunk.start),
-          endDate: formatDexcomDate(chunk.end),
+          startDate: chunk.start,
+          endDate: chunk.end,
         }).toString();
 
         const url = `${DEXCOM_SANDBOX_BASE_URL}/v3/users/self/egvs?${query}`;
@@ -79,8 +80,8 @@ export const dexcomRouter = {
         const cgmDataToUpsert = validatedData.records.map((egv) => ({
           dexcomUserId: validatedData.userId,
           recordId: egv.recordId,
-          systemTime: new Date(egv.systemTime),
-          displayTime: new Date(egv.displayTime),
+          systemTime: parseISO(egv.systemTime),
+          displayTime: parseISO(egv.displayTime),
           transmitterId: egv.transmitterId,
           transmitterTicks: egv.transmitterTicks,
           glucoseValue: egv.value,
@@ -136,12 +137,12 @@ export const dexcomRouter = {
         .from(CGMData)
         .where(
           and(
-            gte(CGMData.displayTime, new Date(input.startDate)),
-            lte(CGMData.displayTime, new Date(input.endDate)),
+            gte(CGMData.systemTime, new Date(input.startDate)),
+            lte(CGMData.systemTime, new Date(input.endDate)),
             eq(CGMData.profileId, ctx.user.id),
           ),
         )
-        .orderBy(desc(CGMData.displayTime));
+        .orderBy(desc(CGMData.systemTime));
 
       return storedData;
     }),

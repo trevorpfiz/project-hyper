@@ -1,5 +1,12 @@
 import { useEffect } from "react";
 import { Alert, View } from "react-native";
+import {
+  endOfMonth,
+  isAfter,
+  isBefore,
+  parseISO,
+  startOfMonth,
+} from "date-fns";
 
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -37,24 +44,23 @@ const DexcomCGMData: React.FC = () => {
 
   const handleFetchData = () => {
     if (fetchDataRangeQuery.data?.egvs) {
-      const augustStart = new Date("2024-08-01T00:00:00Z");
-      const augustEnd = new Date("2024-08-31T23:59:59Z");
+      const augustStart = startOfMonth(new Date(2024, 7));
+      const augustEnd = endOfMonth(new Date(2024, 7));
 
-      const dataRangeStart = new Date(
+      const dataRangeStart = parseISO(
         fetchDataRangeQuery.data.egvs.start.systemTime,
       );
-      const dataRangeEnd = new Date(
+      const dataRangeEnd = parseISO(
         fetchDataRangeQuery.data.egvs.end.systemTime,
       );
 
-      const startDate =
-        dataRangeStart > augustStart
-          ? dataRangeStart.toISOString()
-          : augustStart.toISOString();
-      const endDate =
-        dataRangeEnd < augustEnd
-          ? dataRangeEnd.toISOString()
-          : augustEnd.toISOString();
+      const startDate = isAfter(dataRangeStart, augustStart)
+        ? fetchDataRangeQuery.data.egvs.start.systemTime
+        : augustStart.toISOString();
+
+      const endDate = isBefore(dataRangeEnd, augustEnd)
+        ? fetchDataRangeQuery.data.egvs.end.systemTime
+        : augustEnd.toISOString();
 
       const queryInput = {
         startDate,

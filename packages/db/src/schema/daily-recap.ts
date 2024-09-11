@@ -1,7 +1,6 @@
 import type { z } from "zod";
 import { relations } from "drizzle-orm";
 import {
-  date,
   integer,
   jsonb,
   numeric,
@@ -9,6 +8,7 @@ import {
   unique,
   uniqueIndex,
   uuid,
+  varchar,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
@@ -33,7 +33,8 @@ export const DailyRecap = createTable(
   "daily_recap",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    date: date("date", { mode: "date" }).notNull(),
+    date: timestamp("date", { withTimezone: true }).notNull(),
+    timezone: varchar("timezone", { length: 50 }).notNull(),
     averageGlucose: integer("average_glucose"),
     minimumGlucose: integer("minimum_glucose"),
     maximumGlucose: integer("maximum_glucose"),

@@ -1,5 +1,6 @@
 import React from "react";
 import { Alert, View } from "react-native";
+import { DateTime } from "luxon";
 
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -22,12 +23,24 @@ const CalculateRecap: React.FC = () => {
   });
 
   const handleCalculateRecaps = () => {
-    const augustStart = new Date("2024-08-01T00:00:00Z");
-    const augustEnd = new Date("2024-08-31T23:59:59Z");
+    // const calendars = Localization.getCalendars();
+    // const userTimeZone = calendars[0]!.timeZone ?? "UTC";
+    // const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const userTimezone = DateTime.local().zoneName;
+
+    // Get the start and end of August 2024 in the user's local time
+    const augustStart = DateTime.local(2024, 8, 1, {
+      zone: userTimezone,
+    }).startOf("month");
+    const augustEnd = augustStart.endOf("month");
+
+    console.log("augustStart", augustStart);
+    console.log("augustEnd", augustEnd);
 
     const queryInput = {
-      startDate: augustStart.toISOString(),
-      endDate: augustEnd.toISOString(),
+      startDate: augustStart.toISO() ?? "",
+      endDate: augustEnd.toISO() ?? "",
+      timezone: userTimezone,
     };
 
     mutation.mutate(queryInput);

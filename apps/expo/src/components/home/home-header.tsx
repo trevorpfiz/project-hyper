@@ -67,7 +67,7 @@ export default function HomeHeader() {
             </View>
 
             <View className="h-1 w-full">
-              {!isPending && <IndeterminateProgressBar />}
+              {isPending && <IndeterminateProgressBar />}
             </View>
           </DialogFooter>
         </DialogContent>

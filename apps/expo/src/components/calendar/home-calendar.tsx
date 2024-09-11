@@ -6,6 +6,7 @@ import { useCallback, useMemo, useState } from "react";
 import { fromDateId, toDateId } from "@marceloterreiro/flash-calendar";
 import { add, sub } from "date-fns";
 import { format as formatFP } from "date-fns/fp";
+import { DateTime } from "luxon";
 
 import { BasicCalendar } from "~/components/calendar/basic-calendar";
 import { useDateStore } from "~/stores/date-store";
@@ -25,12 +26,14 @@ export function HomeCalendar() {
 
   const { data: allRecaps } = api.recap.all.useQuery();
 
-  const currentDate = new Date();
+  const currentDate = DateTime.local();
   const minDate = allRecaps
-    ? new Date(
-        Math.min(...allRecaps.map((recap) => new Date(recap.date).getTime())),
+    ? DateTime.fromMillis(
+        Math.min(
+          ...allRecaps.map((recap) => DateTime.fromISO(recap.date).toMillis()),
+        ),
       )
-    : new Date("2024-08-01");
+    : DateTime.fromISO("2024-08-01");
 
   const handleDayPress = useCallback<CalendarOnDayPress>(
     (dateId) => {

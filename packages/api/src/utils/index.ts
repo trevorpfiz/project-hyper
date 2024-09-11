@@ -2,7 +2,7 @@ import { add, format, parseISO } from "date-fns";
 
 // Format dates to remove milliseconds and use the correct format
 export const formatDexcomDate = (dateString: string) => {
-  const date = new Date(dateString);
+  const date = parseISO(dateString);
   return format(date, "yyyy-MM-dd'T'HH:mm:ss");
 };
 
@@ -20,8 +20,8 @@ export function getDateChunks(
     const chunkEnd = add(currentStart, { days: chunkSizeInDays });
     const actualEnd = chunkEnd < finalEnd ? chunkEnd : finalEnd;
     chunks.push({
-      start: currentStart.toISOString(),
-      end: actualEnd.toISOString(),
+      start: formatDexcomDate(currentStart.toISOString()),
+      end: formatDexcomDate(actualEnd.toISOString()),
     });
     currentStart = add(actualEnd, { seconds: 1 });
   }

@@ -1,10 +1,12 @@
 import { z } from "zod";
 
+import { dexcomDateTimeSchema } from "./shared";
+
 // Define enums
-const UnitEnum = z.enum(["unknown", "mg/dL", "mmol/L"]);
-const RateUnitEnum = z.enum(["unknown", "mg/dL/min", "mmol/L/min"]);
-const StatusEnum = z.enum(["unknown", "high", "low", "ok"]);
-const TrendEnum = z.enum([
+export const UnitEnum = z.enum(["unknown", "mg/dL", "mmol/L"]);
+export const RateUnitEnum = z.enum(["unknown", "mg/dL/min", "mmol/L/min"]);
+export const StatusEnum = z.enum(["unknown", "high", "low", "ok"]);
+export const TrendEnum = z.enum([
   "none",
   "unknown",
   "doubleUp",
@@ -17,8 +19,13 @@ const TrendEnum = z.enum([
   "notComputable",
   "rateOutOfRange",
 ]);
-const DisplayDeviceEnum = z.enum(["unknown", "receiver", "iOS", "android"]);
-const TransmitterGenerationEnum = z.enum([
+export const DisplayDeviceEnum = z.enum([
+  "unknown",
+  "receiver",
+  "iOS",
+  "android",
+]);
+export const TransmitterGenerationEnum = z.enum([
   "unknown",
   "g4",
   "g5",
@@ -31,8 +38,8 @@ const TransmitterGenerationEnum = z.enum([
 // Define the EGV schema
 const EGVSchema = z.object({
   recordId: z.string(),
-  systemTime: z.string(),
-  displayTime: z.string(),
+  systemTime: dexcomDateTimeSchema,
+  displayTime: dexcomDateTimeSchema,
   transmitterId: z.string().nullable().optional(),
   transmitterTicks: z.number().int(),
   value: z.number().int().nullable().optional(),

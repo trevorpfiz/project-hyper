@@ -97,4 +97,4 @@ export const mockCGMData = [
   { dateTime: "2024-08-12T23:45:00", amount: 90 },
 ];
 
-export type CGMData = (typeof mockCGMData)[number];
+export type CGMDataPoint = (typeof mockCGMData)[number];

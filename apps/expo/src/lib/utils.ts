@@ -33,8 +33,15 @@ export const getFormattedDateTime = () => {
 };
 
 // Glucose
-export function getGlucoseRangeColors(timeInRange: number, isDark: boolean) {
+export function getGlucoseRangeColors(
+  timeInRange: number | undefined,
+  isDark: boolean,
+) {
   const theme = isDark ? CALENDAR_THEME.dark : CALENDAR_THEME.light;
+
+  if (timeInRange === undefined) {
+    return { background: theme.highlight, text: theme.text };
+  }
 
   if (timeInRange >= 70) return theme.good;
   if (timeInRange >= 50) return theme.ok;

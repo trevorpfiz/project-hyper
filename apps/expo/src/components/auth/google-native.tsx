@@ -1,3 +1,4 @@
+import type { NativeModuleError } from "@react-native-google-signin/google-signin";
 import { View } from "react-native";
 import {
   GoogleSignin,
@@ -14,10 +15,8 @@ const GoogleNative = () => {
 
   GoogleSignin.configure({
     scopes: ["https://www.googleapis.com/auth/drive.readonly"],
-    webClientId:
-      "871950139217-r0n5aqstpokp5uf213kdedheirsuhng3.apps.googleusercontent.com",
-    iosClientId:
-      "871950139217-2knn7tplni9li14l489lpv9i964ujt0h.apps.googleusercontent.com",
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? "",
+    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ?? "",
   });
 
   const handleGoogleSignIn = async () => {
@@ -35,18 +34,30 @@ const GoogleNative = () => {
         throw new Error("no ID token present!");
       }
     } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // User cancelled the login flow
-        console.log("Sign-in cancelled");
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        // Operation (e.g. sign in) is in progress already
-        console.log("Sign-in in progress");
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // Play services not available or outdated
-        console.log("Play services not available");
+      if (error instanceof Error) {
+        if (
+          (error as NativeModuleError).code === statusCodes.SIGN_IN_CANCELLED
+        ) {
+          // User cancelled the login flow
+          console.log("Sign-in cancelled");
+        } else if (
+          (error as NativeModuleError).code === statusCodes.IN_PROGRESS
+        ) {
+          // Operation (e.g. sign in) is in progress already
+          console.log("Sign-in in progress");
+        } else if (
+          (error as NativeModuleError).code ===
+          statusCodes.PLAY_SERVICES_NOT_AVAILABLE
+        ) {
+          // Play services not available or outdated
+          console.log("Play services not available");
+        } else {
+          // Some other error happened
+          console.error("Error during sign-in:", error.message);
+        }
       } else {
-        // Some other error happened
-        console.error("Error during sign-in:", error);
+        // In case it's not an Error object
+        console.error("Unknown error during sign-in:", error);
       }
     }
   };

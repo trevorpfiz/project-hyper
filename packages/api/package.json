@@ -29,7 +29,8 @@
     "@hyper/validators": "workspace:*",
     "@supabase/supabase-js": "catalog:supabase",
     "@trpc/server": "catalog:",
-    "date-fns": "^3.6.0",
+    "date-fns": "catalog:dates",
+    "luxon": "catalog:dates",
     "nanoid": "^5.0.7",
     "superjson": "catalog:",
     "zod": "catalog:"
@@ -38,6 +39,7 @@
     "@hyper/eslint-config": "workspace:*",
     "@hyper/prettier-config": "workspace:*",
     "@hyper/tsconfig": "workspace:*",
+    "@types/luxon": "catalog:dates",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"

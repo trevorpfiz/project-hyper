@@ -1,39 +1,49 @@
-import { addDays, isAfter, isBefore, isSameDay, subDays } from "date-fns";
+import { DateTime, Interval } from "luxon";
 import { create } from "zustand";
 
 interface DateState {
-  selectedDate: Date;
-  setSelectedDate: (date: Date) => void;
+  selectedDate: DateTime;
+  setSelectedDate: (date: DateTime) => void;
   isCalendarOpen: boolean;
   setIsCalendarOpen: (isOpen: boolean) => void;
-  visibleDates: Date[];
-  updateVisibleDates: (date: Date) => void;
+  visibleDates: DateTime[];
+  updateVisibleDates: (date: DateTime) => void;
+  formatDate: (date: DateTime) => string;
 }
 
+const formatDate = (date: DateTime) =>
+  date.startOf("day").toFormat("yyyy-MM-dd");
+
 const generateInitialDates = () => {
-  const today = new Date();
-  return Array.from({ length: 30 }, (_, i) => subDays(today, i));
+  const today = DateTime.local().startOf("day");
+  return Interval.fromDateTimes(today.minus({ days: 29 }), today)
+    .splitBy({ days: 1 })
+    .map((d) => d.start)
+    .reverse();
 };
 
-const generateDatesOutsideRange = (centerDate: Date) => {
-  const endDate = addDays(centerDate, 15);
-  return Array.from({ length: 31 }, (_, i) => subDays(endDate, i));
+const generateDatesOutsideRange = (centerDate: DateTime) => {
+  const endDate = centerDate.plus({ days: 15 }).startOf("day");
+  return Interval.fromDateTimes(endDate.minus({ days: 30 }), endDate)
+    .splitBy({ days: 1 })
+    .map((d) => d.start);
 };
 
 export const useDateStore = create<DateState>((set) => ({
-  selectedDate: new Date(),
-  setSelectedDate: (date: Date) => set({ selectedDate: date }),
+  selectedDate: DateTime.local().startOf("day"),
+  setSelectedDate: (date: DateTime) =>
+    set({ selectedDate: date.startOf("day") }),
   isCalendarOpen: false,
   setIsCalendarOpen: (isOpen: boolean) => set({ isCalendarOpen: isOpen }),
   visibleDates: generateInitialDates(),
-  updateVisibleDates: (date: Date) =>
+  updateVisibleDates: (date: DateTime) =>
     set(() => {
-      const today = new Date();
-      const thirtyDaysAgo = subDays(today, 30);
+      const today = DateTime.local().startOf("day");
+      const thirtyDaysAgo = today.minus({ days: 30 });
 
       if (
-        isSameDay(date, today) ||
-        (isBefore(date, today) && isAfter(date, thirtyDaysAgo))
+        date.hasSame(today, "day") ||
+        (date < today && date > thirtyDaysAgo)
       ) {
         // Case 1: Date is within the last 30 days or is today
         return { visibleDates: generateInitialDates() };
@@ -42,6 +52,7 @@ export const useDateStore = create<DateState>((set) => ({
         return { visibleDates: generateDatesOutsideRange(date) };
       }
     }),
+  formatDate,
 }));
 
 // Example persist-middleware with MMKV

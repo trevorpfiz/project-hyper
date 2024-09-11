@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Dimensions, Pressable, View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { format } from "date-fns";
+import { DateTime } from "luxon";
 
 import type { DailyRecap, GlucoseRangeTypes } from "@hyper/db/schema";
 
@@ -28,7 +28,7 @@ const DayItem = React.memo(
     rangeView,
     isLoading,
   }: {
-    date: Date;
+    date: DateTime;
     recap?: DailyRecap;
     isSelected: boolean;
     onPress: () => void;
@@ -36,8 +36,13 @@ const DayItem = React.memo(
     rangeView: GlucoseRangeTypes;
     isLoading: boolean;
   }) => {
-    const timeInRange = recap?.timeInRanges?.[rangeView] ?? 0;
+    const timeInRange = recap?.timeInRanges?.[rangeView];
     const glucoseColors = getGlucoseRangeColors(timeInRange, isDark);
+
+    if (isSelected) {
+      console.log("dasdfafsdfasdfasd", date);
+      console.log("ddasfasd", recap);
+    }
 
     return (
       <Pressable onPress={onPress} className="h-20 w-16">
@@ -54,7 +59,7 @@ const DayItem = React.memo(
                 isSelected ? "text-secondary" : "text-gray-400",
               )}
             >
-              {format(date, "EEEEE").toUpperCase()}
+              {date.toFormat("ccc").toUpperCase()}
             </Text>
           </View>
 
@@ -73,7 +78,7 @@ const DayItem = React.memo(
                   color: glucoseColors.text,
                 }}
               >
-                {Math.floor(timeInRange)}
+                {timeInRange !== undefined ? Math.floor(timeInRange) : "-"}
               </Text>
             </View>
           )}
@@ -84,7 +89,8 @@ const DayItem = React.memo(
 );
 
 export function DaySlider() {
-  const { selectedDate, setSelectedDate, visibleDates } = useDateStore();
+  const { selectedDate, setSelectedDate, visibleDates, formatDate } =
+    useDateStore();
   const { rangeView } = useGlucoseStore();
   const listRef = useRef<FlashList<Date> | null>(null);
   const { colorScheme } = useColorScheme();
@@ -95,7 +101,11 @@ export function DaySlider() {
   const recapsMap = useMemo(() => {
     const map = new Map<string, DailyRecap>();
     allRecaps?.forEach((recap) => {
-      map.set(new Date(recap.date).toDateString(), recap);
+      const recapDate = DateTime.fromJSDate(recap.date, {
+        zone: recap.timezone,
+      });
+      const dateKey = recapDate.toFormat("yyyy-MM-dd");
+      map.set(dateKey, recap);
     });
     return map;
   }, [allRecaps]);
@@ -132,9 +142,10 @@ export function DaySlider() {
   }, [selectedDate, scrollToSelectedDate]);
 
   const renderItem = useCallback(
-    ({ item: date }: { item: Date }) => {
-      const isSelected = date.toDateString() === selectedDate.toDateString();
-      const recap = recapsMap.get(date.toDateString());
+    ({ item: date }: { item: DateTime }) => {
+      const dateString = date.toFormat("yyyy-MM-dd");
+      const isSelected = date.hasSame(selectedDate, "day");
+      const recap = recapsMap.get(dateString);
       const isLoading = !recap && isPending;
 
       return (
@@ -144,6 +155,9 @@ export function DaySlider() {
           isSelected={isSelected}
           onPress={() => {
             setSelectedDate(date);
+            console.log("date", date);
+            console.log("date string", dateString);
+            console.log("recap", recapsMap.get(dateString));
           }}
           isDark={isDark}
           rangeView={rangeView}
@@ -154,7 +168,10 @@ export function DaySlider() {
     [selectedDate, setSelectedDate, isDark, rangeView, recapsMap, isPending],
   );
 
-  const keyExtractor = useCallback((date: Date) => date.toDateString(), []);
+  const keyExtractor = useCallback(
+    (date: Date) => formatDate(date),
+    [formatDate],
+  );
 
   return (
     <FlashList
