@@ -15,8 +15,8 @@ export const TokenDataSchema = z.object({
 export type TokenData = z.infer<typeof TokenDataSchema>;
 
 export const DateRangeSchema = z.object({
-  startDate: z.string().datetime(), // z.string().datetime({ offset: true });
-  endDate: z.string().datetime(),
+  startDate: z.string().datetime({ offset: true }),
+  endDate: z.string().datetime({ offset: true }),
 });
 export type DateRange = z.infer<typeof DateRangeSchema>;
 

@@ -11,7 +11,6 @@ import {
   useFont,
   vec,
 } from "@shopify/react-native-skia";
-import { endOfDay, startOfDay } from "date-fns";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
 
 import type { ProcessedActivityData } from "~/stores/activity-store";
@@ -47,11 +46,12 @@ export default function CGMChart() {
 
   // Fetch CGM data from the database
   const { startDate, endDate } = useMemo(() => {
-    const start = startOfDay(selectedDate);
-    const end = endOfDay(selectedDate);
+    const start = selectedDate.startOf("day");
+    const end = selectedDate.endOf("day");
+
     return {
-      startDate: start.toISOString(),
-      endDate: end.toISOString(),
+      startDate: start.toISO() ?? start.toMillis().toString(),
+      endDate: end.toISO() ?? end.toMillis().toString(),
     };
   }, [selectedDate]);
 

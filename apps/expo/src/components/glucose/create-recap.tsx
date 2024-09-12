@@ -15,7 +15,7 @@ const CalculateRecap: React.FC = () => {
         "Success",
         `Recaps calculated and stored successfully for ${data.length} days.`,
       );
-      await utils.recap.getDailyRecaps.invalidate();
+      await utils.recap.invalidate();
     },
     onError: (error) => {
       Alert.alert("Error", `Failed to calculate recaps: ${error.message}`);
@@ -32,14 +32,9 @@ const CalculateRecap: React.FC = () => {
     const augustStart = DateTime.local(2024, 8, 1, {
       zone: userTimezone,
     }).startOf("month");
-    const augustEnd = augustStart.endOf("month");
-
-    console.log("augustStart", augustStart);
-    console.log("augustEnd", augustEnd);
 
     const queryInput = {
-      startDate: augustStart.toISO() ?? "",
-      endDate: augustEnd.toISO() ?? "",
+      startDate: augustStart.toISO() ?? augustStart.toMillis().toString(),
       timezone: userTimezone,
     };
 

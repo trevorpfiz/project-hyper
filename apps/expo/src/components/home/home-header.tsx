@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { format, isToday } from "date-fns";
+import { DateTime } from "luxon";
 
 import { HomeCalendar } from "~/components/calendar/home-calendar";
 import { Button } from "~/components/ui/button";
@@ -26,9 +26,9 @@ export default function HomeHeader() {
 
   const { isPending } = api.recap.all.useQuery();
 
-  const formattedDate = isToday(selectedDate)
+  const formattedDate = selectedDate.hasSame(DateTime.local(), "day")
     ? "Today"
-    : format(selectedDate, "MMMM do, yyyy");
+    : selectedDate.toFormat("MMMM dd, yyyy");
 
   return (
     <View className="flex-row items-center justify-between px-2">

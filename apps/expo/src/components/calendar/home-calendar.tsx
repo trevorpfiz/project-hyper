@@ -4,7 +4,6 @@ import type {
 } from "@marceloterreiro/flash-calendar";
 import { useCallback, useMemo, useState } from "react";
 import { fromDateId, toDateId } from "@marceloterreiro/flash-calendar";
-import { add, sub } from "date-fns";
 import { format as formatFP } from "date-fns/fp";
 import { DateTime } from "luxon";
 
@@ -26,21 +25,22 @@ export function HomeCalendar() {
 
   const { data: allRecaps } = api.recap.all.useQuery();
 
-  const currentDate = DateTime.local();
+  const currentDate = DateTime.local().startOf("day");
   const minDate = allRecaps
-    ? DateTime.fromMillis(
-        Math.min(
-          ...allRecaps.map((recap) => DateTime.fromISO(recap.date).toMillis()),
+    ? DateTime.min(
+        ...allRecaps.map((recap) =>
+          DateTime.fromJSDate(recap.date).startOf("day"),
         ),
       )
-    : DateTime.fromISO("2024-08-01");
+    : DateTime.fromISO("2024-08-01").startOf("day");
 
   const handleDayPress = useCallback<CalendarOnDayPress>(
     (dateId) => {
       const newDate = fromDateId(dateId);
-      setCurrentCalendarMonth(newDate);
-      setSelectedDate(newDate);
-      updateVisibleDates(newDate);
+      const newDateTime = DateTime.fromJSDate(newDate);
+      setCurrentCalendarMonth(newDateTime);
+      setSelectedDate(newDateTime);
+      updateVisibleDates(newDateTime);
       setIsCalendarOpen(false); // Close the dialog after selecting a date
     },
     [setSelectedDate, setIsCalendarOpen, updateVisibleDates],
@@ -49,28 +49,28 @@ export function HomeCalendar() {
   const calendarActiveDateRanges = useMemo<CalendarActiveDateRange[]>(
     () => [
       {
-        startId: toDateId(selectedDate),
-        endId: toDateId(selectedDate),
+        startId: toDateId(selectedDate.toJSDate()),
+        endId: toDateId(selectedDate.toJSDate()),
       },
     ],
     [selectedDate],
   );
 
   const handlePreviousMonth = useCallback(() => {
-    setCurrentCalendarMonth(sub(currentCalendarMonth, { months: 1 }));
+    setCurrentCalendarMonth(currentCalendarMonth.minus({ months: 1 }));
   }, [currentCalendarMonth]);
 
   const handleNextMonth = useCallback(() => {
-    setCurrentCalendarMonth(add(currentCalendarMonth, { months: 1 }));
+    setCurrentCalendarMonth(currentCalendarMonth.plus({ months: 1 }));
   }, [currentCalendarMonth]);
 
   return (
     <BasicCalendar
       calendarActiveDateRanges={calendarActiveDateRanges}
       calendarDisabledDateIds={[]}
-      calendarMinDateId={toDateId(minDate)}
-      calendarMaxDateId={toDateId(currentDate)}
-      calendarMonthId={toDateId(currentCalendarMonth)}
+      calendarMinDateId={toDateId(minDate.toJSDate())}
+      calendarMaxDateId={toDateId(currentDate.toJSDate())}
+      calendarMonthId={toDateId(currentCalendarMonth.toJSDate())}
       calendarRowVerticalSpacing={4}
       getCalendarWeekDayFormat={formatFP("E")}
       calendarFirstDayOfWeek="sunday"

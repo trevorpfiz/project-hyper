@@ -1,29 +1,28 @@
-import { add, format, parseISO } from "date-fns";
+import type { DateTime } from "luxon";
 
 // Format dates to remove milliseconds and use the correct format
-export const formatDexcomDate = (dateString: string) => {
-  const date = parseISO(dateString);
-  return format(date, "yyyy-MM-dd'T'HH:mm:ss");
+export const formatDexcomDate = (dateTime: DateTime) => {
+  return dateTime.toUTC().toFormat("yyyy-MM-dd'T'HH:mm:ss");
 };
 
 // Get date chunks for fetching data in chunks of a specified size
 export function getDateChunks(
-  startDate: string,
-  endDate: string,
+  startDate: DateTime,
+  endDate: DateTime,
   chunkSizeInDays = 7,
 ) {
   const chunks = [];
-  let currentStart = parseISO(startDate);
-  const finalEnd = parseISO(endDate);
+  let currentStart = startDate;
+  const finalEnd = endDate;
 
   while (currentStart < finalEnd) {
-    const chunkEnd = add(currentStart, { days: chunkSizeInDays });
+    const chunkEnd = currentStart.plus({ days: chunkSizeInDays });
     const actualEnd = chunkEnd < finalEnd ? chunkEnd : finalEnd;
     chunks.push({
-      start: formatDexcomDate(currentStart.toISOString()),
-      end: formatDexcomDate(actualEnd.toISOString()),
+      start: formatDexcomDate(currentStart),
+      end: formatDexcomDate(actualEnd),
     });
-    currentStart = add(actualEnd, { seconds: 1 });
+    currentStart = actualEnd.plus({ seconds: 1 });
   }
 
   return chunks;

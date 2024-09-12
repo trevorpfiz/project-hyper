@@ -59,7 +59,7 @@ const DayItem = React.memo(
                 isSelected ? "text-secondary" : "text-gray-400",
               )}
             >
-              {date.toFormat("ccc").toUpperCase()}
+              {date.toFormat("ccccc").toUpperCase()}
             </Text>
           </View>
 
@@ -92,9 +92,11 @@ export function DaySlider() {
   const { selectedDate, setSelectedDate, visibleDates, formatDate } =
     useDateStore();
   const { rangeView } = useGlucoseStore();
-  const listRef = useRef<FlashList<Date> | null>(null);
+  const listRef = useRef<FlashList<DateTime> | null>(null);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  console.log("visibleDates", visibleDates);
 
   const { data: allRecaps, isPending } = api.recap.all.useQuery();
 
@@ -127,8 +129,8 @@ export function DaySlider() {
   }, []);
 
   const scrollToSelectedDate = useCallback(() => {
-    const selectedIndex = visibleDates.findIndex(
-      (date) => date.toDateString() === selectedDate.toDateString(),
+    const selectedIndex = visibleDates.findIndex((date) =>
+      date.hasSame(selectedDate, "day"),
     );
 
     if (selectedIndex !== -1) {
@@ -169,7 +171,7 @@ export function DaySlider() {
   );
 
   const keyExtractor = useCallback(
-    (date: Date) => formatDate(date),
+    (date: DateTime) => formatDate(date),
     [formatDate],
   );
 

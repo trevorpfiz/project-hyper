@@ -1,12 +1,6 @@
 import { useEffect } from "react";
 import { Alert, View } from "react-native";
-import {
-  endOfMonth,
-  isAfter,
-  isBefore,
-  parseISO,
-  startOfMonth,
-} from "date-fns";
+import { DateTime } from "luxon";
 
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -17,18 +11,22 @@ const DexcomCGMData: React.FC = () => {
   const utils = api.useUtils();
   const { lastSyncedTime, setLastSyncedTime } = useGlucoseStore();
 
-  const fetchDataRangeQuery = api.dexcom.fetchDataRange.useQuery({});
+  const fetchDataRangeQuery = api.dexcom.fetchDataRange.useQuery({
+    lastSyncTime: lastSyncedTime ?? undefined,
+  });
 
   const fetchAndStoreEGVsMutation = api.dexcom.fetchAndStoreEGVs.useMutation({
     async onSuccess(data) {
       if (data.recordsInserted > 0) {
         Alert.alert(
           "Success",
-          `${data.recordsInserted} CGM records fetched and stored successfully.`,
+          `${data.recordsInserted} CGM records fetched and stored successfully. Last sync time: ${data.latestEGVTimestamp}`,
         );
         await utils.dexcom.getStoredEGVs.invalidate();
         if (data.latestEGVTimestamp) {
-          setLastSyncedTime(new Date(data.latestEGVTimestamp));
+          setLastSyncedTime(
+            DateTime.fromISO(data.latestEGVTimestamp, { zone: "utc" }),
+          );
         }
       } else {
         Alert.alert("Info", "No new CGM data available.");
@@ -44,27 +42,27 @@ const DexcomCGMData: React.FC = () => {
 
   const handleFetchData = () => {
     if (fetchDataRangeQuery.data?.egvs) {
-      const augustStart = startOfMonth(new Date(2024, 7));
-      const augustEnd = endOfMonth(new Date(2024, 7));
+      const augustStart = DateTime.utc(2024, 8, 1).startOf("month");
 
-      const dataRangeStart = parseISO(
+      const dataRangeStart = DateTime.fromISO(
         fetchDataRangeQuery.data.egvs.start.systemTime,
+        { zone: "utc" },
       );
-      const dataRangeEnd = parseISO(
+      const dataRangeEnd = DateTime.fromISO(
         fetchDataRangeQuery.data.egvs.end.systemTime,
+        { zone: "utc" },
       );
 
-      const startDate = isAfter(dataRangeStart, augustStart)
-        ? fetchDataRangeQuery.data.egvs.start.systemTime
-        : augustStart.toISOString();
+      console.log("dataRangeStart", dataRangeStart);
+      console.log("dataRangeEnd", dataRangeEnd);
+      console.log("adfjfsd", dataRangeEnd.toUTC().toISO());
 
-      const endDate = isBefore(dataRangeEnd, augustEnd)
-        ? fetchDataRangeQuery.data.egvs.end.systemTime
-        : augustEnd.toISOString();
+      const startDate =
+        dataRangeStart > augustStart ? dataRangeStart : augustStart;
 
       const queryInput = {
-        startDate,
-        endDate,
+        startDate: startDate.toUTC().toISO() ?? "",
+        endDate: dataRangeEnd.toUTC().toISO() ?? "",
       };
 
       fetchAndStoreEGVsMutation.mutate(queryInput);
@@ -80,6 +78,8 @@ const DexcomCGMData: React.FC = () => {
   if (fetchDataRangeQuery.isError) {
     return <Text>Error: {fetchDataRangeQuery.error.message}</Text>;
   }
+
+  console.log("lastSyncedTime", lastSyncedTime);
 
   return (
     <View>
@@ -100,7 +100,11 @@ const DexcomCGMData: React.FC = () => {
       ) : null}
       <Text>
         Last Synced:{" "}
-        {lastSyncedTime ? lastSyncedTime.toLocaleString() : "Never"}
+        {lastSyncedTime
+          ? DateTime.fromISO(lastSyncedTime, { zone: "utc" })
+              .toLocal()
+              .toString()
+          : "Never"}
       </Text>
     </View>
   );

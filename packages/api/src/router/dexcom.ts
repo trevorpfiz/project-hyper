@@ -1,6 +1,7 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { parseISO } from "date-fns";
+import { DateTime } from "luxon";
 import { z } from "zod";
 
 import { and, desc, eq, gte, lte } from "@hyper/db";
@@ -40,7 +41,16 @@ export const dexcomRouter = {
 
       const query = new URLSearchParams();
       if (input.lastSyncTime) {
-        query.append("lastSyncTime", input.lastSyncTime);
+        const lastSyncDateTime = DateTime.fromISO(input.lastSyncTime);
+
+        if (!lastSyncDateTime.isValid) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Invalid last sync time.",
+          });
+        }
+
+        query.append("lastSyncTime", lastSyncDateTime.toUTC().toISO());
       }
 
       const url = `${DEXCOM_SANDBOX_BASE_URL}/v3/users/self/dataRange${query.toString() ? `?${query.toString()}` : ""}`;
@@ -59,7 +69,17 @@ export const dexcomRouter = {
     .mutation(async ({ input, ctx }) => {
       const { dexcomTokens, db } = ctx;
 
-      const chunks = getDateChunks(input.startDate, input.endDate);
+      const startDate = DateTime.fromISO(input.startDate).toUTC();
+      const endDate = DateTime.fromISO(input.endDate).toUTC();
+
+      if (!startDate.isValid || !endDate.isValid) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid date range provided.",
+        });
+      }
+
+      const chunks = getDateChunks(startDate, endDate);
       let totalRecordsInserted = 0;
       let latestEGVTimestamp: string | null = null;
 
@@ -80,8 +100,8 @@ export const dexcomRouter = {
         const cgmDataToUpsert = validatedData.records.map((egv) => ({
           dexcomUserId: validatedData.userId,
           recordId: egv.recordId,
-          systemTime: parseISO(egv.systemTime),
-          displayTime: parseISO(egv.displayTime),
+          systemTime: DateTime.fromISO(egv.systemTime).toJSDate(),
+          displayTime: DateTime.fromISO(egv.displayTime).toJSDate(),
           transmitterId: egv.transmitterId,
           transmitterTicks: egv.transmitterTicks,
           glucoseValue: egv.value,
@@ -113,17 +133,24 @@ export const dexcomRouter = {
         const recordsAffected = result.length;
         totalRecordsInserted += recordsAffected;
 
-        const lastResult = result[result.length - 1];
-        if (lastResult) {
-          latestEGVTimestamp = lastResult.systemTime.toISOString();
+        // Sort the result array to find the latest systemTime
+        const sortedResult = result.sort(
+          (a, b) => b.systemTime.getTime() - a.systemTime.getTime(),
+        );
+        const latestRecord = sortedResult[0];
+
+        if (latestRecord) {
+          latestEGVTimestamp = DateTime.fromJSDate(
+            latestRecord.systemTime,
+          ).toISO();
         }
       }
 
       return {
         recordsInserted: totalRecordsInserted,
         dateRange: {
-          start: input.startDate,
-          end: input.endDate,
+          start: startDate.toISO(),
+          end: endDate.toISO(),
         },
         latestEGVTimestamp,
       };

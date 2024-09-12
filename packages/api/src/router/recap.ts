@@ -67,7 +67,13 @@ export const recapRouter = {
   }),
 
   calculateAndStoreRecapsForRange: protectedProcedure
-    .input(DateRangeSchema.extend({ timezone: z.string() }))
+    .input(
+      z.object({
+        startDate: z.string().datetime({ offset: true }),
+        endDate: z.string().datetime({ offset: true }).optional(),
+        timezone: z.string(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const { startDate, endDate, timezone } = input;
       const userId = ctx.user.id;
@@ -76,7 +82,9 @@ export const recapRouter = {
       const startDateUTC = DateTime.fromISO(startDate, {
         zone: timezone,
       }).toUTC();
-      const endDateUTC = DateTime.fromISO(endDate, { zone: timezone }).toUTC();
+      const endDateUTC = endDate
+        ? DateTime.fromISO(endDate, { zone: timezone }).toUTC()
+        : undefined;
 
       // Fetch EGVs for the date range
       const storedEGVs = await ctx.db
@@ -85,7 +93,9 @@ export const recapRouter = {
         .where(
           and(
             gte(CGMData.systemTime, startDateUTC.toJSDate()),
-            lte(CGMData.systemTime, endDateUTC.toJSDate()),
+            endDateUTC
+              ? lte(CGMData.systemTime, endDateUTC.toJSDate())
+              : undefined,
             eq(CGMData.profileId, userId),
           ),
         )
@@ -128,6 +138,7 @@ export const recapRouter = {
 
         recapsToUpsert.push({
           date: zonedDate.toJSDate(),
+          timezone,
           averageGlucose,
           minimumGlucose,
           maximumGlucose,
