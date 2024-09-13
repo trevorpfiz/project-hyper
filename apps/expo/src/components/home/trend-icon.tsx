@@ -19,7 +19,7 @@ type TrendIconProps = LucideProps & {
 export const TrendIcon: React.FC<TrendIconProps> = ({ trend, ...props }) => {
   const iconProps = {
     ...props,
-    size: props.size ?? 21,
+    size: props.size ?? 24,
     strokeWidth: props.strokeWidth ?? 1.25,
   };
 

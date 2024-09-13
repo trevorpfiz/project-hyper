@@ -6,8 +6,8 @@ import CGMChart from "~/components/charts/cgm-chart";
 import BloodSugarWidget from "~/components/home/blood-sugar-widget";
 import { DaySlider } from "~/components/home/day-slider";
 import HomeHeader from "~/components/home/home-header";
+import { MacrosWidget } from "~/components/home/macros-widget";
 import { OverviewPager } from "~/components/home/overview-pager";
-import { TempWidget } from "~/components/home/temp-widget";
 import Timeline from "~/components/home/timeline";
 import { Separator } from "~/components/ui/separator";
 
@@ -30,7 +30,7 @@ export default function HomeScreen() {
         <View className="h-64 flex-1">
           <OverviewPager>
             <BloodSugarWidget />
-            <TempWidget />
+            <MacrosWidget />
           </OverviewPager>
         </View>
 
