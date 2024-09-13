@@ -26,9 +26,6 @@ export default function BloodSugarWidget() {
 
   const bloodSugarColors = getBloodSugarColors(bloodSugar, isDark, rangeView);
 
-  console.log("Raw system time:", latestEgv?.egv?.systemTime);
-  console.log("Parsed system time:", localTime.toISO());
-
   return (
     <View className="flex-col items-center justify-between pb-4">
       {/* Blood Sugar */}
