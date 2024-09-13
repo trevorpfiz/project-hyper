@@ -30,8 +30,6 @@ function ChangeRangeSetting() {
 
   const { rangeView, setRangeView } = useGlucoseStore();
 
-  console.log(rangeView);
-
   const capitalizeFirstLetter = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };

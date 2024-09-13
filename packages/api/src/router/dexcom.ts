@@ -174,6 +174,17 @@ export const dexcomRouter = {
       return storedData;
     }),
 
+  getLatestEGV: protectedProcedure.query(async ({ ctx }) => {
+    const { db, user } = ctx;
+
+    const row = await db.query.CGMData.findFirst({
+      where: eq(CGMData.profileId, user.id),
+      orderBy: desc(CGMData.systemTime),
+    });
+
+    return { egv: row };
+  }),
+
   fetchDevices: protectedDexcomProcedure.query(async ({ ctx }) => {
     const { dexcomTokens } = ctx;
 

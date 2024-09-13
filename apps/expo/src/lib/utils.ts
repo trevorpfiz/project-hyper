@@ -2,6 +2,8 @@ import type { ClassValue } from "clsx";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import type { GlucoseRangeTypes } from "@hyper/db/schema";
+
 import { CALENDAR_THEME } from "~/lib/constants";
 
 export function cn(...inputs: ClassValue[]) {
@@ -48,10 +50,28 @@ export function getGlucoseRangeColors(
   return theme.bad;
 }
 
-export function getBloodSugarColors(value: number, isDark: boolean) {
-  const theme = isDark ? CALENDAR_THEME.dark : CALENDAR_THEME.light;
+interface Range {
+  veryLow: number;
+  low: number;
+  high: number;
+  veryHigh: number;
+}
 
-  if (value < 70 || value > 180) return theme.bad;
-  if (value >= 70 && value <= 140) return theme.good;
-  return theme.ok; // for 140 < value <= 180
+const ranges: Record<GlucoseRangeTypes, Range> = {
+  tight: { veryLow: 70, low: 70, high: 140, veryHigh: 180 },
+  standard: { veryLow: 70, low: 70, high: 180, veryHigh: 180 },
+  optimal: { veryLow: 70, low: 72, high: 110, veryHigh: 140 },
+};
+
+export function getBloodSugarColors(
+  value: number,
+  isDark: boolean,
+  rangeView: GlucoseRangeTypes,
+) {
+  const theme = isDark ? CALENDAR_THEME.dark : CALENDAR_THEME.light;
+  const range = ranges[rangeView];
+
+  if (value < range.veryLow || value > range.veryHigh) return theme.bad;
+  if (value >= range.low && value <= range.high) return theme.good;
+  return theme.ok;
 }

@@ -37,7 +37,7 @@ const OverviewPager = (props: { children: React.ReactNode }) => {
   });
 
   const handler = usePagerScrollHandler({
-    onPageScroll: (e: any) => {
+    onPageScroll: (e) => {
       "worklet";
       positionSharedValue.value = e.position;
       scrollOffsetSharedValue.value = e.offset;
@@ -52,7 +52,6 @@ const OverviewPager = (props: { children: React.ReactNode }) => {
         style={{ flex: 1 }}
         onPageScroll={handler}
         orientation="horizontal"
-        useNext={false}
       >
         {React.Children.map(children, (child, index) => (
           <View key={index} className="flex-1 justify-center">

@@ -30,9 +30,7 @@ const generateDates = (start: DateTime, end: DateTime) => {
 
 const generateInitialDates = () => {
   const today = DateTime.local().startOf("day");
-  console.log("today", today);
   const start = today.minus({ days: 29 });
-  console.log("start", start);
   return generateDates(start, today);
 };
 

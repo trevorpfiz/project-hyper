@@ -14,8 +14,8 @@ export function ThemeToggle() {
       onPress={() => {
         const newTheme = isDarkColorScheme ? "light" : "dark";
         setColorScheme(newTheme);
-        setAndroidNavigationBar(newTheme);
-        AsyncStorage.setItem("theme", newTheme);
+        void setAndroidNavigationBar(newTheme);
+        void AsyncStorage.setItem("theme", newTheme);
       }}
       className="web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2"
     >

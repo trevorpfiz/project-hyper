@@ -39,11 +39,6 @@ const DayItem = React.memo(
     const timeInRange = recap?.timeInRanges?.[rangeView];
     const glucoseColors = getGlucoseRangeColors(timeInRange, isDark);
 
-    if (isSelected) {
-      console.log("dasdfafsdfasdfasd", date);
-      console.log("ddasfasd", recap);
-    }
-
     return (
       <Pressable onPress={onPress} className="h-20 w-16">
         <View className="flex-col items-center gap-1">
@@ -95,8 +90,6 @@ export function DaySlider() {
   const listRef = useRef<FlashList<DateTime> | null>(null);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
-
-  console.log("visibleDates", visibleDates);
 
   const { data: allRecaps, isPending } = api.recap.all.useQuery();
 
@@ -157,9 +150,6 @@ export function DaySlider() {
           isSelected={isSelected}
           onPress={() => {
             setSelectedDate(date);
-            console.log("date", date);
-            console.log("date string", dateString);
-            console.log("recap", recapsMap.get(dateString));
           }}
           isDark={isDark}
           rangeView={rangeView}

@@ -23,6 +23,7 @@ const DexcomCGMData: React.FC = () => {
           `${data.recordsInserted} CGM records fetched and stored successfully. Last sync time: ${data.latestEGVTimestamp}`,
         );
         await utils.dexcom.getStoredEGVs.invalidate();
+        await utils.dexcom.getLatestEGV.invalidate();
         if (data.latestEGVTimestamp) {
           setLastSyncedTime(
             DateTime.fromISO(data.latestEGVTimestamp, { zone: "utc" }),
@@ -53,10 +54,6 @@ const DexcomCGMData: React.FC = () => {
         { zone: "utc" },
       );
 
-      console.log("dataRangeStart", dataRangeStart);
-      console.log("dataRangeEnd", dataRangeEnd);
-      console.log("adfjfsd", dataRangeEnd.toUTC().toISO());
-
       const startDate =
         dataRangeStart > augustStart ? dataRangeStart : augustStart;
 
@@ -78,8 +75,6 @@ const DexcomCGMData: React.FC = () => {
   if (fetchDataRangeQuery.isError) {
     return <Text>Error: {fetchDataRangeQuery.error.message}</Text>;
   }
-
-  console.log("lastSyncedTime", lastSyncedTime);
 
   return (
     <View>
