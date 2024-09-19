@@ -11,16 +11,20 @@ import {
 } from "~/components/ui/dialog";
 import { IndeterminateProgressBar } from "~/components/ui/indeterminate-progress";
 import { Text } from "~/components/ui/text";
+import { useDexcomSync } from "~/hooks/use-dexcom-sync";
 import { CALENDAR_THEME } from "~/lib/constants";
 import { Bell } from "~/lib/icons/bell";
 import { Calendar } from "~/lib/icons/calendar";
+import { RefreshCw } from "~/lib/icons/refresh-cw";
 import { useColorScheme } from "~/lib/use-color-scheme";
+import { cn } from "~/lib/utils";
 import { useDateStore } from "~/stores/date-store";
 import { api } from "~/utils/api";
 
 export default function HomeHeader() {
   const { selectedDate, isCalendarOpen, setIsCalendarOpen } = useDateStore();
   const { colorScheme } = useColorScheme();
+  const { syncNow, isPending: isSyncPending } = useDexcomSync();
   const isDark = colorScheme === "dark";
   const theme = isDark ? CALENDAR_THEME.dark : CALENDAR_THEME.light;
 
@@ -30,13 +34,17 @@ export default function HomeHeader() {
     ? "Today"
     : selectedDate.toFormat("MMMM dd, yyyy");
 
+  const handleSyncPress = () => {
+    void syncNow();
+  };
+
   return (
     <View className="flex-row items-center justify-between px-2">
       <Dialog open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
         <DialogTrigger asChild>
           <Button variant="ghost" className="flex-row items-center gap-2">
             <Calendar className="text-foreground" size={24} />
-            <Text>{formattedDate}</Text>
+            <Text className="text-xs">{formattedDate}</Text>
           </Button>
         </DialogTrigger>
         <DialogContent
@@ -73,12 +81,26 @@ export default function HomeHeader() {
         </DialogContent>
       </Dialog>
 
-      <Button
-        variant="ghost"
-        className="active:bg-transparent active:opacity-50"
-      >
-        <Bell className="text-foreground" size={24} />
-      </Button>
+      <View className="flex-row items-center gap-0">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="flex-col items-center gap-0 active:bg-transparent active:opacity-50"
+          onPress={handleSyncPress}
+          disabled={isSyncPending}
+        >
+          {/* <View className={cn(isSyncPending && "animate-spin")}> */}
+          <RefreshCw className={cn("text-foreground")} size={24} />
+          {/* </View> */}
+          <Text className="native:text-xs text-muted-foreground">Sync</Text>
+        </Button>
+        <Button
+          variant="ghost"
+          className="active:bg-transparent active:opacity-50"
+        >
+          <Bell className="text-foreground" size={24} />
+        </Button>
+      </View>
     </View>
   );
 }

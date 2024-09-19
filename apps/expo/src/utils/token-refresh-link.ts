@@ -5,7 +5,7 @@ import PQueue from "p-queue";
 import type { AppRouter } from "@hyper/api";
 
 import { getDexcomTokens, updateDexcomTokens } from "~/utils/dexcom-store";
-import { helperClient } from "~/utils/helper-client";
+import { helperClient } from "~/utils/helper-trpc-client";
 
 export const RENEW_MS_BEFORE_EXPIRATION = 5000; // 5 seconds
 

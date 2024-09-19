@@ -9,7 +9,7 @@ import type { AppRouter } from "@hyper/api";
 
 import { getBaseUrl } from "~/utils/base-url";
 import { getDexcomTokens } from "~/utils/dexcom-store";
-import { tokenRefreshLink } from "~/utils/token-refresh";
+import { tokenRefreshLink } from "~/utils/token-refresh-link";
 
 /**
  * A set of typesafe hooks for consuming your API.

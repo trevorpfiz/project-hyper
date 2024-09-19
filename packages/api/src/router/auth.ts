@@ -13,8 +13,7 @@ export const authRouter = {
     return "you can see this secret message!";
   }),
 
-  // TODO: can potentially make this a protected procedure by creating a helper TRPCProvider that includes supabase auth and we use that in token-refresh.ts
-  refreshDexcomToken: publicProcedure.mutation(async ({ ctx }) => {
+  refreshDexcomToken: protectedProcedure.mutation(async ({ ctx }) => {
     const { dexcomTokens } = ctx;
 
     if (!dexcomTokens) {

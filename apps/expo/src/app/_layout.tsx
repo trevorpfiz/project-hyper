@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import { DateTime } from "luxon";
 
 // import * as SystemUI from "expo-system-ui";
 
@@ -25,6 +26,7 @@ import { HeaderCloseButton } from "~/components/header";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/use-color-scheme";
+import { useGlucoseStore } from "~/stores/glucose-store";
 import { TRPCProvider } from "~/utils/api";
 import { supabase } from "~/utils/supabase";
 
@@ -140,6 +142,7 @@ const InitialLayout = () => {
 export default function RootLayout() {
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = useState(false);
+  const { setUserTimezone } = useGlucoseStore();
 
   useEffect(() => {
     (async () => {
@@ -148,6 +151,11 @@ export default function RootLayout() {
         // Adds the background color to the html element to prevent white background on overscroll.
         document.documentElement.classList.add("bg-background");
       }
+
+      // Set user's timezone if needed (e.g. background fetch recaps)
+      const detectedTimezone = DateTime.local().zoneName;
+      setUserTimezone(detectedTimezone);
+
       if (!theme) {
         setAndroidNavigationBar(colorScheme);
         AsyncStorage.setItem("theme", colorScheme);
@@ -166,7 +174,7 @@ export default function RootLayout() {
     })().finally(() => {
       SplashScreen.hideAsync();
     });
-  }, [colorScheme, setColorScheme]);
+  }, [colorScheme, setColorScheme, setUserTimezone]);
 
   // useEffect(() => {
   //   if (isDarkColorScheme) {

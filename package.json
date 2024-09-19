@@ -4,7 +4,7 @@
   "engines": {
     "node": ">=20.16.0"
   },
-  "packageManager": "pnpm@9.8.0+sha256.56a9e76b51796ca7f73b85e44cf83712862091f4d498c0ce4d5b7ecdc6ba18f7",
+  "packageManager": "pnpm@9.10.0+sha256.355a8ab8dbb6ad41befbef39bc4fd6b5df85e12761d2724bd01f13e878de4b13",
   "scripts": {
     "build": "turbo run build",
     "clean": "git clean -xdf node_modules",

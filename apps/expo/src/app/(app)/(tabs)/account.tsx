@@ -6,11 +6,9 @@ import {
 } from "@supabase/auth-helpers-react";
 
 import DexcomCGMData from "~/components/dexcom/dexcom-data";
-import DexcomDevicesList from "~/components/dexcom/dexcom-devices";
 import { DexcomLogin } from "~/components/dexcom/dexcom-login";
 import { DexcomBackgroundSync } from "~/components/dexcom/dexcom-sync";
 import { ChangeRangeSetting } from "~/components/glucose/change-range-setting";
-import { CalculateRecap } from "~/components/glucose/create-recap";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -48,13 +46,10 @@ export default function AccountScreen() {
 
       <DexcomLogin />
 
+      {/* <DexcomBackgroundSync /> */}
       <DexcomCGMData />
-
-      <CalculateRecap />
-
-      <DexcomBackgroundSync />
-
-      <DexcomDevicesList />
+      {/* <CalculateRecap /> */}
+      {/* <DexcomDevicesList /> */}
     </ScrollView>
   );
 }

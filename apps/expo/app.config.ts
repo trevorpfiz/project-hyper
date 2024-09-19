@@ -78,13 +78,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     [
-      "expo-av",
-      {
-        microphonePermission:
-          "Allow $(PRODUCT_NAME) to access your microphone.",
-      },
-    ],
-    [
       "react-native-vision-camera",
       {
         cameraPermissionText: "$(PRODUCT_NAME) needs access to your Camera.",

@@ -110,5 +110,3 @@ export const INTRO_CONTENT = [
     fontColor: colors.pink[500],
   },
 ];
-
-export const BACKGROUND_FETCH_DEXCOM_SYNC = "background-fetch";

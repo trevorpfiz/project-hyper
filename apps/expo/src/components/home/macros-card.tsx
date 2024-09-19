@@ -11,7 +11,7 @@ const MacrosCard = (props: { macrosData: MacrosData }) => {
   const { macrosData } = props;
 
   return (
-    <Card className="h-full w-full bg-gray-900 text-white">
+    <Card className="h-full w-full bg-gray-900">
       <CardHeader className="py-4">
         <CardTitle className="text-lg font-bold">
           Daily Macronutrients
@@ -56,7 +56,7 @@ const MacroItem = ({
   unit,
   hideUnit = false,
   hideLabel = false,
-  className = "",
+  className,
 }: MacroItem & {
   hideUnit?: boolean;
   hideLabel?: boolean;

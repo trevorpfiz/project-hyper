@@ -1,41 +1,10 @@
 import { View } from "react-native";
 import * as BackgroundFetch from "expo-background-fetch";
-import * as Notifications from "expo-notifications";
-import * as TaskManager from "expo-task-manager";
 
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { useDexcomSync } from "~/hooks/use-dexcom-sync";
-import { BACKGROUND_FETCH_DEXCOM_SYNC } from "~/lib/constants";
-import { useGlucoseStore } from "~/stores/glucose-store";
-
-const BACKGROUND_FETCH_TASK = "background-fetch";
-
-// 1. Define the task by providing a name and the function that should be executed
-// Note: This needs to be called in the global scope (e.g outside of your React components)
-TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
-  const { lastSyncedTime } = useGlucoseStore();
-
-  try {
-    const result = await performSync(lastSyncedTime);
-
-    if (result.newData) {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "New CGM Data Available",
-          body: "Tap to view your latest glucose readings.",
-        },
-        trigger: null,
-      });
-      return BackgroundFetch.BackgroundFetchResult.NewData;
-    } else {
-      return BackgroundFetch.BackgroundFetchResult.NoData;
-    }
-  } catch (error) {
-    console.error("Background sync failed:", error);
-    return BackgroundFetch.BackgroundFetchResult.Failed;
-  }
-});
+import { BACKGROUND_FETCH_DEXCOM_SYNC } from "~/utils/background";
 
 export function DexcomBackgroundSync() {
   const { status, syncNow, isPending, isRegistered, toggleFetchTask } =

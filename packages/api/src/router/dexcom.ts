@@ -79,6 +79,7 @@ export const dexcomRouter = {
       }
 
       const chunks = getDateChunks(startDate, endDate);
+      console.log("Chunks:", chunks);
       let totalRecordsInserted = 0;
       let latestEGVTimestamp: string | null = null;
 
