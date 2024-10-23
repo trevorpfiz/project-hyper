@@ -11,7 +11,7 @@ const MacrosCard = (props: { macrosData: MacrosData }) => {
   const { macrosData } = props;
 
   return (
-    <Card className="h-full w-full bg-gray-900">
+    <Card className="h-full w-full">
       <CardHeader className="py-4">
         <CardTitle className="text-lg font-bold">
           Daily Macronutrients

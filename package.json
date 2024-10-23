@@ -2,9 +2,10 @@
   "name": "hyper",
   "private": true,
   "engines": {
-    "node": ">=20.16.0"
+    "node": ">=20.16.0",
+    "pnpm": "^9.6.0"
   },
-  "packageManager": "pnpm@9.10.0+sha256.355a8ab8dbb6ad41befbef39bc4fd6b5df85e12761d2724bd01f13e878de4b13",
+  "packageManager": "pnpm@9.12.2+sha256.2ef6e547b0b07d841d605240dce4d635677831148cd30f6d564b8f4f928f73d2",
   "scripts": {
     "build": "turbo run build",
     "clean": "git clean -xdf node_modules",
@@ -14,7 +15,7 @@
     "db:migrate": "turbo -F @hyper/db migrate",
     "db:push": "turbo -F @hyper/db push",
     "db:studio": "turbo -F @hyper/db studio",
-    "dev": "turbo watch dev",
+    "dev": "turbo watch dev --continue",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
@@ -25,9 +26,9 @@
   },
   "devDependencies": {
     "@hyper/prettier-config": "workspace:*",
-    "@turbo/gen": "^2.1.1",
+    "@turbo/gen": "^2.2.3",
     "prettier": "catalog:",
-    "turbo": "^2.1.1",
+    "turbo": "^2.2.3",
     "typescript": "catalog:"
   },
   "prettier": "@hyper/prettier-config"

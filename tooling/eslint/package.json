@@ -15,21 +15,22 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@next/eslint-plugin-next": "^14.2.7",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsx-a11y": "^6.9.0",
-    "eslint-plugin-react": "^7.35.0",
-    "eslint-plugin-react-hooks": "rc",
-    "eslint-plugin-testing-library": "^6.3.0",
-    "eslint-plugin-turbo": "^2.1.1",
-    "typescript-eslint": "^8.3.0"
+    "@next/eslint-plugin-next": "^14.2.16",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.1",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "5.0.0",
+    "eslint-plugin-testing-library": "^6.4.0",
+    "eslint-plugin-turbo": "^2.2.3",
+    "typescript-eslint": "^8.11.0"
   },
   "devDependencies": {
-    "@eslint/compat": "^1.1.1",
+    "@eslint/compat": "^1.2.1",
     "@eslint/eslintrc": "^3.1.0",
     "@hyper/prettier-config": "workspace:*",
     "@hyper/tsconfig": "workspace:*",
     "@types/eslint__eslintrc": "^2.1.2",
+    "@types/eslint__js": "8.42.3",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"

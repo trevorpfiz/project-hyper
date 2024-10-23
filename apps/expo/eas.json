@@ -1,11 +1,12 @@
 {
   "cli": {
-    "version": ">= 4.1.2"
+    "version": ">= 12.0.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "base": {
       "node": "20.16.0",
-      "pnpm": "9.8.0",
+      "pnpm": "9.10.0",
       "ios": {
         "resourceClass": "m-medium"
       }
@@ -13,17 +14,20 @@
     "development": {
       "extends": "base",
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "autoIncrement": true
     },
     "preview": {
       "extends": "base",
       "distribution": "internal",
       "ios": {
         "simulator": true
-      }
+      },
+      "autoIncrement": true
     },
     "production": {
-      "extends": "base"
+      "extends": "base",
+      "autoIncrement": true
     }
   },
   "submit": {

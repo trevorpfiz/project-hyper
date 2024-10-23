@@ -1,30 +1,26 @@
 import { relations } from "drizzle-orm";
-import { doublePrecision, timestamp, uuid } from "drizzle-orm/pg-core";
 
 import { createTable } from "./_table";
 import { Profile } from "./profile";
 
-export const Meal = createTable("meal", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  mealTime: timestamp("meal_time", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  carbohydrates: doublePrecision("carbohydrates"),
-  dietaryEnergy: doublePrecision("dietary_energy"),
-  dietarySugar: doublePrecision("dietary_sugar"),
-  fiber: doublePrecision("fiber"),
-  protein: doublePrecision("protein"),
-  totalFat: doublePrecision("total_fat"),
-  profileId: uuid("profile_id")
+export const Meal = createTable("meal", (t) => ({
+  id: t.uuid().primaryKey().defaultRandom(),
+  mealTime: t.timestamp({ withTimezone: true }).defaultNow().notNull(),
+  carbohydrates: t.doublePrecision(),
+  dietaryEnergy: t.doublePrecision(),
+  dietarySugar: t.doublePrecision(),
+  fiber: t.doublePrecision(),
+  protein: t.doublePrecision(),
+  totalFat: t.doublePrecision(),
+  profileId: t
+    .uuid()
     .notNull()
     .references(() => Profile.id),
-
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", {
-    mode: "date",
-    withTimezone: true,
-  }).$onUpdateFn(() => new Date()),
-});
+  createdAt: t.timestamp().defaultNow().notNull(),
+  updatedAt: t
+    .timestamp({ mode: "date", withTimezone: true })
+    .$onUpdateFn(() => new Date()),
+}));
 
 export const MealRelations = relations(Meal, ({ one }) => ({
   profile: one(Profile, {

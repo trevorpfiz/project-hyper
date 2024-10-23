@@ -1,13 +1,5 @@
 import { relations } from "drizzle-orm";
-import {
-  doublePrecision,
-  index,
-  integer,
-  timestamp,
-  uniqueIndex,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { index, uniqueIndex } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -16,35 +8,31 @@ import { Profile } from "./profile";
 
 export const CGMData = createTable(
   "cgm_data",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    dexcomUserId: varchar("dexcom_user_id", { length: 255 }).notNull(),
-    recordId: varchar("record_id", { length: 255 }).notNull().unique(),
-    systemTime: timestamp("system_time", { withTimezone: true }).notNull(),
-    displayTime: timestamp("display_time", { withTimezone: true }).notNull(),
-    transmitterId: varchar("transmitter_id", { length: 255 }),
-    transmitterTicks: integer("transmitter_ticks").notNull(),
-    glucoseValue: integer("glucose_value"),
-    status: varchar("status", { length: 20 }),
-    trend: varchar("trend", { length: 20 }),
-    trendRate: doublePrecision("trend_rate"),
-    unit: varchar("unit", { length: 10 }).notNull(),
-    rateUnit: varchar("rate_unit", { length: 20 }).notNull(),
-    displayDevice: varchar("display_device", { length: 20 }).notNull(),
-    transmitterGeneration: varchar("transmitter_generation", {
-      length: 20,
-    }).notNull(),
-
-    profileId: uuid("profile_id")
+  (t) => ({
+    id: t.uuid().primaryKey().defaultRandom(),
+    dexcomUserId: t.varchar({ length: 255 }).notNull(),
+    recordId: t.varchar({ length: 255 }).notNull().unique(),
+    systemTime: t.timestamp({ withTimezone: true }).notNull(),
+    displayTime: t.timestamp({ withTimezone: true }).notNull(),
+    transmitterId: t.varchar({ length: 255 }),
+    transmitterTicks: t.integer().notNull(),
+    glucoseValue: t.integer(),
+    status: t.varchar({ length: 20 }),
+    trend: t.varchar({ length: 20 }),
+    trendRate: t.doublePrecision(),
+    unit: t.varchar({ length: 10 }).notNull(),
+    rateUnit: t.varchar({ length: 20 }).notNull(),
+    displayDevice: t.varchar({ length: 20 }).notNull(),
+    transmitterGeneration: t.varchar({ length: 20 }).notNull(),
+    profileId: t
+      .uuid()
       .notNull()
       .references(() => Profile.id),
-
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt", {
-      mode: "date",
-      withTimezone: true,
-    }).$onUpdateFn(() => new Date()),
-  },
+    createdAt: t.timestamp().defaultNow().notNull(),
+    updatedAt: t
+      .timestamp({ mode: "date", withTimezone: true })
+      .$onUpdateFn(() => new Date()),
+  }),
   (table) => {
     return {
       profileIdIdx: index("cgm_data_profile_id_idx").on(table.profileId),

@@ -1,25 +1,24 @@
 import { relations } from "drizzle-orm";
-import { interval, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { createTable } from "./_table";
 import { Profile } from "./profile";
 
-export const Activity = createTable("activity", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  duration: interval("duration").notNull(),
-  activityTypeId: uuid("activity_type_id")
+export const Activity = createTable("activity", (t) => ({
+  id: t.uuid().primaryKey().defaultRandom(),
+  duration: t.interval().notNull(),
+  activityTypeId: t
+    .uuid()
     .notNull()
     .references(() => ActivityType.id),
-  profileId: uuid("profile_id")
+  profileId: t
+    .uuid()
     .notNull()
     .references(() => Profile.id),
-
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", {
-    mode: "date",
-    withTimezone: true,
-  }).$onUpdateFn(() => new Date()),
-});
+  createdAt: t.timestamp().defaultNow().notNull(),
+  updatedAt: t
+    .timestamp({ mode: "date", withTimezone: true })
+    .$onUpdateFn(() => new Date()),
+}));
 
 export const ActivityRelations = relations(Activity, ({ one }) => ({
   activityType: one(ActivityType, {
@@ -32,7 +31,7 @@ export const ActivityRelations = relations(Activity, ({ one }) => ({
   }),
 }));
 
-export const ActivityType = createTable("activity_type", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: varchar("name", { length: 50 }).notNull().unique(),
-});
+export const ActivityType = createTable("activity_type", (t) => ({
+  id: t.uuid().primaryKey().defaultRandom(),
+  name: t.varchar({ length: 50 }).notNull().unique(),
+}));

@@ -66,14 +66,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "expo-build-properties",
       {
         android: {
-          minSdkVersion: 24,
-          compileSdkVersion: 33,
-          targetSdkVersion: 33,
-          buildToolsVersion: "33.0.0",
-          kotlinVersion: "1.6.20",
+          newArchEnabled: true,
         },
         ios: {
-          deploymentTarget: "15.0",
+          newArchEnabled: true,
         },
       },
     ],

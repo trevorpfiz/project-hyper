@@ -1,15 +1,6 @@
 import type { z } from "zod";
 import { relations } from "drizzle-orm";
-import {
-  integer,
-  jsonb,
-  numeric,
-  timestamp,
-  unique,
-  uniqueIndex,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { unique, uniqueIndex } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { timestamps } from "../lib/utils";
@@ -31,27 +22,25 @@ export interface TimeInRanges {
 
 export const DailyRecap = createTable(
   "daily_recap",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    date: timestamp("date", { withTimezone: true }).notNull(),
-    timezone: varchar("timezone", { length: 50 }).notNull(),
-    averageGlucose: integer("average_glucose"),
-    minimumGlucose: integer("minimum_glucose"),
-    maximumGlucose: integer("maximum_glucose"),
-    glucoseVariability: numeric("glucose_variability"), // Standard deviation or coefficient of variation
-    timeInRanges: jsonb("time_in_ranges").$type<TimeInRanges>(),
-    totalReadings: integer("total_readings"),
-
-    profileId: uuid("profile_id")
+  (t) => ({
+    id: t.uuid().primaryKey().defaultRandom(),
+    date: t.timestamp({ withTimezone: true }).notNull(),
+    timezone: t.varchar({ length: 50 }).notNull(),
+    averageGlucose: t.integer(),
+    minimumGlucose: t.integer(),
+    maximumGlucose: t.integer(),
+    glucoseVariability: t.numeric(), // Standard deviation or coefficient of variation
+    timeInRanges: t.jsonb(),
+    totalReadings: t.integer(),
+    profileId: t
+      .uuid()
       .notNull()
       .references(() => Profile.id),
-
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt", {
-      mode: "date",
-      withTimezone: true,
-    }).$onUpdateFn(() => new Date()),
-  },
+    createdAt: t.timestamp().defaultNow().notNull(),
+    updatedAt: t
+      .timestamp({ mode: "date", withTimezone: true })
+      .$onUpdateFn(() => new Date()),
+  }),
   (table) => {
     return {
       profileIdDateIdx: uniqueIndex("daily_recap_profile_id_date_idx").on(

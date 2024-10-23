@@ -44,7 +44,7 @@ export default function HomeHeader() {
         <DialogTrigger asChild>
           <Button variant="ghost" className="flex-row items-center gap-2">
             <Calendar className="text-foreground" size={24} />
-            <Text className="text-xs">{formattedDate}</Text>
+            <Text>{formattedDate}</Text>
           </Button>
         </DialogTrigger>
         <DialogContent

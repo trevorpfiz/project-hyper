@@ -9,10 +9,6 @@
       "path": "../apps/nextjs",
     },
     {
-      "name": "FastAPI",
-      "path": "../apps/fastapi",
-    },
-    {
       "name": "Root",
       "path": "../",
     },
@@ -35,13 +31,9 @@
     "configurations": [],
     "compounds": [
       {
-        "name": "Launch Next.js, Expo, and FastAPI",
-        // from apps/nextjs/.vscode/launch.json, apps/expo/.vscode/launch.json, and apps/fastapi/.vscode/launch.json
-        "configurations": [
-          "Debug Next.js",
-          "Debug Expo app",
-          "Python: FastAPI",
-        ],
+        "name": "Launch Next.js and Expo",
+        // from apps/nextjs/.vscode/launch.json, apps/expo/.vscode/launch.json
+        "configurations": ["Debug Next.js", "Debug Expo app"],
       },
     ],
   },

@@ -7,10 +7,6 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
-    },
-    "./client": {
-      "types": "./dist/client.d.ts",
-      "default": "./dist/lib/api/client/index.js"
     }
   },
   "license": "MIT",
@@ -20,9 +16,7 @@
     "dev": "tsc --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "generate-client": "pnpm dlx @hey-api/openapi-ts --input https://next-fast-turbo.vercel.app/openapi.json --output ./src/lib/api/client --client fetch",
-    "generate-client:dev": "pnpm dlx @hey-api/openapi-ts --input http://127.0.0.1:8000/openapi.json --output ./src/lib/api/client --client fetch"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
     "@hyper/db": "workspace:*",

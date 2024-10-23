@@ -1,26 +1,26 @@
 import type { z } from "zod";
 import { relations } from "drizzle-orm";
-import { text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { timestamps } from "../lib/utils";
 import { createTable } from "./_table";
 import { Profile } from "./profile";
 
-export const Report = createTable("report", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  title: varchar("title", { length: 256 }).notNull(),
-  content: text("content"),
-  profileId: uuid("profile_id")
+export const Report = createTable("report", (t) => ({
+  id: t.uuid().primaryKey().defaultRandom(),
+  reportType: t.varchar({ length: 50 }).notNull(),
+  startTime: t.timestamp({ withTimezone: true }).notNull(),
+  endTime: t.timestamp({ withTimezone: true }).notNull(),
+  generatedAt: t.timestamp({ withTimezone: true }).notNull(),
+  profileId: t
+    .uuid()
     .notNull()
     .references(() => Profile.id),
-
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", {
-    mode: "date",
-    withTimezone: true,
-  }).$onUpdateFn(() => new Date()),
-});
+  createdAt: t.timestamp().defaultNow().notNull(),
+  updatedAt: t
+    .timestamp({ mode: "date", withTimezone: true })
+    .$onUpdateFn(() => new Date()),
+}));
 
 export const ReportRelations = relations(Report, ({ one }) => ({
   profile: one(Profile, {

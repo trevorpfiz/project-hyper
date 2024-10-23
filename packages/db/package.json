@@ -34,10 +34,10 @@
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.11.1",
-    "@vercel/postgres": "^0.9.0",
-    "drizzle-orm": "^0.33.0",
+    "@vercel/postgres": "^0.10.0",
+    "drizzle-orm": "^0.35.3",
     "drizzle-zod": "^0.5.1",
-    "pg": "^8.12.0",
+    "pg": "^8.13.0",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -45,10 +45,10 @@
     "@hyper/prettier-config": "workspace:*",
     "@hyper/tsconfig": "workspace:*",
     "dotenv-cli": "^7.4.2",
-    "drizzle-kit": "^0.24.2",
+    "drizzle-kit": "^0.26.2",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "tsx": "^4.18.0",
+    "tsx": "^4.19.1",
     "typescript": "catalog:"
   },
   "prettier": "@hyper/prettier-config"

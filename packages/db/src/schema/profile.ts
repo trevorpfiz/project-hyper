@@ -1,12 +1,5 @@
 import { relations } from "drizzle-orm";
-import {
-  index,
-  pgEnum,
-  timestamp,
-  uniqueIndex,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { index, pgEnum, uniqueIndex } from "drizzle-orm/pg-core";
 
 import { createTable } from "./_table";
 import { Users } from "./auth";
@@ -31,28 +24,23 @@ export const diabetesStatusEnum = pgEnum("diabetes_status", diabetesStatus);
 
 export const Profile = createTable(
   "profile",
-  {
+  (t) => ({
     // Matches id from auth.users table in Supabase
-    id: uuid("id")
+    id: t
+      .uuid()
       .primaryKey()
       .references(() => Users.id, { onDelete: "cascade" }),
-    name: varchar("name", { length: 256 }).notNull(),
-    image: varchar("image", { length: 256 }),
-    email: varchar("email", { length: 256 }),
-    lastSyncedTime: timestamp("last_synced_time", { withTimezone: true }),
-    diabetesStatus: diabetesStatusEnum("diabetes_status")
-      .notNull()
-      .default("none"),
-    glucoseRangeType: glucoseRangeTypeEnum("glucose_range_type")
-      .notNull()
-      .default("tight"),
-  },
-  (table) => {
-    return {
-      nameIdx: index("name_idx").on(table.name),
-      emailIdx: uniqueIndex("email_idx").on(table.email),
-    };
-  },
+    name: t.varchar({ length: 256 }).notNull(),
+    image: t.varchar({ length: 256 }),
+    email: t.varchar({ length: 256 }),
+    lastSyncedTime: t.timestamp({ withTimezone: true }),
+    diabetesStatus: diabetesStatusEnum().notNull().default("none"),
+    glucoseRangeType: glucoseRangeTypeEnum().notNull().default("tight"),
+  }),
+  (table) => ({
+    nameIdx: index().on(table.name),
+    emailIdx: uniqueIndex().on(table.email),
+  }),
 );
 
 export const ProfileRelations = relations(Profile, ({ many }) => ({
