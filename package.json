@@ -5,7 +5,7 @@
     "node": ">=20.16.0",
     "pnpm": "^9.6.0"
   },
-  "packageManager": "pnpm@9.12.2+sha256.2ef6e547b0b07d841d605240dce4d635677831148cd30f6d564b8f4f928f73d2",
+  "packageManager": "pnpm@9.12.3+sha256.24235772cc4ac82a62627cd47f834c72667a2ce87799a846ec4e8e555e2d4b8b",
   "scripts": {
     "build": "turbo run build",
     "clean": "git clean -xdf node_modules",
