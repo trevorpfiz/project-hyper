@@ -9,6 +9,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "automatic",
+  newArchEnabled: true,
   splash: {
     image: "./assets/icon.png",
     resizeMode: "contain",
@@ -63,17 +64,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-font",
     "expo-localization",
     [
-      "expo-build-properties",
-      {
-        android: {
-          newArchEnabled: true,
-        },
-        ios: {
-          newArchEnabled: true,
-        },
-      },
-    ],
-    [
       "react-native-vision-camera",
       {
         cameraPermissionText: "$(PRODUCT_NAME) needs access to your Camera.",
@@ -92,5 +82,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           "com.googleusercontent.apps.871950139217-2knn7tplni9li14l489lpv9i964ujt0h",
       },
     ],
+    "react-native-health",
   ],
 });

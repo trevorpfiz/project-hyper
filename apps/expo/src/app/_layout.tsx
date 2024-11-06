@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 
 import "../global.css";
-import "@bacons/text-decoder/install";
 
 import type { Theme } from "@react-navigation/native";
 import { useEffect, useState } from "react";

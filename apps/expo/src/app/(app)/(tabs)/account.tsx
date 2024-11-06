@@ -7,7 +7,7 @@ import {
 
 import DexcomCGMData from "~/components/dexcom/dexcom-data";
 import { DexcomLogin } from "~/components/dexcom/dexcom-login";
-import { DexcomBackgroundSync } from "~/components/dexcom/dexcom-sync";
+// import { DexcomBackgroundSync } from "~/components/dexcom/dexcom-sync";
 import { ChangeRangeSetting } from "~/components/glucose/change-range-setting";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { Button } from "~/components/ui/button";

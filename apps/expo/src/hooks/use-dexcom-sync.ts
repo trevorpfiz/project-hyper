@@ -1,23 +1,13 @@
 import { useCallback, useState } from "react";
 import { Alert } from "react-native";
-import * as BackgroundFetch from "expo-background-fetch";
-import * as TaskManager from "expo-task-manager";
 import { DateTime } from "luxon";
 
 import { useGlucoseStore } from "~/stores/glucose-store";
 import { api } from "~/utils/api";
-import {
-  BACKGROUND_FETCH_DEXCOM_SYNC,
-  registerBackgroundFetchAsync,
-  unregisterBackgroundFetchAsync,
-} from "~/utils/background";
 
 export function useDexcomSync() {
   const utils = api.useUtils();
   const { lastSyncedTime, setLastSyncedTime } = useGlucoseStore();
-  const [status, setStatus] =
-    useState<BackgroundFetch.BackgroundFetchStatus | null>(null);
-  const [isRegistered, setIsRegistered] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
 
   const fetchDataRangeQuery = api.dexcom.fetchDataRange.useQuery(
@@ -38,8 +28,6 @@ export function useDexcomSync() {
             DateTime.fromISO(data.latestEGVTimestamp, { zone: "utc" }),
           );
         }
-      } else {
-        return;
       }
     },
     onError: (error) => {
@@ -57,26 +45,7 @@ export function useDexcomSync() {
       },
     });
 
-  const checkStatusAsync = async () => {
-    const fetchStatus = await BackgroundFetch.getStatusAsync();
-    const isTaskRegistered = await TaskManager.isTaskRegisteredAsync(
-      BACKGROUND_FETCH_DEXCOM_SYNC,
-    );
-    setStatus(fetchStatus);
-    setIsRegistered(isTaskRegistered);
-  };
-
-  const toggleFetchTask = async () => {
-    if (isRegistered) {
-      await unregisterBackgroundFetchAsync(BACKGROUND_FETCH_DEXCOM_SYNC);
-    } else {
-      await registerBackgroundFetchAsync(BACKGROUND_FETCH_DEXCOM_SYNC);
-    }
-    await checkStatusAsync();
-  };
-
   const performSync = useCallback(async () => {
-    // resetLastSyncedTime();
     setIsSyncing(true);
     try {
       const fetchDataRangeResult = await fetchDataRangeQuery.refetch();
@@ -127,9 +96,6 @@ export function useDexcomSync() {
 
   return {
     syncNow,
-    status,
-    isRegistered,
-    toggleFetchTask,
     isPending:
       isSyncing ||
       isLoading ||
