@@ -47,7 +47,7 @@ export default function AccountScreen() {
       <DexcomLogin />
 
       {/* <DexcomBackgroundSync /> */}
-      <DexcomCGMData />
+      {/* <DexcomCGMData /> */}
       {/* <CalculateRecap /> */}
       {/* <DexcomDevicesList /> */}
     </ScrollView>

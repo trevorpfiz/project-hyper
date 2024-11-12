@@ -4,8 +4,7 @@ import "../global.css";
 
 import type { Theme } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Platform, View } from "react-native";
-import { useSafeAreaEnv } from "react-native-css-interop/dist/runtime/api";
+import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   initialWindowMetrics,
@@ -29,13 +28,128 @@ import { useGlucoseStore } from "~/stores/glucose-store";
 import { TRPCProvider } from "~/utils/api";
 import { supabase } from "~/utils/supabase";
 
+const WEB_FONT_STACK =
+  'system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
+
 const LIGHT_THEME: Theme = {
   dark: false,
   colors: NAV_THEME.light,
+  fonts: Platform.select({
+    web: {
+      regular: {
+        fontFamily: WEB_FONT_STACK,
+        fontWeight: "400",
+      },
+      medium: {
+        fontFamily: WEB_FONT_STACK,
+        fontWeight: "500",
+      },
+      bold: {
+        fontFamily: WEB_FONT_STACK,
+        fontWeight: "600",
+      },
+      heavy: {
+        fontFamily: WEB_FONT_STACK,
+        fontWeight: "700",
+      },
+    },
+    ios: {
+      regular: {
+        fontFamily: "System",
+        fontWeight: "400",
+      },
+      medium: {
+        fontFamily: "System",
+        fontWeight: "500",
+      },
+      bold: {
+        fontFamily: "System",
+        fontWeight: "600",
+      },
+      heavy: {
+        fontFamily: "System",
+        fontWeight: "700",
+      },
+    },
+    default: {
+      regular: {
+        fontFamily: "sans-serif",
+        fontWeight: "normal",
+      },
+      medium: {
+        fontFamily: "sans-serif-medium",
+        fontWeight: "normal",
+      },
+      bold: {
+        fontFamily: "sans-serif",
+        fontWeight: "600",
+      },
+      heavy: {
+        fontFamily: "sans-serif",
+        fontWeight: "700",
+      },
+    },
+  }),
 };
 const DARK_THEME: Theme = {
   dark: true,
   colors: NAV_THEME.dark,
+  fonts: Platform.select({
+    web: {
+      regular: {
+        fontFamily: WEB_FONT_STACK,
+        fontWeight: "400",
+      },
+      medium: {
+        fontFamily: WEB_FONT_STACK,
+        fontWeight: "500",
+      },
+      bold: {
+        fontFamily: WEB_FONT_STACK,
+        fontWeight: "600",
+      },
+      heavy: {
+        fontFamily: WEB_FONT_STACK,
+        fontWeight: "700",
+      },
+    },
+    ios: {
+      regular: {
+        fontFamily: "System",
+        fontWeight: "400",
+      },
+      medium: {
+        fontFamily: "System",
+        fontWeight: "500",
+      },
+      bold: {
+        fontFamily: "System",
+        fontWeight: "600",
+      },
+      heavy: {
+        fontFamily: "System",
+        fontWeight: "700",
+      },
+    },
+    default: {
+      regular: {
+        fontFamily: "sans-serif",
+        fontWeight: "normal",
+      },
+      medium: {
+        fontFamily: "sans-serif-medium",
+        fontWeight: "normal",
+      },
+      bold: {
+        fontFamily: "sans-serif",
+        fontWeight: "600",
+      },
+      heavy: {
+        fontFamily: "sans-serif",
+        fontWeight: "700",
+      },
+    },
+  }),
 };
 
 export {
@@ -80,7 +194,7 @@ const InitialLayout = () => {
     const inAppGroup = segments[0] === "(app)";
 
     if (isSignedIn && !inAppGroup) {
-      router.replace("/(tabs)");
+      router.replace("/(app)/(tabs)");
     } else if (!isSignedIn && inAppGroup) {
       router.replace("/(home)");
     }
@@ -92,46 +206,44 @@ const InitialLayout = () => {
 
   return (
     <>
-      <SafeAreaEnv>
-        <Stack>
-          <Stack.Screen
-            name="(home)/index"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="(auth)/signup"
-            options={{
-              presentation: "modal",
-              title: "Sign Up",
-              headerTitle: "",
-              headerLeft: HeaderCloseButton,
-            }}
-          />
-          <Stack.Screen
-            name="(auth)/signin"
-            options={{
-              presentation: "modal",
-              title: "Sign In",
-              headerTitle: "",
-              headerLeft: HeaderCloseButton,
-            }}
-          />
-          <Stack.Screen
-            name="(auth)/reset-password"
-            options={{
-              presentation: "modal",
-              title: "Reset Password",
-              headerTitle: "",
-              headerLeft: HeaderCloseButton,
-            }}
-          />
-          <Stack.Screen name="(app)" options={{ headerShown: false }} />
-        </Stack>
+      <Stack>
+        <Stack.Screen
+          name="(home)/index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="(auth)/signup"
+          options={{
+            presentation: "modal",
+            title: "Sign Up",
+            headerTitle: "",
+            headerLeft: HeaderCloseButton,
+          }}
+        />
+        <Stack.Screen
+          name="(auth)/signin"
+          options={{
+            presentation: "modal",
+            title: "Sign In",
+            headerTitle: "",
+            headerLeft: HeaderCloseButton,
+          }}
+        />
+        <Stack.Screen
+          name="(auth)/reset-password"
+          options={{
+            presentation: "modal",
+            title: "Reset Password",
+            headerTitle: "",
+            headerLeft: HeaderCloseButton,
+          }}
+        />
+        <Stack.Screen name="(app)" options={{ headerShown: false }} />
+      </Stack>
 
-        <PortalHost />
-      </SafeAreaEnv>
+      <PortalHost />
     </>
   );
 };
@@ -202,9 +314,4 @@ export default function RootLayout() {
       </TRPCProvider>
     </SessionContextProvider>
   );
-}
-
-function SafeAreaEnv({ children }: { children: React.ReactNode }) {
-  // Add the safe area insets to the render tree
-  return <View style={[{ flex: 1 }, useSafeAreaEnv()]}>{children}</View>;
 }

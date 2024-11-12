@@ -17,6 +17,15 @@
       "distribution": "internal",
       "autoIncrement": true
     },
+    "development-simulator": {
+      "extends": "base",
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "autoIncrement": true
+    },
     "preview": {
       "extends": "base",
       "distribution": "internal",
