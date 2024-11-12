@@ -1,11 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import type { OAuthTokenResponse } from "@hyper/validators/dexcom";
+import type { OAuthTokenResponse } from "@stable/validators/dexcom";
 import {
   OAuthErrorResponseSchema,
   OAuthTokenResponseSchema,
-} from "@hyper/validators/dexcom";
+} from "@stable/validators/dexcom";
 
 export const TokenDataSchema = z.object({
   accessToken: z.string(),

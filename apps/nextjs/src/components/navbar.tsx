@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AlignRight } from "lucide-react";
 
-import { Button } from "@hyper/ui/button";
+import { Button } from "@stable/ui/button";
 
 import { defaultLinks } from "~/config/nav";
 

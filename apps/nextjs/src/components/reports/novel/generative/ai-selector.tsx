@@ -8,9 +8,9 @@ import { addAIHighlight } from "novel/extensions";
 import Markdown from "react-markdown";
 import { toast } from "sonner";
 
-import { Button } from "@hyper/ui/button";
-import { Command, CommandInput } from "@hyper/ui/command";
-import { ScrollArea } from "@hyper/ui/scroll-area";
+import { Button } from "@stable/ui/button";
+import { Command, CommandInput } from "@stable/ui/command";
+import { ScrollArea } from "@stable/ui/scroll-area";
 
 import CrazySpinner from "../ui/icons/crazy-spinner";
 import Magic from "../ui/icons/magic";

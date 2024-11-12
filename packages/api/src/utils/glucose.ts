@@ -1,4 +1,4 @@
-import type { TimeInRanges } from "@hyper/db/schema";
+import type { TimeInRanges } from "@stable/db/schema";
 
 interface GlucoseReading {
   value: number;

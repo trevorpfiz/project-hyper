@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Button } from "@hyper/ui/button";
+import { Button } from "@stable/ui/button";
 
 export default function HomePage() {
   return (

@@ -1,4 +1,4 @@
-import { Button } from "@hyper/ui/button";
+import { Button } from "@stable/ui/button";
 
 import { signOut } from "~/lib/actions/auth";
 

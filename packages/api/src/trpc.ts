@@ -11,7 +11,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { db } from "@hyper/db/client";
+import { db } from "@stable/db/client";
 
 import type { TokenData } from "./utils/dexcom";
 

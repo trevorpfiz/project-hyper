@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 
-import { Button } from "@hyper/ui/button";
+import { Button } from "@stable/ui/button";
 
 export default function SettingsPage() {
   const { setTheme } = useTheme();

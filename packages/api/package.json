@@ -1,5 +1,5 @@
 {
-  "name": "@hyper/api",
+  "name": "@stable/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -19,8 +19,8 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@hyper/db": "workspace:*",
-    "@hyper/validators": "workspace:*",
+    "@stable/db": "workspace:*",
+    "@stable/validators": "workspace:*",
     "@supabase/supabase-js": "catalog:supabase",
     "@trpc/server": "catalog:",
     "date-fns": "catalog:dates",
@@ -30,13 +30,13 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@hyper/eslint-config": "workspace:*",
-    "@hyper/prettier-config": "workspace:*",
-    "@hyper/tsconfig": "workspace:*",
+    "@stable/eslint-config": "workspace:*",
+    "@stable/prettier-config": "workspace:*",
+    "@stable/tsconfig": "workspace:*",
     "@types/luxon": "catalog:dates",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },
-  "prettier": "@hyper/prettier-config"
+  "prettier": "@stable/prettier-config"
 }

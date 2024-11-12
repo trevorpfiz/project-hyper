@@ -2,9 +2,9 @@ import { useEffect, useRef } from "react";
 import { Check, Trash } from "lucide-react";
 import { useEditor } from "novel";
 
-import { cn } from "@hyper/ui";
-import { Button } from "@hyper/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@hyper/ui/popover";
+import { cn } from "@stable/ui";
+import { Button } from "@stable/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@stable/ui/popover";
 
 export function isValidUrl(url: string) {
   try {

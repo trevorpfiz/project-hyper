@@ -4,8 +4,8 @@ import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 
-import type { ResetPassword } from "@hyper/validators/auth";
-import { ResetPasswordSchema } from "@hyper/validators/auth";
+import type { ResetPassword } from "@stable/validators/auth";
+import { ResetPasswordSchema } from "@stable/validators/auth";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";

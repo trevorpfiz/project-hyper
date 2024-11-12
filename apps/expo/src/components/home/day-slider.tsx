@@ -3,7 +3,7 @@ import { Dimensions, Pressable, View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { DateTime } from "luxon";
 
-import type { DailyRecap, GlucoseRangeTypes } from "@hyper/db/schema";
+import type { DailyRecap, GlucoseRangeTypes } from "@stable/db/schema";
 
 import { Skeleton } from "~/components/ui/skeleton";
 import { Text } from "~/components/ui/text";

@@ -3,8 +3,8 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { Button } from "@hyper/ui/button";
-import { toast } from "@hyper/ui/sonner";
+import { Button } from "@stable/ui/button";
+import { toast } from "@stable/ui/sonner";
 
 import { env } from "~/env";
 import { api } from "~/trpc/react";

@@ -14,8 +14,8 @@ import { handleCommandNavigation, ImageResizer } from "novel/extensions";
 import { handleImageDrop, handleImagePaste } from "novel/plugins";
 import { useDebouncedCallback } from "use-debounce";
 
-import { Separator } from "@hyper/ui/separator";
-import { toast } from "@hyper/ui/sonner";
+import { Separator } from "@stable/ui/separator";
+import { toast } from "@stable/ui/sonner";
 
 import { api } from "~/trpc/react";
 import { defaultEditorContent } from "./default-content";

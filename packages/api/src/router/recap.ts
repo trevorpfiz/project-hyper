@@ -2,14 +2,14 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import type { NewRecapParams, TimeInRanges } from "@hyper/db/schema";
-import { and, desc, eq, gte, lte } from "@hyper/db";
+import type { NewRecapParams, TimeInRanges } from "@stable/db/schema";
+import { and, desc, eq, gte, lte } from "@stable/db";
 import {
   CGMData,
   DailyRecap,
   insertRecapParams,
   updateRecapParams,
-} from "@hyper/db/schema";
+} from "@stable/db/schema";
 
 import { protectedProcedure } from "../trpc";
 import { DateRangeSchema } from "../utils/dexcom";

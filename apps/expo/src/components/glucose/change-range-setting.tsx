@@ -1,7 +1,7 @@
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import type { GlucoseRangeTypes } from "@hyper/db/schema";
+import type { GlucoseRangeTypes } from "@stable/db/schema";
 
 import { Label } from "~/components/ui/label";
 import {

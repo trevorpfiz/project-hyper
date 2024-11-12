@@ -7,7 +7,7 @@ import { View } from "react-native";
 import { Calendar, useCalendar } from "@marceloterreiro/flash-calendar";
 import { format } from "date-fns";
 
-import type { DailyRecap, GlucoseRangeTypes } from "@hyper/db/schema";
+import type { DailyRecap, GlucoseRangeTypes } from "@stable/db/schema";
 
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";

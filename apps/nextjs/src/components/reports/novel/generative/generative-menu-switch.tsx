@@ -6,7 +6,7 @@ import "novel/plugins";
 import type { ReactNode } from "react";
 import { Fragment, useEffect } from "react";
 
-import { Button } from "@hyper/ui/button";
+import { Button } from "@stable/ui/button";
 
 import Magic from "../ui/icons/magic";
 import { AISelector } from "./ai-selector";

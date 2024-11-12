@@ -5,10 +5,10 @@ import type { Metadata, Viewport } from "next";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
-// import { OpenAPI } from "@hyper/api/client";
-import { cn } from "@hyper/ui";
-import { Toaster } from "@hyper/ui/sonner";
-import { ThemeProvider } from "@hyper/ui/theme";
+// import { OpenAPI } from "@stable/api/client";
+import { cn } from "@stable/ui";
+import { Toaster } from "@stable/ui/sonner";
+import { ThemeProvider } from "@stable/ui/theme";
 
 import { env } from "~/env";
 import { TRPCReactProvider } from "~/trpc/react";

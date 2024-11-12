@@ -1,5 +1,5 @@
 {
-  "name": "hyper",
+  "name": "stable",
   "private": true,
   "engines": {
     "node": ">=20.16.0",
@@ -11,10 +11,10 @@
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",
     "daemon:restart": "turbo daemon restart",
-    "db:generate": "turbo -F @hyper/db dk-generate",
-    "db:migrate": "turbo -F @hyper/db migrate",
-    "db:push": "turbo -F @hyper/db push",
-    "db:studio": "turbo -F @hyper/db studio",
+    "db:generate": "turbo -F @stable/db dk-generate",
+    "db:migrate": "turbo -F @stable/db migrate",
+    "db:push": "turbo -F @stable/db push",
+    "db:studio": "turbo -F @stable/db studio",
     "dev": "turbo watch dev --continue",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
@@ -22,14 +22,14 @@
     "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
     "lint:ws": "pnpm dlx sherif@latest",
     "typecheck": "turbo run typecheck",
-    "ui:ui-add": "turbo -F @hyper/ui ui-add"
+    "ui:ui-add": "turbo -F @stable/ui ui-add"
   },
   "devDependencies": {
-    "@hyper/prettier-config": "workspace:*",
+    "@stable/prettier-config": "workspace:*",
     "@turbo/gen": "^2.2.3",
     "prettier": "catalog:",
     "turbo": "^2.2.3",
     "typescript": "catalog:"
   },
-  "prettier": "@hyper/prettier-config"
+  "prettier": "@stable/prettier-config"
 }

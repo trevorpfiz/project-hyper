@@ -1,6 +1,6 @@
-import baseConfig from "@hyper/eslint-config/base";
-import expoConfig from "@hyper/eslint-config/expo";
-import reactConfig from "@hyper/eslint-config/react";
+import baseConfig from "@stable/eslint-config/base";
+import expoConfig from "@stable/eslint-config/expo";
+import reactConfig from "@stable/eslint-config/react";
 
 /** @type {import('typescript-eslint').Config} */
 export default [

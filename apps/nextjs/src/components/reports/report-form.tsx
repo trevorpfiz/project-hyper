@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import type { NewReportParams, Report } from "@hyper/db/schema";
-import { insertReportParams } from "@hyper/db/schema";
-import { Button } from "@hyper/ui/button";
+import type { NewReportParams, Report } from "@stable/db/schema";
+import { insertReportParams } from "@stable/db/schema";
+import { Button } from "@stable/ui/button";
 import {
   Form,
   FormControl,
@@ -14,8 +14,8 @@ import {
   FormLabel,
   FormMessage,
   useForm,
-} from "@hyper/ui/form";
-import { Input } from "@hyper/ui/input";
+} from "@stable/ui/form";
+import { Input } from "@stable/ui/input";
 
 import { api } from "~/trpc/react";
 

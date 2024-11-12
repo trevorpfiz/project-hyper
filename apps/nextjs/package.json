@@ -1,5 +1,5 @@
 {
-  "name": "@hyper/nextjs",
+  "name": "@stable/nextjs",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,10 +14,10 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@hyper/api": "workspace:*",
-    "@hyper/db": "workspace:*",
-    "@hyper/ui": "workspace:*",
-    "@hyper/validators": "workspace:*",
+    "@stable/api": "workspace:*",
+    "@stable/db": "workspace:*",
+    "@stable/ui": "workspace:*",
+    "@stable/validators": "workspace:*",
     "@supabase/ssr": "catalog:supabase",
     "@supabase/supabase-js": "catalog:supabase",
     "@t3-oss/env-nextjs": "^0.11.1",
@@ -40,10 +40,10 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@hyper/eslint-config": "workspace:*",
-    "@hyper/prettier-config": "workspace:*",
-    "@hyper/tailwind-config": "workspace:*",
-    "@hyper/tsconfig": "workspace:*",
+    "@stable/eslint-config": "workspace:*",
+    "@stable/prettier-config": "workspace:*",
+    "@stable/tailwind-config": "workspace:*",
+    "@stable/tsconfig": "workspace:*",
     "@types/luxon": "catalog:dates",
     "@types/node": "catalog:",
     "@types/react": "catalog:react18",
@@ -56,5 +56,5 @@
     "tailwindcss": "catalog:tailwind",
     "typescript": "catalog:"
   },
-  "prettier": "@hyper/prettier-config"
+  "prettier": "@stable/prettier-config"
 }

@@ -3,7 +3,7 @@ import type { Config } from "tailwindcss";
 import nativewind from "nativewind/preset";
 import { hairlineWidth } from "nativewind/theme";
 
-import baseConfig from "@hyper/tailwind-config/native";
+import baseConfig from "@stable/tailwind-config/native";
 
 export default {
   darkMode: "class",

@@ -2,7 +2,7 @@ import type { z } from "zod";
 import { View } from "react-native";
 import { DateTime } from "luxon";
 
-import type { TrendEnum } from "@hyper/validators/dexcom";
+import type { TrendEnum } from "@stable/validators/dexcom";
 
 import { TrendIcon } from "~/components/home/trend-icon";
 import { Skeleton } from "~/components/ui/skeleton";

@@ -2,7 +2,7 @@ import type { ClassValue } from "clsx";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-import type { GlucoseRangeTypes } from "@hyper/db/schema";
+import type { GlucoseRangeTypes } from "@stable/db/schema";
 
 import { CALENDAR_THEME } from "~/lib/constants";
 

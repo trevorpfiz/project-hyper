@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 
-import type { Report } from "@hyper/db/schema";
-import { Button } from "@hyper/ui/button";
+import type { Report } from "@stable/db/schema";
+import { Button } from "@stable/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@hyper/ui/dialog";
+} from "@stable/ui/dialog";
 
 import ReportForm from "./report-form";
 

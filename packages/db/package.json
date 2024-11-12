@@ -1,5 +1,5 @@
 {
-  "name": "@hyper/db",
+  "name": "@stable/db",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -41,9 +41,9 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@hyper/eslint-config": "workspace:*",
-    "@hyper/prettier-config": "workspace:*",
-    "@hyper/tsconfig": "workspace:*",
+    "@stable/eslint-config": "workspace:*",
+    "@stable/prettier-config": "workspace:*",
+    "@stable/tsconfig": "workspace:*",
     "dotenv-cli": "^7.4.2",
     "drizzle-kit": "^0.28.0",
     "eslint": "catalog:",
@@ -51,5 +51,5 @@
     "tsx": "^4.19.2",
     "typescript": "catalog:"
   },
-  "prettier": "@hyper/prettier-config"
+  "prettier": "@stable/prettier-config"
 }

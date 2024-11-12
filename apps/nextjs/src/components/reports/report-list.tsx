@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 
-import type { Report } from "@hyper/db/schema";
-import { Button } from "@hyper/ui/button";
+import type { Report } from "@stable/db/schema";
+import { Button } from "@stable/ui/button";
 
 import { api } from "~/trpc/react";
 import ReportModal from "./report-modal";

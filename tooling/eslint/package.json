@@ -1,5 +1,5 @@
 {
-  "name": "@hyper/eslint-config",
+  "name": "@stable/eslint-config",
   "private": true,
   "version": "0.3.0",
   "type": "module",
@@ -27,13 +27,13 @@
   "devDependencies": {
     "@eslint/compat": "^1.2.2",
     "@eslint/eslintrc": "^3.1.0",
-    "@hyper/prettier-config": "workspace:*",
-    "@hyper/tsconfig": "workspace:*",
+    "@stable/prettier-config": "workspace:*",
+    "@stable/tsconfig": "workspace:*",
     "@types/eslint__eslintrc": "^2.1.2",
     "@types/eslint__js": "8.42.3",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },
-  "prettier": "@hyper/prettier-config"
+  "prettier": "@stable/prettier-config"
 }

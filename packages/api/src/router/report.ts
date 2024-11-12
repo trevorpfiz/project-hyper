@@ -2,12 +2,12 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { and, desc, eq } from "@hyper/db";
+import { and, desc, eq } from "@stable/db";
 import {
   insertReportParams,
   Report,
   updateReportParams,
-} from "@hyper/db/schema";
+} from "@stable/db/schema";
 
 import { protectedProcedure, publicProcedure } from "../trpc";
 

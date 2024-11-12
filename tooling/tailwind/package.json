@@ -1,5 +1,5 @@
 {
-  "name": "@hyper/tailwind-config",
+  "name": "@stable/tailwind-config",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -20,13 +20,13 @@
     "tailwindcss-animate": "catalog:tailwind"
   },
   "devDependencies": {
-    "@hyper/eslint-config": "workspace:*",
-    "@hyper/prettier-config": "workspace:*",
-    "@hyper/tsconfig": "workspace:*",
+    "@stable/eslint-config": "workspace:*",
+    "@stable/prettier-config": "workspace:*",
+    "@stable/tsconfig": "workspace:*",
     "@tailwindcss/typography": "^0.5.15",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },
-  "prettier": "@hyper/prettier-config"
+  "prettier": "@stable/prettier-config"
 }

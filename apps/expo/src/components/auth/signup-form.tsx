@@ -5,8 +5,8 @@ import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 
-import type { SignUp } from "@hyper/validators/auth";
-import { SignUpSchema } from "@hyper/validators/auth";
+import type { SignUp } from "@stable/validators/auth";
+import { SignUpSchema } from "@stable/validators/auth";
 
 import { OTPVerification } from "~/components/auth/otp-verification";
 import { Button } from "~/components/ui/button";

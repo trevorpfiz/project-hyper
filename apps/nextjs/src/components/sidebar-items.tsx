@@ -4,7 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { cn } from "@hyper/ui";
+import { cn } from "@stable/ui";
 
 import { additionalLinks, defaultLinks } from "~/config/nav";
 

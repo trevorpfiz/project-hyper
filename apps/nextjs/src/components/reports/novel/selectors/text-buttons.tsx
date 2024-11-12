@@ -7,8 +7,8 @@ import {
 } from "lucide-react";
 import { EditorBubbleItem, useEditor } from "novel";
 
-import { cn } from "@hyper/ui";
-import { Button } from "@hyper/ui/button";
+import { cn } from "@stable/ui";
+import { Button } from "@stable/ui/button";
 
 import type { SelectorItem } from "./node-selector";
 

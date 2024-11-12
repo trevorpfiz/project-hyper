@@ -8,7 +8,7 @@ import {
 import { useEditor } from "novel";
 import { getPrevText } from "novel/utils";
 
-import { CommandGroup, CommandItem, CommandSeparator } from "@hyper/ui/command";
+import { CommandGroup, CommandItem, CommandSeparator } from "@stable/ui/command";
 
 const options = [
   {

@@ -3,13 +3,13 @@ import { TRPCError } from "@trpc/server";
 import { DateTime } from "luxon";
 import { z } from "zod";
 
-import { and, desc, eq, gte, lte } from "@hyper/db";
-import { CGMData, Profile } from "@hyper/db/schema";
+import { and, desc, eq, gte, lte } from "@stable/db";
+import { CGMData, Profile } from "@stable/db/schema";
 import {
   DataRangeResponseSchema,
   DevicesResponseSchema,
   EGVsResponseSchema,
-} from "@hyper/validators/dexcom";
+} from "@stable/validators/dexcom";
 
 import { protectedDexcomProcedure, protectedProcedure } from "../trpc";
 import { getDateChunks } from "../utils";
@@ -182,10 +182,14 @@ export const dexcomRouter = {
   getLatestEGV: protectedProcedure.query(async ({ ctx }) => {
     const { db, user } = ctx;
 
+    console.log("user", user);
+
     const row = await db.query.CGMData.findFirst({
       where: eq(CGMData.profileId, user.id),
       orderBy: desc(CGMData.systemTime),
     });
+
+    console.log("row", row);
 
     return { egv: row };
   }),

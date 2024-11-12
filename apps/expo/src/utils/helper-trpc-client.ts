@@ -1,7 +1,7 @@
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import SuperJSON from "superjson";
 
-import type { AppRouter } from "@hyper/api";
+import type { AppRouter } from "@stable/api";
 
 import { getBaseUrl } from "~/utils/base-url";
 import { getDexcomTokens } from "~/utils/dexcom-store";

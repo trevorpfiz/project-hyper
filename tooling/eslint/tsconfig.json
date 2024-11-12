@@ -1,5 +1,5 @@
 {
-  "extends": "@hyper/tsconfig/base.json",
+  "extends": "@stable/tsconfig/base.json",
   "include": ["."],
   "exclude": ["node_modules"]
 }

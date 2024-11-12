@@ -1,7 +1,7 @@
 import type { LucideProps } from "lucide-react-native";
 import type { z } from "zod";
 
-import type { TrendEnum } from "@hyper/validators/dexcom";
+import type { TrendEnum } from "@stable/validators/dexcom";
 
 import { ChevronsDown } from "~/lib/icons/chevrons-down";
 import { ChevronsUp } from "~/lib/icons/chevrons-up";

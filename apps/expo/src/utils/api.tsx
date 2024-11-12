@@ -5,7 +5,7 @@ import { httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import superjson from "superjson";
 
-import type { AppRouter } from "@hyper/api";
+import type { AppRouter } from "@stable/api";
 
 import { getBaseUrl } from "~/utils/base-url";
 import { getDexcomTokens } from "~/utils/dexcom-store";
@@ -15,7 +15,7 @@ import { tokenRefreshLink } from "~/utils/token-refresh-link";
  * A set of typesafe hooks for consuming your API.
  */
 export const api = createTRPCReact<AppRouter>();
-export { type RouterInputs, type RouterOutputs } from "@hyper/api";
+export { type RouterInputs, type RouterOutputs } from "@stable/api";
 
 /**
  * A wrapper for your app that provides the TRPC context.

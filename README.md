@@ -3,14 +3,20 @@
 <!-- PROJECT LOGO -->
 <br>
 <div align="center">
-  <a href="https://github.com/trevorpfiz/wellchart">
-    <img src="https://github.com/trevorpfiz/wellchart/assets/24904780/0e15369e-2550-42da-84ad-0f224af1ac8a" alt="Logo" width="80" height="80">
+  <a href="https://github.com/trevorpfiz/stable">
+    <img src="https://github.com/trevorpfiz/stable/assets/24904780/0e15369e-2550-42da-84ad-0f224af1ac8a" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">WellChart - Automated Pre-Charting for Digital Health</h3>
+<h3 align="center">Stable - Open Source Metabolic Health App</h3>
 
   <p align="center">
-    This is an open source AI ambient scribe app for healthcare. Record patient-doctor conversations and automatically generate SOAP notes based on the transcripts. Make sure you are HIPAA compliant before using this in a healthcare setting.
+    This is an open source metabolic health app. Connect with your Dexcom CGM and visualize your glucose data in real-time.
+  </p>
+
+  <!-- WIP Alert -->
+  <p align="center">
+    <strong>⚠️ WIP - Upgrading to Expo SDK 52 and the New Architecture. ⚠️</strong>
+  </p>
   </p>
 </div>
 
@@ -46,25 +52,21 @@
 
 <!-- PROJECT DETAILS -->
 
-
 ## Project Details
 
 ### Apps
 
-- **Expo** mobile app for recording patient-doctor conversations.
-- **Next.js** dashboard for managing conversations and SOAP notes.
-- **FastAPI** for processing audio recordings, generating transcripts, and generating SOAP notes.
+- **Expo** mobile app for optimizing metabolic health.
+- **Next.js** web dashboard.
 
 ### Features
 
-- **Animations:** `react-native-reanimated` for OpenAI-like animations.
-- **Authentication:** Sign up with Google, Apple, or email. Clerk components for Next.js, custom components (signin, signup, OTP, password reset) for Expo.
-- **Audio Recording:** Record patient-doctor conversations using `expo-av`.
-- **Transcripts + SOAP Notes:** Generated in FastAPI using OpenAI APIs.
-- **Web Dashboard:** Next.js app for managing SOAP notes.
-- **Note Editor:** Edit generated SOAP notes using [novel](https://novel.sh/).
-
-Refer to [building-hipaa-compliant](https://github.com/zacharypfiz/building-hipaa-compliant) for more information on making this project HIPAA compliant.
+- **Authentication:** Sign up with Apple, Google, or email. Supabase Auth.
+- **Calendar:** WHOOP-inspired calendar built with Flash Calendar.
+- **Day Slider:** Quickly swipe through days of data.
+- **Dexcom Sandbox:** Connect with Dexcom Sandbox Data.
+- **Glucose Graph:** Visualize your Time in Range (TIR) with charts from Victory Native.
+- **Web Dashboard:** Next.js app for visualizing metabolic health.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -76,17 +78,15 @@ Refer to [building-hipaa-compliant](https://github.com/zacharypfiz/building-hipa
 
 - [React Native](https://reactnative.dev/)
 - [Expo](https://expo.dev/)
-- [NativeWind](https://www.nativewind.dev/v4/overview)
+- [NativeWind](https://www.nativewind.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [tRPC](https://trpc.io/)
 - [Drizzle ORM](https://orm.drizzle.team/)
-- [Clerk](https://clerk.com/)
 - [Next.js](https://nextjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [SST Ion](https://ion.sst.dev/)
+- [Supabase](https://supabase.com/)
+- [Supabase Auth](https://supabase.com/docs/guides/auth)
 - [Jest](https://jestjs.io/)
-- [Testing Library](https://testing-library.com/)
 - [Turborepo](https://turbo.build/repo/docs)
 
 ```text
@@ -98,33 +98,26 @@ Refer to [building-hipaa-compliant](https://github.com/zacharypfiz/building-hipa
   └─ Multi-root Workspaces for smoother python experience in monorepo
 apps
   ├─ expo
-  |   ├─ Expo SDK 51
-  |   ├─ React Native using React 18
+  |   ├─ Expo SDK 52
+  |   ├─ React Native 0.76 New Architecture
   |   ├─ Navigation using Expo Router
   |   ├─ Tailwind using NativeWind
   |   ├─ Typesafe API calls using tRPC
   |   └─ Jest + React Native Testing Library for unit tests
-  ├─ nextjs
-  |   ├─ Next.js 14
-  |   ├─ React 18
-  |   ├─ Tailwind CSS
-  |   └─ E2E Typesafe API Server & Client
-  └─ fastapi
-      ├─ FastAPI for uploading and processing audio recordings
-      ├─ OpenAI Whisper for transcription
-      └─ OpenAI Chat Completions API for generating SOAP notes from transcripts
+  └─ nextjs
+      ├─ Next.js 14
+      ├─ React 18
+      ├─ Tailwind CSS
+      └─ E2E Typesafe API Server & Client
 packages
   ├─ api
-  |   ├─ tRPC v11 router definition.
-  |   └─ Generated TypeScript client from FastAPI OpenAPI spec.
+  |   └─ tRPC v11 router definition.
   ├─ db
-  |   └─ Typesafe db calls using Drizzle & Amazon RDS
+  |   └─ Typesafe db calls using Drizzle & Supabase
   ├─ ui
   |   └─ shadcn/ui.
   └─ validators
       └─ Zod schemas for repo-wide type-safety and validation.
-infra
-  └─ SST Ion resources
 tooling
   ├─ eslint
   |   └─ shared, fine-grained, eslint presets
@@ -138,7 +131,7 @@ tooling
       └─ shared tsconfig you can extend from
 ```
 
-> In this project, we use `@hyper` as a placeholder for package names. As a user, you might want to replace it with your own organization or project name. You can use find-and-replace to change all the instances of `@hyper` to something like `@my-company` or `@project-name`.
+> In this project, we use `@stable` as a placeholder for package names. As a user, you might want to replace it with your own organization or project name. You can use find-and-replace to change all the instances of `@stable` to something like `@my-company` or `@project-name`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -158,22 +151,81 @@ cp .env.example .env
 cp .env.example .env.local
 ```
 
-Configure AWS credentials
-<https://docs.sst.dev/advanced/iam-credentials#loading-from-a-file>
-
-Install the SST CLI
-<https://ion.sst.dev/docs/reference/cli>
-
 ```bash
-# Run SST Ion (run this in apps/nextjs)
-pnpm dev
-
-# Push the Drizzle schema to the RDS database
+# Push the Drizzle schema to Supabase
 pnpm db:generate
 pnpm db:migrate
 ```
 
-### 2. Configure Expo `dev`-script
+### 2. Setup Supabase
+
+1. Go to [the Supabase dashboard](https://app.supabase.com/projects) and create a new project.
+2. Under project settings, retrieve the environment variables `reference id`, `project url` & `anon public key` and paste them into [.env](./.env.example) in the necessary places. You'll also need the database password you set when creating the project.
+3. Under `Auth`, configure any auth provider(s) of your choice. This repo is using Github for Web and Apple for Mobile.
+4. If you want to use the `Email` provider and `email confirmation`, go to `Auth` -> `Email Templates` and change the `Confirm signup` from `{{ .ConfirmationURL }}` to `{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=signup`, according to <https://supabase.com/docs/guides/auth/redirect-urls#email-templates-when-using-redirectto>. `.RedirectTo` will need to be added to your `Redirect URLs` in the next step.
+5. Under `Auth` -> `URL Configuration`, set the `Site URL` to your production URL and add `http://localhost:3000/**` and `https://*-username.vercel.app/**` to `Redirect URLs` as detailed here <https://supabase.com/docs/guides/auth/redirect-urls#vercel-preview-urls>.
+6. Set up a trigger when a new user signs up: <https://supabase.com/docs/guides/auth/managing-user-data#using-triggers>. You can run this in the SQL Editor.
+
+```sql
+-- inserts a row into public.profile
+create function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.epi_profile (id, email, name, image)
+  values (
+    new.id,
+    new.email,
+    COALESCE(
+      new.raw_user_meta_data ->> 'name',
+      new.raw_user_meta_data ->> 'full_name',
+      new.raw_user_meta_data ->> 'user_name',
+      'Guest User'
+    ),
+    new.raw_user_meta_data ->> 'avatar_url'
+  )
+  on conflict (id) do update set
+    email = excluded.email,
+    name = excluded.name,
+    image = excluded.image;
+  return new;
+end;
+$$;
+
+-- trigger the function every time a user is created
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+-- trigger the function when a user signs in/their email is confirmed to get missing values
+create trigger on_auth_user_verified
+  after update on auth.users
+  for each row when (
+    old.last_sign_in_at is null
+    and new.last_sign_in_at is not null
+  ) execute procedure public.handle_new_user();
+```
+
+```sql
+-- drop a trigger if needed
+drop trigger "on_auth_user_verified" on auth.users;
+```
+
+7. Remove access to the `public` schema as we are only using the server
+
+By default, Supabase exposes the `public` schema to the PostgREST API to allow the `supabase-js` client query the database directly from the client. However, since we route all our requests through the Next.js application (through tRPC), we don't want our client to have this access. To disable this, execute the following SQL query in the SQL Editor on your Supabase dashboard:
+
+```sql
+REVOKE USAGE ON SCHEMA public FROM anon, authenticated;
+```
+
+![disable public access](https://user-images.githubusercontent.com/51714798/231810706-88b1db82-0cfd-485f-9043-ef12a53dc62f.png)
+
+> Note: This means you also don't need to enable row-level security (RLS) on your database if you don't want to.
+
+### 3. Configure Expo `dev`-script
 
 #### Use iOS Simulator
 
@@ -241,10 +293,6 @@ This repo originates from [create-t3-turbo](https://github.com/t3-oss/create-t3-
 
 Thanks as well to the following:
 
-- [next-fast-turbo](https://github.com/cording12/next-fast-turbo) for the learnings on how to bring FastAPI into the project.
-
-- [Build a ChatGPT Clone with React Native](https://youtu.be/8ztx68SUOQo?si=f-HCi6K1qpVX-ATV) by Simon Grimm for the inspiring the direction of the mobile app.
-
-- [Andy AI](https://www.ycombinator.com/companies/andy-ai) for fueling the original idea of this project.
+- [Levels Health](https://www.levels.com/) for fueling the inspiration for this project.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

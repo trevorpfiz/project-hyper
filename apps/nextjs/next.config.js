@@ -13,10 +13,10 @@ const config = {
 
   /** Enables hot reloading for local packages without a build step */
   transpilePackages: [
-    "@hyper/api",
-    "@hyper/db",
-    "@hyper/ui",
-    "@hyper/validators",
+    "@stable/api",
+    "@stable/db",
+    "@stable/ui",
+    "@stable/validators",
   ],
 
   // Allow optimizing avatar images from GitHub

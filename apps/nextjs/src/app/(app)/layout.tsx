@@ -1,4 +1,4 @@
-import { Toaster } from "@hyper/ui/sonner";
+import { Toaster } from "@stable/ui/sonner";
 
 import Navbar from "~/components/navbar";
 import Sidebar from "~/components/sidebar";

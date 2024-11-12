@@ -2,7 +2,7 @@ import type { DateTime } from "luxon";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import type { GlucoseRangeTypes } from "@hyper/db/schema";
+import type { GlucoseRangeTypes } from "@stable/db/schema";
 
 import { zustandStorage } from "~/lib/storage";
 

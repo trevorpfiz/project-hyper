@@ -3,8 +3,8 @@
 import { Check, Menu as MenuIcon, Monitor, Moon, SunDim } from "lucide-react";
 import { useTheme } from "next-themes";
 
-import { Button } from "@hyper/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@hyper/ui/popover";
+import { Button } from "@stable/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@stable/ui/popover";
 
 // TODO implement multiple fonts editor
 // const fonts = [

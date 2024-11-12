@@ -5,7 +5,7 @@ import * as React from "react";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Command as CommandPrimitive } from "cmdk";
 
-import { cn } from "@hyper/ui";
+import { cn } from "@stable/ui";
 
 import { Dialog, DialogContent } from "./dialog";
 

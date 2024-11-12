@@ -2,7 +2,7 @@ import type { TRPCLink } from "@trpc/client";
 import { observable } from "@trpc/server/observable";
 import PQueue from "p-queue";
 
-import type { AppRouter } from "@hyper/api";
+import type { AppRouter } from "@stable/api";
 
 import { getDexcomTokens, updateDexcomTokens } from "~/utils/dexcom-store";
 import { helperClient } from "~/utils/helper-trpc-client";

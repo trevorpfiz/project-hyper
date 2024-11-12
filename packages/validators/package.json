@@ -1,5 +1,5 @@
 {
-  "name": "@hyper/validators",
+  "name": "@stable/validators",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -30,12 +30,12 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@hyper/eslint-config": "workspace:*",
-    "@hyper/prettier-config": "workspace:*",
-    "@hyper/tsconfig": "workspace:*",
+    "@stable/eslint-config": "workspace:*",
+    "@stable/prettier-config": "workspace:*",
+    "@stable/tsconfig": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },
-  "prettier": "@hyper/prettier-config"
+  "prettier": "@stable/prettier-config"
 }

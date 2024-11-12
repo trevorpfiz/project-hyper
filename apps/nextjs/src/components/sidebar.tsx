@@ -2,7 +2,7 @@ import type { User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { Avatar, AvatarFallback } from "@hyper/ui/avatar";
+import { Avatar, AvatarFallback } from "@stable/ui/avatar";
 
 import SidebarItems from "~/components/sidebar-items";
 import { getNameFromUser } from "~/lib/utils";
