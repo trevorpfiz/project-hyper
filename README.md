@@ -37,13 +37,15 @@
 
 ## Demo
 
-https://github.com/trevorpfiz/wellchart/assets/24904780/a1552b10-9694-4d9c-b5fc-ea3b23c91d8d
-
-https://github.com/trevorpfiz/wellchart/assets/24904780/3feda629-a0d1-4a33-ba63-0c2c14ae1bb4
+<div style="display: flex; gap: 10px;">
+  <img src="https://github.com/user-attachments/assets/a1644fe2-84aa-4126-8c24-25e674598629" alt="Screenshot 2024-11-12 at 3 56 12 PM" style="width: 180px; height: 390px;">
+  <img src="https://github.com/user-attachments/assets/090d5819-4a5d-4acd-914e-ab7bfd13fdd8" alt="Screenshot 2024-11-12 at 3 55 27 PM" style="width: 180px; height: 390px;">
+</div>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- PROJECT DETAILS -->
+
 
 ## Project Details
 
