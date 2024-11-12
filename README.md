@@ -4,7 +4,7 @@
 <br>
 <div align="center">
   <a href="https://github.com/trevorpfiz/stable">
-    <img src="https://github.com/trevorpfiz/stable/assets/24904780/0e15369e-2550-42da-84ad-0f224af1ac8a" alt="Logo" width="80" height="80">
+    <img src="https://github.com/user-attachments/assets/1c78afee-94dd-495c-a84e-164a65f44a34" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Stable - Open Source Metabolic Health App</h3>
