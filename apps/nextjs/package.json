@@ -28,7 +28,7 @@
     "ai": "^3.4.33",
     "date-fns": "catalog:dates",
     "geist": "^1.3.1",
-    "lucide-react": "^0.454.0",
+    "lucide-react": "^0.456.0",
     "luxon": "catalog:dates",
     "next": "^14.2.16",
     "next-safe-action": "^7.9.9",

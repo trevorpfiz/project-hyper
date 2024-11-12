@@ -41,18 +41,17 @@ export const DailyRecap = createTable(
       .timestamp({ mode: "date", withTimezone: true })
       .$onUpdateFn(() => new Date()),
   }),
-  (table) => {
-    return {
-      profileIdDateIdx: uniqueIndex("daily_recap_profile_id_date_idx").on(
-        table.profileId,
-        table.date,
-      ),
-      // This unique constraint allows for efficient upserts
-      // It ensures only one recap per day per profile
-      // and enables the use of ON CONFLICT for updates
-      dateProfileUnique: unique().on(table.date, table.profileId),
-    };
-  },
+
+  (table) => [
+    uniqueIndex("daily_recap_profile_id_date_idx").on(
+      table.profileId,
+      table.date,
+    ),
+    // This unique constraint allows for efficient upserts
+    // It ensures only one recap per day per profile
+    // and enables the use of ON CONFLICT for updates
+    unique("daily_recap_date_profile_unique").on(table.date, table.profileId),
+  ],
 );
 
 export const DailyRecapRelations = relations(DailyRecap, ({ one }) => ({

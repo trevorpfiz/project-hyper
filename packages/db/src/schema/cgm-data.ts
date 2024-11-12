@@ -33,12 +33,10 @@ export const CGMData = createTable(
       .timestamp({ mode: "date", withTimezone: true })
       .$onUpdateFn(() => new Date()),
   }),
-  (table) => {
-    return {
-      profileIdIdx: index("cgm_data_profile_id_idx").on(table.profileId),
-      recordIdIdx: uniqueIndex("cgm_data_record_id_idx").on(table.recordId),
-    };
-  },
+  (table) => [
+    index("cgm_data_profile_id_idx").on(table.profileId),
+    uniqueIndex("cgm_data_record_id_idx").on(table.recordId),
+  ],
 );
 
 export const CGMDataRelations = relations(CGMData, ({ one }) => ({

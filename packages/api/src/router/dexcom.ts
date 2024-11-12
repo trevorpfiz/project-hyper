@@ -25,7 +25,12 @@ export const dexcomRouter = {
   authorize: protectedProcedure
     .input(z.object({ code: z.string() }))
     .mutation(async ({ input }) => {
+      console.log("testatdsdsdsdgssdg", input.code);
+
       const tokenData = await exchangeAuthorizationCode(input.code);
+
+      console.log("tokenData", tokenData);
+
       return {
         accessToken: tokenData.access_token,
         refreshToken: tokenData.refresh_token,

@@ -37,10 +37,10 @@ export const Profile = createTable(
     diabetesStatus: diabetesStatusEnum().notNull().default("none"),
     glucoseRangeType: glucoseRangeTypeEnum().notNull().default("tight"),
   }),
-  (table) => ({
-    nameIdx: index().on(table.name),
-    emailIdx: uniqueIndex().on(table.email),
-  }),
+  (table) => [
+    index("name_idx").on(table.name),
+    uniqueIndex("email_idx").on(table.email),
+  ],
 );
 
 export const ProfileRelations = relations(Profile, ({ many }) => ({
